@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>CarQuest — Inici</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-wrap">
+        <header class="topbar">
+            <div class="logo">
+                <div class="logo-box"></div>
+                <div>
+                    <h1>CarQuest</h1>
+                    <p>Aprèn a conduir jugant</p>
+                </div>
+            </div>
+            <nav class="nav-pills">
+                <button class="pill activo">Inici</button>
+                <button class="pill">Perfil</button>
+                <button class="pill">Reptes</button>
+                <button class="pill">Test</button>
+                <button class="pill">Diari</button>
+                <button class="pill">Rànquing</button>
+                <button class="pill">Botiga</button>
+            </nav>
+        </header>
+
+        <main class="main-card">
+            <div class="content-sheet">
+                <div class="page-title">Inici</div>
+
+                <section class="panel-user">
+                    <div class="avatar">🙂</div>
+                    <div class="user-info">
+                        <h3 id="userName">Conductor Novell</h3>
+                        <p>Nivell 2</p>
+                        <p style="font-size:13px; opacity:0.9">1500 XP · 450 monedes · 5 dies</p>
+                    </div>
+                    <div style="margin-left:550px">
+                        <a href="index.html" class="logout">Tancar sessió</a>
+                    </div>
+                </section>
+
+                <div class="progress-card">
+                    <div style="display:flex; align-items:center; justify-content:space-between;">
+                        <div style="font-weight:700;">60% cap a Conductor Urbà</div>
+                        <div style="opacity:0.6; font-size:13px;">Progrés</div>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" data-progress="60"></div>
+                    </div>
+                    <div class="progress-note">60% cap a Conductor Urbà</div>
+                </div>
+
+                <section class="ranks-card">
+                    <h4>Rangs de Conductor</h4>
+                    <ul class="ranks-list">
+                        <li class="active"><div class="rank-emoji">🙂</div><div>1. Conductor Novell (TU)</div></li>
+                        <li><div class="rank-emoji">🚗</div><div>2. Conductor Urbà</div></li>
+                        <li><div class="rank-emoji">🛣️</div><div>3. Expert en Carretera</div></li>
+                        <li><div class="rank-emoji">🏁</div><div>4. Pilot Segur</div></li>
+                        <li><div class="rank-emoji">👑</div><div>5. Pilot Expert</div></li>
+                    </ul>
+                </section>
+
+                <section class="stats-grid">
+                    <div class="stat-card">
+                        <div class="icon">🎯</div>
+                        <div class="stat-title">Reptes</div>
+                        <div class="stat-value" data-value="24">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon">✅</div>
+                        <div class="stat-title">Tests</div>
+                        <div class="stat-value" data-value="8">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon">🏆</div>
+                        <div class="stat-title">Insígnies</div>
+                        <div class="stat-value" data-value="5">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon">🔥</div>
+                        <div class="stat-title">Ràtio</div>
+                        <div class="stat-value" data-value="5">5 dies</div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // activar comportamiento simple de pills
+        document.querySelectorAll('.pill').forEach(p => p.addEventListener('click', () => {
+            document.querySelectorAll('.pill').forEach(x => x.classList.remove('activo'));
+            p.classList.add('activo');
+        }));
+    </script>
+    <script src="dashboard.js"></script>
+</body>
+</html>

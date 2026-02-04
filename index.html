@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carquest - Iniciar Sesión & Registro</title>
+    <link rel="stylesheet" href="estilos.css">
+    <meta name="theme-color" content="#0b1220">
+</head>
+<body>
+    <div class="contenedor">
+        <!-- Formulario de Inicio de Sesión -->
+        <div class="contenedor-formulario formulario-inicio activo" id="formularioInicio">
+            <div class="encabezado-formulario">
+                <h1><span style="color:var(--color-secundario)">Car</span><span style="color:var(--color-primario)">quest</span></h1>
+                <p>Bienvenido de vuelta</p>
+            </div>
+            
+            <form id="elementoFormularioInicio">
+                <div class="grupo-formulario">
+                    <label for="emailInicio">Correo electrónico</label>
+                    <input 
+                        type="email" 
+                        id="emailInicio" 
+                        name="email" 
+                        placeholder="tu@email.com"
+                        required
+                    >
+                    <span class="mensaje-error" id="errorEmailInicio"></span>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label for="contraseñaInicio">Contraseña</label>
+                    <div class="entrada-contraseña">
+                        <input 
+                            type="password" 
+                            id="contraseñaInicio" 
+                            name="contraseña" 
+                            placeholder="••••••••"
+                            required
+                        >
+                        <button type="button" class="boton-alternar-contraseña" onclick="alternarVisibilidadContraseña('contraseñaInicio')">
+                            👁️
+                        </button>
+                    </div>
+                    <span class="mensaje-error" id="errorContraseñaInicio"></span>
+                </div>
+
+                <div class="grupo-formulario casilla-verificacion">
+                    <input type="checkbox" id="recordarme" name="recordarme">
+                    <label for="recordarme">Recuérdame</label>
+                </div>
+
+                <button type="submit" class="boton boton-principal">Iniciar Sesión</button>
+            </form>
+
+            <div class="pie-formulario">
+                <p>¿No tienes cuenta? <a href="#" onclick="alternarFormularios()">Regístrate aquí</a></p>
+                <a href="#" class="enlace-contraseña-olvidada">¿Olvidaste tu contraseña?</a>
+            </div>
+        </div>
+
+        <!-- Formulario de Registro -->
+        <div class="contenedor-formulario formulario-registro" id="formularioRegistro">
+            <div class="encabezado-formulario">
+                <h1>Carquest</h1>
+                <p>Crea tu cuenta</p>
+            </div>
+            
+            <form id="elementoFormularioRegistro">
+                <div class="grupo-formulario">
+                    <label for="nombreRegistro">Nombre completo</label>
+                    <input 
+                        type="text" 
+                        id="nombreRegistro" 
+                        name="nombre" 
+                        placeholder="Juan Pérez"
+                        required
+                    >
+                    <span class="mensaje-error" id="errorNombreRegistro"></span>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label for="emailRegistro">Correo electrónico</label>
+                    <input 
+                        type="email" 
+                        id="emailRegistro" 
+                        name="email" 
+                        placeholder="tu@email.com"
+                        required
+                    >
+                    <span class="mensaje-error" id="errorEmailRegistro"></span>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label for="contraseñaRegistro">Contraseña</label>
+                    <div class="entrada-contraseña">
+                        <input 
+                            type="password" 
+                            id="contraseñaRegistro" 
+                            name="contraseña" 
+                            placeholder="••••••••"
+                            required
+                        >
+                        <button type="button" class="boton-alternar-contraseña" onclick="alternarVisibilidadContraseña('contraseñaRegistro')">
+                            👁️
+                        </button>
+                    </div>
+                    <span class="mensaje-error" id="errorContraseñaRegistro"></span>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label for="confirmarContraseñaRegistro">Confirmar contraseña</label>
+                    <div class="entrada-contraseña">
+                        <input 
+                            type="password" 
+                            id="confirmarContraseñaRegistro" 
+                            name="confirmarContraseña" 
+                            placeholder="••••••••"
+                            required
+                        >
+                        <button type="button" class="boton-alternar-contraseña" onclick="alternarVisibilidadContraseña('confirmarContraseñaRegistro')">
+                            👁️
+                        </button>
+                    </div>
+                    <span class="mensaje-error" id="errorConfirmarContraseñaRegistro"></span>
+                </div>
+
+                <div class="requisitos-contraseña">
+                    <p>La contraseña debe tener:</p>
+                    <ul>
+                        <li id="req-longitud">✗ Al menos 8 caracteres</li>
+                        <li id="req-mayuscula">✗ Una letra mayúscula</li>
+                        <li id="req-minuscula">✗ Una letra minúscula</li>
+                        <li id="req-numero">✗ Un número</li>
+                    </ul>
+                </div>
+
+                <div class="grupo-formulario casilla-verificacion">
+                    <input type="checkbox" id="aceptarTerminos" name="aceptarTerminos" required>
+                    <label for="aceptarTerminos">Acepto los términos y condiciones</label>
+                </div>
+
+                <button type="submit" class="boton boton-principal">Crear Cuenta</button>
+            </form>
+
+            <div class="pie-formulario">
+                <p>¿Ya tienes cuenta? <a href="#" onclick="alternarFormularios()">Inicia sesión aquí</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificación emergente -->
+    <div class="notificacion" id="notificacion"></div>
+
+    <script src="guion.js"></script>
+</body>
+</html>
