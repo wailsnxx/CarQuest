@@ -416,6 +416,8 @@ body {
     font-weight: 700;
     font-size: 13px;
     transition: background 180ms ease, transform 120ms ease;
+    text-decoration: none;
+    display: inline-block;
 }
 .pill:hover {
     transform: translateY(-4px);
@@ -533,4 +535,331 @@ body {
 @media (max-width: 900px) {
     .dashboard-wrap { padding: 0 18px; }
     .stats-grid { flex-wrap:wrap; }
+}
+
+/* ============================================
+   PERFIL PAGE STYLES (NOU DISSENY)
+   ============================================ */
+
+/* Card principal amb avatar i cotxe */
+.perfil-principal-card {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 40px 30px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px;
+    margin-bottom: 20px;
+}
+
+.perfil-conductor,
+.perfil-cotxe {
+    text-align: center;
+}
+
+.perfil-conductor h3,
+.perfil-cotxe h3 {
+    margin: 14px 0 6px;
+    font-size: 18px;
+    color: #fff;
+    font-weight: 600;
+}
+
+.perfil-cotxe p {
+    margin: 0;
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+}
+
+.avatar-cercle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    transition: transform 300ms ease;
+}
+
+.avatar-cercle:hover {
+    transform: scale(1.05);
+}
+
+.avatar-lila {
+    background: linear-gradient(135deg, #e0d4f7 0%, #c9b8f0 100%);
+    box-shadow: 0 8px 30px rgba(168,85,247,0.25);
+}
+
+.avatar-verd {
+    background: linear-gradient(135deg, #b8f0d4 0%, #7ee6b8 100%);
+    box-shadow: 0 8px 30px rgba(6,167,125,0.25);
+}
+
+.avatar-emoji,
+.cotxe-emoji {
+    font-size: 60px;
+}
+
+.badge-rang {
+    display: inline-block;
+    padding: 6px 16px;
+    background: linear-gradient(90deg, var(--color-secundario), #0066b3);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 20px;
+    margin-top: 6px;
+}
+
+/* Estadístiques row */
+.perfil-stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.perfil-stat-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    transition: all 220ms ease;
+}
+
+.perfil-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(2,6,23,0.4);
+    background: rgba(255,255,255,0.04);
+}
+
+.stat-icon-big {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 6px;
+}
+
+.stat-number {
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+}
+
+/* Section cards */
+.perfil-section-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.perfil-section-card h4 {
+    margin: 0 0 18px 0;
+    font-size: 15px;
+    color: rgba(255,255,255,0.95);
+    font-weight: 600;
+}
+
+/* Avatar selector */
+.avatar-selector {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+}
+
+.avatar-option {
+    background: rgba(255,255,255,0.02);
+    border: 2px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 16px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 200ms ease;
+}
+
+.avatar-option:hover {
+    background: rgba(255,255,255,0.05);
+    transform: translateY(-3px);
+}
+
+.avatar-option.selected {
+    border-color: var(--color-secundario);
+    background: rgba(0,78,137,0.1);
+}
+
+.avatar-option span {
+    font-size: 36px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.avatar-option p {
+    margin: 0;
+    font-size: 12px;
+    color: rgba(255,255,255,0.8);
+}
+
+/* Cotxes selector */
+.cotxes-selector {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.cotxe-option {
+    background: rgba(255,255,255,0.02);
+    border: 2px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 20px 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 200ms ease;
+    min-width: 140px;
+}
+
+.cotxe-option:hover {
+    background: rgba(255,255,255,0.05);
+    transform: translateY(-3px);
+}
+
+.cotxe-option.selected {
+    border-color: var(--color-exito);
+    background: rgba(6,167,125,0.1);
+}
+
+.cotxe-option span {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.cotxe-option p {
+    margin: 0;
+    font-size: 13px;
+    color: rgba(255,255,255,0.8);
+}
+
+.cotxes-hint {
+    margin: 16px 0 0 0;
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    text-align: center;
+}
+
+/* Rang progress */
+.rang-progress {
+    margin-top: 10px;
+}
+
+.rang-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.9);
+    font-weight: 600;
+}
+
+.rang-progress-track {
+    height: 14px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 7px;
+    overflow: hidden;
+}
+
+.rang-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-secundario), var(--color-exito));
+    border-radius: 7px;
+    transition: width 800ms ease;
+}
+
+.rang-hint {
+    margin: 12px 0 0 0;
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+}
+
+/* Activitat resum grid */
+.activitat-resum-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+
+.activitat-resum-card {
+    padding: 16px 20px;
+    border-radius: 10px;
+    border-left: 4px solid;
+}
+
+.activitat-resum-card.card-green {
+    background: rgba(6,167,125,0.08);
+    border-color: var(--color-exito);
+}
+
+.activitat-resum-card.card-purple {
+    background: rgba(168,85,247,0.08);
+    border-color: #a855f7;
+}
+
+.activitat-resum-card.card-red {
+    background: rgba(230,57,70,0.08);
+    border-color: var(--color-error);
+}
+
+.activitat-resum-label {
+    font-size: 13px;
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 6px;
+}
+
+.card-green .activitat-resum-label { color: var(--color-exito); }
+.card-purple .activitat-resum-label { color: #a855f7; }
+.card-red .activitat-resum-label { color: var(--color-error); }
+
+.activitat-resum-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+}
+
+/* Responsive perfil nou */
+@media (max-width: 900px) {
+    .perfil-principal-card {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .perfil-stats-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .avatar-selector {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .activitat-resum-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .perfil-stats-row {
+        grid-template-columns: 1fr;
+    }
+
+    .avatar-selector {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>CarQuest — Perfil</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-wrap">
+        <header class="topbar">
+            <div class="logo">
+                <div class="logo-box"></div>
+                <div>
+                    <h1>CarQuest</h1>
+                    <p>Aprèn jugant</p>
+                </div>
+            </div>
+            <nav class="nav-pills">
+                <a href="inici.html" class="pill">Inici</a>
+                <a href="#" class="pill">Reptes</a>
+                <a href="#" class="pill">Tests</a>
+                <a href="#" class="pill">Diaris</a>
+                <a href="#" class="pill">Rànquing</a>
+                <a href="#" class="pill">Botiga</a>
+                <a href="perfil.html" class="pill activo">Perfil</a>
+            </nav>
+        </header>
+
+        <main class="main-card">
+            <div class="content-sheet">
+                <div class="page-title">El Meu Perfil</div>
+
+                <!-- Secció perfil principal amb avatar i cotxe -->
+                <section class="perfil-principal-card">
+                    <div class="perfil-conductor">
+                        <div class="avatar-cercle avatar-lila">
+                            <span class="avatar-emoji" id="avatarActual">👨</span>
+                        </div>
+                        <h3>Conductor</h3>
+                        <span class="badge-rang">Conductor Urbà</span>
+                    </div>
+                    <div class="perfil-cotxe">
+                        <div class="avatar-cercle avatar-verd">
+                            <span class="cotxe-emoji" id="cotxeActual">🚗</span>
+                        </div>
+                        <h3>Cotxe Bàsic</h3>
+                        <p>El meu cotxe actual</p>
+                    </div>
+                </section>
+
+                <!-- Estadístiques -->
+                <section class="perfil-stats-row">
+                    <div class="perfil-stat-card">
+                        <div class="stat-icon-big">⭐</div>
+                        <div class="stat-label">XP Total</div>
+                        <div class="stat-number">3000</div>
+                    </div>
+                    <div class="perfil-stat-card">
+                        <div class="stat-icon-big">🏅</div>
+                        <div class="stat-label">Monedes</div>
+                        <div class="stat-number">450</div>
+                    </div>
+                    <div class="perfil-stat-card">
+                        <div class="stat-icon-big">🏆</div>
+                        <div class="stat-label">Insígnies</div>
+                        <div class="stat-number">2</div>
+                    </div>
+                    <div class="perfil-stat-card">
+                        <div class="stat-icon-big">🔥</div>
+                        <div class="stat-label">Ratxa</div>
+                        <div class="stat-number">5 dies</div>
+                    </div>
+                </section>
+
+                <!-- Tria el teu Avatar -->
+                <section class="perfil-section-card">
+                    <h4>👤 Tria el teu Avatar</h4>
+                    <div class="avatar-selector">
+                        <div class="avatar-option selected" data-avatar="👨">
+                            <span>👨</span>
+                            <p>Home</p>
+                        </div>
+                        <div class="avatar-option" data-avatar="👩">
+                            <span>👩</span>
+                            <p>Dona</p>
+                        </div>
+                        <div class="avatar-option" data-avatar="👦">
+                            <span>👦</span>
+                            <p>Noi</p>
+                        </div>
+                        <div class="avatar-option" data-avatar="👧">
+                            <span>👧</span>
+                            <p>Noia</p>
+                        </div>
+                        <div class="avatar-option" data-avatar="🧑">
+                            <span>🧑</span>
+                            <p>Persona 1</p>
+                        </div>
+                        <div class="avatar-option" data-avatar="🧔">
+                            <span>🧔</span>
+                            <p>Persona 2</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Els Meus Cotxes -->
+                <section class="perfil-section-card">
+                    <h4>🚙 Els Meus Cotxes</h4>
+                    <div class="cotxes-selector">
+                        <div class="cotxe-option selected" data-cotxe="🚗">
+                            <span>🚗</span>
+                            <p>Cotxe Bàsic</p>
+                        </div>
+                    </div>
+                    <p class="cotxes-hint">💡 Compra més cotxes a la Botiga!</p>
+                </section>
+
+                <!-- Progrés al Següent Rang -->
+                <section class="perfil-section-card">
+                    <h4>📈 Progrés al Següent Rang</h4>
+                    <div class="rang-progress">
+                        <div class="rang-labels">
+                            <span>Conductor Urbà</span>
+                            <span>Pilot Expert</span>
+                        </div>
+                        <div class="rang-progress-track">
+                            <div class="rang-progress-fill" style="width: 40%"></div>
+                        </div>
+                        <p class="rang-hint">Necessites 2000 XP més per arribar a Pilot Expert</p>
+                    </div>
+                </section>
+
+                <!-- Resum d'Activitat -->
+                <section class="perfil-section-card">
+                    <h4>📊 Resum d'Activitat</h4>
+                    <div class="activitat-resum-grid">
+                        <div class="activitat-resum-card card-green">
+                            <div class="activitat-resum-label">Reptes Completats</div>
+                            <div class="activitat-resum-value">24</div>
+                        </div>
+                        <div class="activitat-resum-card card-purple">
+                            <div class="activitat-resum-label">Tests Aprovats</div>
+                            <div class="activitat-resum-value">8</div>
+                        </div>
+                        <div class="activitat-resum-card card-red">
+                            <div class="activitat-resum-label">Tests Suspesos</div>
+                            <div class="activitat-resum-value">2</div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Selector d'avatar
+        document.querySelectorAll('.avatar-option').forEach(opt => {
+            opt.addEventListener('click', function() {
+                document.querySelectorAll('.avatar-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                document.getElementById('avatarActual').textContent = this.dataset.avatar;
+            });
+        });
+
+        // Selector de cotxe
+        document.querySelectorAll('.cotxe-option').forEach(opt => {
+            opt.addEventListener('click', function() {
+                document.querySelectorAll('.cotxe-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                document.getElementById('cotxeActual').textContent = this.dataset.cotxe;
+            });
+        });
+    </script>
+</body>
+</html>
