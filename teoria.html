@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>CarQuest — Teoria</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-wrap">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-box"></div>
+                <div>
+                    <h1>CarQuest</h1>
+                    <p>Aprèn a conduir jugant</p>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="sidebar-section-label">Principal</div>
+                <a href="inici.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🏠</span> Inici
+                </a>
+                <a href="perfil.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">👤</span> Perfil
+                </a>
+                <div class="sidebar-section-label">Aprendre</div>
+                <a href="teoria.html" class="sidebar-link activo">
+                    <span class="sidebar-link-icon">📖</span> Teoria
+                </a>
+                <a href="jocs.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🎯</span> Jocs
+                </a>
+                <a href="tests.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">📝</span> Tests
+                </a>
+                <a href="diaris.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">📅</span> Diaris
+                </a>
+                <div class="sidebar-section-label">Comunitat</div>
+                <a href="ranquing.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🏆</span> Rànquing
+                </a>
+                <a href="botiga.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🛒</span> Botiga
+                </a>
+            </nav>
+            <div class="sidebar-bottom">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">🙂</div>
+                    <div class="sidebar-user-info">
+                        <strong>Conductor Novell</strong>
+                        <span>1500 XP · Nivell 2</span>
+                    </div>
+                </div>
+                <a href="index.html" class="sidebar-logout">
+                    <span class="sidebar-link-icon">🚪</span> Tancar sessió
+                </a>
+            </div>
+        </aside>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <main class="main-content">
+            <div class="mobile-header">
+                <button class="mobile-menu-btn" id="menuBtn">☰</button>
+                <span style="font-weight:700; color:#fff;">CarQuest</span>
+            </div>
+            <div class="content-sheet">
+
+                <!-- Hero del Hub -->
+                <div class="hub-hero">
+                    <div class="hub-hero-glow"></div>
+                    <div class="hub-hero-content">
+                        <div class="hub-hero-badge">📖 Hub d'Aprenentatge</div>
+                        <h2>Teoria del Carnet de Conduir</h2>
+                        <p>Domina tota la teoria que necessites per aprovar el carnet. Estudia al teu ritme amb lliçons interactives.</p>
+                    </div>
+                    <div class="hub-hero-stats">
+                        <div class="hub-hero-stat">
+                            <span class="hub-stat-number">10</span>
+                            <span class="hub-stat-label">Completades</span>
+                        </div>
+                        <div class="hub-hero-stat-divider"></div>
+                        <div class="hub-hero-stat">
+                            <span class="hub-stat-number">22</span>
+                            <span class="hub-stat-label">Total Lliçons</span>
+                        </div>
+                        <div class="hub-hero-stat-divider"></div>
+                        <div class="hub-hero-stat">
+                            <span class="hub-stat-number hub-stat-highlight">45%</span>
+                            <span class="hub-stat-label">Progrés</span>
+                        </div>
+                    </div>
+                    <div class="hub-progress-bar">
+                        <div class="hub-progress-fill" style="width: 45%"></div>
+                    </div>
+                </div>
+
+                <!-- Grid de categories -->
+                <div class="hub-grid">
+
+                    <!-- Senyals de Trànsit -->
+                    <div class="hub-card hub-card-green">
+                        <div class="hub-card-accent"></div>
+                        <div class="hub-card-top">
+                            <div class="hub-card-icon-wrap hub-icon-green">
+                                <span>🚦</span>
+                            </div>
+                            <div class="hub-card-badge-progress">3/4</div>
+                        </div>
+                        <h4>Senyals de Trànsit</h4>
+                        <p>Identifica i interpreta tots els senyals de circulació</p>
+                        <div class="hub-card-progress">
+                            <div class="hub-card-track">
+                                <div class="hub-card-fill" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <ul class="hub-llico-list">
+                            <li class="hub-llico completada"><span class="hub-llico-dot done"></span>Senyals de Prohibició</li>
+                            <li class="hub-llico completada"><span class="hub-llico-dot done"></span>Senyals d'Obligació</li>
+                            <li class="hub-llico completada"><span class="hub-llico-dot done"></span>Senyals de Perill</li>
+                            <li class="hub-llico"><span class="hub-llico-dot"></span>Senyals d'Informació</li>
+                        </ul>
+                        <button class="hub-btn hub-btn-green">Continuar</button>
+                    </div>
+
+                    <!-- Normes de Circulació -->
+                    <div class="hub-card hub-card-blue">
+                        <div class="hub-card-accent"></div>
+                        <div class="hub-card-top">
+                            <div class="hub-card-icon-wrap hub-icon-blue">
+                                <span>📋</span>
+                            </div>
+                            <div class="hub-card-badge-progress">2/4</div>
+                        </div>
+                        <h4>Normes de Circulació</h4>
+                        <p>Les regles bàsiques per circular correctament</p>
+                        <div class="hub-card-progress">
+                            <div class="hub-card-track">
+                                <div class="hub-card-fill" style="width: 50%"></div>
+                            </div>
+                        </div>
+                        <ul class="hub-llico-list">
+                            <li class="hub-llico completada"><span class="hub-llico-dot done"></span>Límits de Velocitat</li>
+                            <li class="hub-llico completada"><span class="hub-llico-dot done"></span>Avançaments</li>
+                            <li class="hub-llico"><span class="hub-llico-dot"></span>Interseccions</li>
+                            <li class="hub-llico"><span class="hub-llico-dot"></span>Estacionament</li>
+                        </ul>
+                        <button class="hub-btn hub-btn-blue">Continuar</button>
+                    </div>
+
+                    <!-- Seguretat Vial -->
+                    <div class="hub-card hub-card-orange">
+                        <div class="hub-card-accent"></div>
+                        <div class="hub-card-top">
+                            <div class="hub-card-icon-wrap hub-icon-orange">
+                                <span>🛡️</span>
+                            </div>
+                            <div class="hub-card-badge-progress">2/4</div>
+                        </div>
+                        <h4>Seguretat Vial</h4>
+                        <p>Condueix de forma segura en qualsevol situació</p>
+                        <div class="hub-card-progress">
+                            <div class="hub-card-track">
+                                <div class="hub-card-fill" style="width: 50%"></div>
+                            </div>
+                        </div>
+                        <ul class="hub-llico-list">
+                            <li class="hub-llico completada"><span class="hub-llico-dot done"></span>Cinturó de Seguretat</li>
+                            <li class="hub-llico completada"><span class="hub-llico-dot done"></span>Distància de Seguretat</li>
+                            <li class="hub-llico"><span class="hub-llico-dot"></span>Condicions Adverses</li>
+                            <li class="hub-llico"><span class="hub-llico-dot"></span>Fatiga i Distracció</li>
+                        </ul>
+                        <button class="hub-btn hub-btn-orange">Continuar</button>
+                    </div>
+
+                    <!-- Mecànica Bàsica -->
+                    <div class="hub-card hub-card-purple">
+                        <div class="hub-card-accent"></div>
+                        <div class="hub-card-top">
+                            <div class="hub-card-icon-wrap hub-icon-purple">
+                                <span>🔧</span>
+                            </div>
+                            <div class="hub-card-badge-progress">1/4</div>
+                        </div>
+                        <h4>Mecànica Bàsica</h4>
+                        <p>Coneix el teu vehicle per dins i per fora</p>
+                        <div class="hub-card-progress">
+                            <div class="hub-card-track">
+                                <div class="hub-card-fill" style="width: 25%"></div>
+                            </div>
+                        </div>
+                        <ul class="hub-llico-list">
+                            <li class="hub-llico completada"><span class="hub-llico-dot done"></span>El Motor</li>
+                            <li class="hub-llico"><span class="hub-llico-dot"></span>Sistema de Frens</li>
+                            <li class="hub-llico"><span class="hub-llico-dot"></span>Pneumàtics</li>
+                            <li class="hub-llico"><span class="hub-llico-dot"></span>Llums i Indicadors</li>
+                        </ul>
+                        <button class="hub-btn hub-btn-purple">Començar</button>
+                    </div>
+
+                    <!-- Primers Auxilis -->
+                    <div class="hub-card hub-card-red">
+                        <div class="hub-card-accent"></div>
+                        <div class="hub-card-top">
+                            <div class="hub-card-icon-wrap hub-icon-red">
+                                <span>🚑</span>
+                            </div>
+                            <div class="hub-card-badge-progress">1/3</div>
+                        </div>
+                        <h4>Primers Auxilis</h4>
+                        <p>Com actuar en cas d'accident de trànsit</p>
+                        <div class="hub-card-progress">
+                            <div class="hub-card-track">
+                                <div class="hub-card-fill" style="width: 33%"></div>
+                            </div>
+                        </div>
+                        <ul class="hub-llico-list">
+                            <li class="hub-llico completada"><span class="hub-llico-dot done"></span>Protocol PAS</li>
+                            <li class="hub-llico"><span class="hub-llico-dot"></span>Tractament de Ferides</li>
+                            <li class="hub-llico"><span class="hub-llico-dot"></span>RCP Bàsic</li>
+                        </ul>
+                        <button class="hub-btn hub-btn-red">Començar</button>
+                    </div>
+
+                    <!-- Prioritats -->
+                    <div class="hub-card hub-card-cyan">
+                        <div class="hub-card-accent"></div>
+                        <div class="hub-card-top">
+                            <div class="hub-card-icon-wrap hub-icon-cyan">
+                                <span>⚖️</span>
+                            </div>
+                            <div class="hub-card-badge-progress">1/4</div>
+                        </div>
+                        <h4>Prioritats</h4>
+                        <p>Qui passa primer? Les regles de prioritat</p>
+                        <div class="hub-card-progress">
+                            <div class="hub-card-track">
+                                <div class="hub-card-fill" style="width: 25%"></div>
+                            </div>
+                        </div>
+                        <ul class="hub-llico-list">
+                            <li class="hub-llico completada"><span class="hub-llico-dot done"></span>Rotondes</li>
+                            <li class="hub-llico"><span class="hub-llico-dot"></span>Creuaments</li>
+                            <li class="hub-llico"><span class="hub-llico-dot"></span>Senyals d'Agents</li>
+                            <li class="hub-llico"><span class="hub-llico-dot"></span>Vehicles d'Emergència</li>
+                        </ul>
+                        <button class="hub-btn hub-btn-cyan">Començar</button>
+                    </div>
+
+                </div>
+
+                <!-- Consell del dia -->
+                <div class="hub-tip">
+                    <div class="hub-tip-icon">💡</div>
+                    <div class="hub-tip-content">
+                        <strong>Consell del dia</strong>
+                        <p>Estudia almenys 2 lliçons al dia per mantenir la teva ratxa i preparar-te millor per l'examen!</p>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+    <script src="dashboard.js"></script>
+    <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        if (menuBtn) {
+            menuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('open');
+            });
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('open');
+            });
+        }
+    </script>
+</body>
+</html>

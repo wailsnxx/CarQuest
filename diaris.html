@@ -3,12 +3,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>CarQuest — Inici</title>
+    <title>CarQuest — Diaris</title>
     <link rel="stylesheet" href="estilos.css">
 </head>
 <body class="dashboard-body">
     <div class="dashboard-wrap">
-        <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
                 <div class="logo-box"></div>
@@ -17,16 +16,14 @@
                     <p>Aprèn a conduir jugant</p>
                 </div>
             </div>
-
             <nav class="sidebar-nav">
                 <div class="sidebar-section-label">Principal</div>
-                <a href="inici.html" class="sidebar-link activo">
+                <a href="inici.html" class="sidebar-link">
                     <span class="sidebar-link-icon">🏠</span> Inici
                 </a>
                 <a href="perfil.html" class="sidebar-link">
                     <span class="sidebar-link-icon">👤</span> Perfil
                 </a>
-
                 <div class="sidebar-section-label">Aprendre</div>
                 <a href="teoria.html" class="sidebar-link">
                     <span class="sidebar-link-icon">📖</span> Teoria
@@ -37,10 +34,9 @@
                 <a href="tests.html" class="sidebar-link">
                     <span class="sidebar-link-icon">📝</span> Tests
                 </a>
-                <a href="diaris.html" class="sidebar-link">
+                <a href="diaris.html" class="sidebar-link activo">
                     <span class="sidebar-link-icon">📅</span> Diaris
                 </a>
-
                 <div class="sidebar-section-label">Comunitat</div>
                 <a href="ranquing.html" class="sidebar-link">
                     <span class="sidebar-link-icon">🏆</span> Rànquing
@@ -49,7 +45,6 @@
                     <span class="sidebar-link-icon">🛒</span> Botiga
                 </a>
             </nav>
-
             <div class="sidebar-bottom">
                 <div class="sidebar-user">
                     <div class="sidebar-user-avatar">🙂</div>
@@ -63,79 +58,88 @@
                 </a>
             </div>
         </aside>
-
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-        <!-- Main content -->
         <main class="main-content">
             <div class="mobile-header">
                 <button class="mobile-menu-btn" id="menuBtn">☰</button>
                 <span style="font-weight:700; color:#fff;">CarQuest</span>
             </div>
-
             <div class="content-sheet">
-                <div class="page-title">Inici</div>
+                <div class="page-title">Reptes Diaris</div>
 
-                <section class="panel-user">
-                    <div class="avatar">🙂</div>
-                    <div class="user-info">
-                        <h3 id="userName">Conductor Novell</h3>
-                        <p>Nivell 2</p>
-                        <p style="font-size:13px; opacity:0.9">1500 XP · 450 monedes · 5 dies</p>
+                <!-- Capçalera del dia -->
+                <div class="diaris-header">
+                    <h3>Reptes d'Avui</h3>
+                    <p>Divendres, 7 de novembre 2025</p>
+                    <p>Completats: 1 / 3</p>
+                    <div class="diaris-progress-track">
+                        <div class="diaris-progress-fill" style="width: 33%"></div>
                     </div>
-                </section>
-
-                <div class="progress-card">
-                    <div style="display:flex; align-items:center; justify-content:space-between;">
-                        <div style="font-weight:700;">60% cap a Conductor Urbà</div>
-                        <div style="opacity:0.6; font-size:13px;">Progrés</div>
-                    </div>
-                    <div class="progress-track">
-                        <div class="progress-fill" data-progress="60"></div>
-                    </div>
-                    <div class="progress-note">60% cap a Conductor Urbà</div>
                 </div>
 
-                <section class="ranks-card">
-                    <h4>Rangs de Conductor</h4>
-                    <ul class="ranks-list">
-                        <li class="active"><div class="rank-emoji">🙂</div><div>1. Conductor Novell (TU)</div></li>
-                        <li><div class="rank-emoji">🚗</div><div>2. Conductor Urbà</div></li>
-                        <li><div class="rank-emoji">🛣️</div><div>3. Expert en Carretera</div></li>
-                        <li><div class="rank-emoji">🏁</div><div>4. Pilot Segur</div></li>
-                        <li><div class="rank-emoji">👑</div><div>5. Pilot Expert</div></li>
-                    </ul>
-                </section>
+                <!-- Repte 1 - Completat -->
+                <div class="diari-repte diari-repte-completat">
+                    <div class="diari-repte-icon">✅</div>
+                    <div class="diari-repte-info">
+                        <h4>5 missions sense errors</h4>
+                        <p>Completa 5 reptes sense fallar</p>
+                        <p class="diari-repte-reward">✓ Completat! +200 XP +50 🪙</p>
+                    </div>
+                </div>
 
-                <section class="stats-grid">
-                    <div class="stat-card">
-                        <div class="icon">🎯</div>
-                        <div class="stat-title">Reptes</div>
-                        <div class="stat-value" data-value="24">0</div>
+                <!-- Repte 2 - En progrés -->
+                <div class="diari-repte">
+                    <div class="diari-repte-icon">⭐</div>
+                    <div class="diari-repte-info">
+                        <h4>100 punts XP avui</h4>
+                        <p>Aconsegueix 100 XP</p>
+                        <div class="diari-repte-progress">
+                            <span>Progrés: 75 / 100</span>
+                            <div class="diari-mini-track">
+                                <div class="diari-mini-fill" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <p class="diari-repte-reward-pending">Recompensa: +50 XP +25 🪙</p>
+                        <button class="repte-btn repte-btn-small">Continuar</button>
                     </div>
-                    <div class="stat-card">
-                        <div class="icon">✅</div>
-                        <div class="stat-title">Tests</div>
-                        <div class="stat-value" data-value="8">0</div>
+                </div>
+
+                <!-- Repte 3 - En progrés -->
+                <div class="diari-repte">
+                    <div class="diari-repte-icon">🎯</div>
+                    <div class="diari-repte-info">
+                        <h4>Aprova 3 tests seguits</h4>
+                        <p>Supera 3 tests consecutius</p>
+                        <div class="diari-repte-progress">
+                            <span>Progrés: 1 / 3</span>
+                            <div class="diari-mini-track">
+                                <div class="diari-mini-fill" style="width: 33%"></div>
+                            </div>
+                        </div>
+                        <p class="diari-repte-reward-pending">Recompensa: +150 XP +40 🪙</p>
+                        <button class="repte-btn repte-btn-small">Continuar</button>
                     </div>
-                    <div class="stat-card">
-                        <div class="icon">🏆</div>
-                        <div class="stat-title">Insígnies</div>
-                        <div class="stat-value" data-value="5">0</div>
+                </div>
+
+                <!-- Bonificació Especial -->
+                <div class="diari-bonus">
+                    <div class="diari-bonus-icon">🎁</div>
+                    <div class="diari-bonus-info">
+                        <h4>Bonificació Especial</h4>
+                        <p>Completa tots els reptes!</p>
+                        <div class="diari-bonus-tags">
+                            <span class="bonus-tag tag-xp">+300 XP</span>
+                            <span class="bonus-tag tag-coins">+50 🪙</span>
+                            <span class="bonus-tag tag-badge">Insígnia</span>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="icon">🔥</div>
-                        <div class="stat-title">Ràtio</div>
-                        <div class="stat-value" data-value="5">5 dies</div>
-                    </div>
-                </section>
+                </div>
+
             </div>
         </main>
     </div>
-
     <script src="dashboard.js"></script>
     <script>
-        // Mobile sidebar toggle
         const menuBtn = document.getElementById('menuBtn');
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebarOverlay');

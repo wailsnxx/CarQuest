@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>CarQuest — Tests</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-wrap">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-box"></div>
+                <div>
+                    <h1>CarQuest</h1>
+                    <p>Aprèn a conduir jugant</p>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="sidebar-section-label">Principal</div>
+                <a href="inici.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🏠</span> Inici
+                </a>
+                <a href="perfil.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">👤</span> Perfil
+                </a>
+                <div class="sidebar-section-label">Aprendre</div>
+                <a href="teoria.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">📖</span> Teoria
+                </a>
+                <a href="jocs.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🎯</span> Jocs
+                </a>
+                <a href="tests.html" class="sidebar-link activo">
+                    <span class="sidebar-link-icon">📝</span> Tests
+                </a>
+                <a href="diaris.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">📅</span> Diaris
+                </a>
+                <div class="sidebar-section-label">Comunitat</div>
+                <a href="ranquing.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🏆</span> Rànquing
+                </a>
+                <a href="botiga.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🛒</span> Botiga
+                </a>
+            </nav>
+            <div class="sidebar-bottom">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">🙂</div>
+                    <div class="sidebar-user-info">
+                        <strong>Conductor Novell</strong>
+                        <span>1500 XP · Nivell 2</span>
+                    </div>
+                </div>
+                <a href="index.html" class="sidebar-logout">
+                    <span class="sidebar-link-icon">🚪</span> Tancar sessió
+                </a>
+            </div>
+        </aside>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <main class="main-content">
+            <div class="mobile-header">
+                <button class="mobile-menu-btn" id="menuBtn">☰</button>
+                <span style="font-weight:700; color:#fff;">CarQuest</span>
+            </div>
+            <div class="content-sheet">
+                <div class="page-title">Tests de Conducció</div>
+
+                <!-- Estadístiques resum -->
+                <div class="test-stats-row">
+                    <div class="test-stat-box">
+                        <div class="test-stat-icon">📊</div>
+                        <div class="test-stat-label">Total</div>
+                        <div class="test-stat-value" style="color:#3b82f6;">10</div>
+                    </div>
+                    <div class="test-stat-box">
+                        <div class="test-stat-icon">✅</div>
+                        <div class="test-stat-label">Aprovats</div>
+                        <div class="test-stat-value" style="color:var(--color-exito);">8</div>
+                    </div>
+                    <div class="test-stat-box">
+                        <div class="test-stat-icon">❌</div>
+                        <div class="test-stat-label">Suspesos</div>
+                        <div class="test-stat-value" style="color:var(--color-error);">2</div>
+                    </div>
+                    <div class="test-stat-box">
+                        <div class="test-stat-icon">🎯</div>
+                        <div class="test-stat-label">% Èxit</div>
+                        <div class="test-stat-value" style="color:var(--color-primario);">80%</div>
+                    </div>
+                </div>
+
+                <!-- Test cards grid -->
+                <div class="test-cards-grid">
+                    <!-- Test Normal -->
+                    <div class="test-card">
+                        <div class="test-card-icon">📝</div>
+                        <h4 class="test-card-title" style="color:#3b82f6;">Test Normal</h4>
+                        <p class="test-card-desc">10 preguntes amb resposta immediata</p>
+                        <ul class="test-card-features">
+                            <li>📋 10 preguntes</li>
+                            <li>✓ Resposta immediata</li>
+                            <li>⭐ +50 XP</li>
+                        </ul>
+                        <button class="repte-btn repte-btn-play">Començar</button>
+                    </div>
+
+                    <!-- Test Killer -->
+                    <div class="test-card test-card-killer">
+                        <div class="test-card-icon">🔥</div>
+                        <h4 class="test-card-title" style="color:var(--color-error);">Test Killer</h4>
+                        <p class="test-card-desc">Difícil - 1 error = out!</p>
+                        <ul class="test-card-features">
+                            <li>🔥 Preguntes difícils</li>
+                            <li>⚠️ 1 error = finalitza</li>
+                            <li>⭐ +150 XP</li>
+                        </ul>
+                        <button class="repte-btn repte-btn-killer">Repte Killer</button>
+                    </div>
+
+                    <!-- Test d'Errors -->
+                    <div class="test-card">
+                        <div class="test-card-icon">💫</div>
+                        <h4 class="test-card-title" style="color:var(--color-primario);">Test d'Errors</h4>
+                        <p class="test-card-desc">Practica les fallades</p>
+                        <ul class="test-card-features">
+                            <li>💥 Preguntes fallades</li>
+                            <li>📖 Aprèn dels errors</li>
+                            <li>⭐ +40 XP</li>
+                        </ul>
+                        <button class="repte-btn repte-btn-play">Practicar</button>
+                    </div>
+
+                    <!-- Test per Temes -->
+                    <div class="test-card">
+                        <div class="test-card-icon">📚</div>
+                        <h4 class="test-card-title">Test per Temes</h4>
+                        <p class="test-card-desc">Escull un tema</p>
+                        <div class="test-temes-list">
+                            <a href="#" class="test-tema-link">Senyals</a>
+                            <a href="#" class="test-tema-link">Normes</a>
+                            <a href="#" class="test-tema-link">Seguretat</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Test Tipus Examen Oficial -->
+                <div class="test-examen-oficial">
+                    <div class="test-examen-header">
+                        <div class="test-examen-icon">📋</div>
+                        <div>
+                            <h4>Test Tipus Examen Oficial</h4>
+                            <p>30 preguntes · Simulació real</p>
+                        </div>
+                    </div>
+                    <div class="test-examen-body">
+                        <div class="test-examen-info">
+                            <p>📝 30 preguntes</p>
+                            <p>⏱️ 30 minuts</p>
+                            <p>❓ Resultat al final</p>
+                        </div>
+                        <div class="test-examen-resultats">
+                            <p>Realitzats: <strong>1</strong></p>
+                            <p>Aprovats: <strong>0</strong></p>
+                            <p>Millor: <strong>24/30</strong></p>
+                        </div>
+                    </div>
+                    <button class="repte-btn repte-btn-examen">🎓 Començar Examen</button>
+                </div>
+
+            </div>
+        </main>
+    </div>
+    <script src="dashboard.js"></script>
+    <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        if (menuBtn) {
+            menuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('open');
+            });
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('open');
+            });
+        }
+    </script>
+</body>
+</html>

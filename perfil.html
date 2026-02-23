@@ -8,26 +8,62 @@
 </head>
 <body class="dashboard-body">
     <div class="dashboard-wrap">
-        <header class="topbar">
-            <div class="logo">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
                 <div class="logo-box"></div>
                 <div>
                     <h1>CarQuest</h1>
-                    <p>Aprèn jugant</p>
+                    <p>Aprèn a conduir jugant</p>
                 </div>
             </div>
-            <nav class="nav-pills">
-                <a href="inici.html" class="pill">Inici</a>
-                <a href="#" class="pill">Reptes</a>
-                <a href="#" class="pill">Tests</a>
-                <a href="#" class="pill">Diaris</a>
-                <a href="#" class="pill">Rànquing</a>
-                <a href="#" class="pill">Botiga</a>
-                <a href="perfil.html" class="pill activo">Perfil</a>
+            <nav class="sidebar-nav">
+                <div class="sidebar-section-label">Principal</div>
+                <a href="inici.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🏠</span> Inici
+                </a>
+                <a href="perfil.html" class="sidebar-link activo">
+                    <span class="sidebar-link-icon">👤</span> Perfil
+                </a>
+                <div class="sidebar-section-label">Aprendre</div>
+                <a href="teoria.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">📖</span> Teoria
+                </a>
+                <a href="jocs.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🎯</span> Jocs
+                </a>
+                <a href="tests.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">📝</span> Tests
+                </a>
+                <a href="diaris.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">📅</span> Diaris
+                </a>
+                <div class="sidebar-section-label">Comunitat</div>
+                <a href="ranquing.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🏆</span> Rànquing
+                </a>
+                <a href="botiga.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🛒</span> Botiga
+                </a>
             </nav>
-        </header>
-
-        <main class="main-card">
+            <div class="sidebar-bottom">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">🙂</div>
+                    <div class="sidebar-user-info">
+                        <strong>Conductor Novell</strong>
+                        <span>1500 XP · Nivell 2</span>
+                    </div>
+                </div>
+                <a href="index.html" class="sidebar-logout">
+                    <span class="sidebar-link-icon">🚪</span> Tancar sessió
+                </a>
+            </div>
+        </aside>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <main class="main-content">
+            <div class="mobile-header">
+                <button class="mobile-menu-btn" id="menuBtn">☰</button>
+                <span style="font-weight:700; color:#fff;">CarQuest</span>
+            </div>
             <div class="content-sheet">
                 <div class="page-title">El Meu Perfil</div>
 
@@ -153,7 +189,22 @@
             </div>
         </main>
     </div>
-
+    <script src="dashboard.js"></script>
+    <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        if (menuBtn) {
+            menuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('open');
+            });
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('open');
+            });
+        }
+    </script>
     <script>
         // Selector d'avatar
         document.querySelectorAll('.avatar-option').forEach(opt => {

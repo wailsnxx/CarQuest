@@ -3,12 +3,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>CarQuest — Inici</title>
+    <title>CarQuest — Reptes</title>
     <link rel="stylesheet" href="estilos.css">
 </head>
 <body class="dashboard-body">
     <div class="dashboard-wrap">
-        <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
                 <div class="logo-box"></div>
@@ -17,21 +16,19 @@
                     <p>Aprèn a conduir jugant</p>
                 </div>
             </div>
-
             <nav class="sidebar-nav">
                 <div class="sidebar-section-label">Principal</div>
-                <a href="inici.html" class="sidebar-link activo">
+                <a href="inici.html" class="sidebar-link">
                     <span class="sidebar-link-icon">🏠</span> Inici
                 </a>
                 <a href="perfil.html" class="sidebar-link">
                     <span class="sidebar-link-icon">👤</span> Perfil
                 </a>
-
                 <div class="sidebar-section-label">Aprendre</div>
                 <a href="teoria.html" class="sidebar-link">
                     <span class="sidebar-link-icon">📖</span> Teoria
                 </a>
-                <a href="jocs.html" class="sidebar-link">
+                <a href="jocs.html" class="sidebar-link activo">
                     <span class="sidebar-link-icon">🎯</span> Jocs
                 </a>
                 <a href="tests.html" class="sidebar-link">
@@ -40,7 +37,6 @@
                 <a href="diaris.html" class="sidebar-link">
                     <span class="sidebar-link-icon">📅</span> Diaris
                 </a>
-
                 <div class="sidebar-section-label">Comunitat</div>
                 <a href="ranquing.html" class="sidebar-link">
                     <span class="sidebar-link-icon">🏆</span> Rànquing
@@ -49,7 +45,6 @@
                     <span class="sidebar-link-icon">🛒</span> Botiga
                 </a>
             </nav>
-
             <div class="sidebar-bottom">
                 <div class="sidebar-user">
                     <div class="sidebar-user-avatar">🙂</div>
@@ -63,79 +58,88 @@
                 </a>
             </div>
         </aside>
-
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-        <!-- Main content -->
         <main class="main-content">
             <div class="mobile-header">
                 <button class="mobile-menu-btn" id="menuBtn">☰</button>
                 <span style="font-weight:700; color:#fff;">CarQuest</span>
             </div>
-
             <div class="content-sheet">
-                <div class="page-title">Inici</div>
+                <div class="page-title">Reptes i Minijocs</div>
 
-                <section class="panel-user">
-                    <div class="avatar">🙂</div>
-                    <div class="user-info">
-                        <h3 id="userName">Conductor Novell</h3>
-                        <p>Nivell 2</p>
-                        <p style="font-size:13px; opacity:0.9">1500 XP · 450 monedes · 5 dies</p>
+                <div class="reptes-grid">
+                    <!-- Senyal Challenge -->
+                    <div class="repte-card">
+                        <div class="repte-icon">🚦</div>
+                        <h4 class="repte-nom">Senyal Challenge</h4>
+                        <p class="repte-desc">Identifica els senyals de trànsit</p>
+                        <div class="repte-rewards">
+                            <span>⭐ +50 XP</span> | <span>🪙 +10</span>
+                        </div>
+                        <button class="repte-btn repte-btn-play">Jugar</button>
                     </div>
-                </section>
 
-                <div class="progress-card">
-                    <div style="display:flex; align-items:center; justify-content:space-between;">
-                        <div style="font-weight:700;">60% cap a Conductor Urbà</div>
-                        <div style="opacity:0.6; font-size:13px;">Progrés</div>
+                    <!-- Temps de Reacció -->
+                    <div class="repte-card">
+                        <div class="repte-icon">⚡</div>
+                        <h4 class="repte-nom">Temps de Reacció</h4>
+                        <p class="repte-desc">Millora la velocitat de resposta</p>
+                        <div class="repte-rewards">
+                            <span>⭐ +75 XP</span> | <span>🪙 +15</span>
+                        </div>
+                        <button class="repte-btn repte-btn-play">Jugar</button>
                     </div>
-                    <div class="progress-track">
-                        <div class="progress-fill" data-progress="60"></div>
+
+                    <!-- Tria Responsable -->
+                    <div class="repte-card">
+                        <div class="repte-icon">🥺</div>
+                        <h4 class="repte-nom">Tria Responsable</h4>
+                        <p class="repte-desc">Decisions en situacions reals</p>
+                        <div class="repte-rewards">
+                            <span>⭐ +60 XP</span> | <span>🪙 +12</span>
+                        </div>
+                        <button class="repte-btn repte-btn-play">Jugar</button>
                     </div>
-                    <div class="progress-note">60% cap a Conductor Urbà</div>
+
+                    <!-- Conducció Segura -->
+                    <div class="repte-card">
+                        <div class="repte-icon">🚗</div>
+                        <h4 class="repte-nom">Conducció Segura</h4>
+                        <p class="repte-desc">Simulador de conducció</p>
+                        <div class="repte-rewards">
+                            <span>⭐ +100 XP</span> | <span>🪙 +20</span>
+                        </div>
+                        <button class="repte-btn repte-btn-play">Jugar</button>
+                    </div>
+
+                    <!-- Aparcament Perfecte -->
+                    <div class="repte-card">
+                        <div class="repte-icon">🅿️</div>
+                        <h4 class="repte-nom">Aparcament Perfecte</h4>
+                        <p class="repte-desc">Aprèn a aparcar bé</p>
+                        <div class="repte-rewards">
+                            <span>⭐ +80 XP</span> | <span>🪙 +16</span>
+                        </div>
+                        <button class="repte-btn repte-btn-play">Jugar</button>
+                    </div>
+
+                    <!-- Prioritats -->
+                    <div class="repte-card">
+                        <div class="repte-icon">🔀</div>
+                        <h4 class="repte-nom">Prioritats</h4>
+                        <p class="repte-desc">Qui passa primer?</p>
+                        <div class="repte-rewards">
+                            <span>⭐ +90 XP</span> | <span>🪙 +18</span>
+                        </div>
+                        <button class="repte-btn repte-btn-play">Jugar</button>
+                    </div>
                 </div>
 
-                <section class="ranks-card">
-                    <h4>Rangs de Conductor</h4>
-                    <ul class="ranks-list">
-                        <li class="active"><div class="rank-emoji">🙂</div><div>1. Conductor Novell (TU)</div></li>
-                        <li><div class="rank-emoji">🚗</div><div>2. Conductor Urbà</div></li>
-                        <li><div class="rank-emoji">🛣️</div><div>3. Expert en Carretera</div></li>
-                        <li><div class="rank-emoji">🏁</div><div>4. Pilot Segur</div></li>
-                        <li><div class="rank-emoji">👑</div><div>5. Pilot Expert</div></li>
-                    </ul>
-                </section>
-
-                <section class="stats-grid">
-                    <div class="stat-card">
-                        <div class="icon">🎯</div>
-                        <div class="stat-title">Reptes</div>
-                        <div class="stat-value" data-value="24">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="icon">✅</div>
-                        <div class="stat-title">Tests</div>
-                        <div class="stat-value" data-value="8">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="icon">🏆</div>
-                        <div class="stat-title">Insígnies</div>
-                        <div class="stat-value" data-value="5">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="icon">🔥</div>
-                        <div class="stat-title">Ràtio</div>
-                        <div class="stat-value" data-value="5">5 dies</div>
-                    </div>
-                </section>
             </div>
         </main>
     </div>
-
     <script src="dashboard.js"></script>
     <script>
-        // Mobile sidebar toggle
         const menuBtn = document.getElementById('menuBtn');
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebarOverlay');

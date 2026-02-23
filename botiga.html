@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>CarQuest — Botiga</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-wrap">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-box"></div>
+                <div>
+                    <h1>CarQuest</h1>
+                    <p>Aprèn a conduir jugant</p>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="sidebar-section-label">Principal</div>
+                <a href="inici.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🏠</span> Inici
+                </a>
+                <a href="perfil.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">👤</span> Perfil
+                </a>
+                <div class="sidebar-section-label">Aprendre</div>
+                <a href="teoria.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">📖</span> Teoria
+                </a>
+                <a href="jocs.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🎯</span> Jocs
+                </a>
+                <a href="tests.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">📝</span> Tests
+                </a>
+                <a href="diaris.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">📅</span> Diaris
+                </a>
+                <div class="sidebar-section-label">Comunitat</div>
+                <a href="ranquing.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🏆</span> Rànquing
+                </a>
+                <a href="botiga.html" class="sidebar-link activo">
+                    <span class="sidebar-link-icon">🛒</span> Botiga
+                </a>
+            </nav>
+            <div class="sidebar-bottom">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">🙂</div>
+                    <div class="sidebar-user-info">
+                        <strong>Conductor Novell</strong>
+                        <span>1500 XP · Nivell 2</span>
+                    </div>
+                </div>
+                <a href="index.html" class="sidebar-logout">
+                    <span class="sidebar-link-icon">🚪</span> Tancar sessió
+                </a>
+            </div>
+        </aside>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <main class="main-content">
+            <div class="mobile-header">
+                <button class="mobile-menu-btn" id="menuBtn">☰</button>
+                <span style="font-weight:700; color:#fff;">CarQuest</span>
+            </div>
+            <div class="content-sheet">
+                <div class="botiga-header">
+                    <div class="page-title">Botiga</div>
+                    <div class="botiga-monedes">🪙 450 Monedes</div>
+                </div>
+
+                <!-- Cotxes -->
+                <section class="botiga-section">
+                    <h4>🚗 Cotxes</h4>
+                    <div class="botiga-grid">
+                        <div class="botiga-item botiga-item-owned">
+                            <div class="botiga-item-emoji">🚗</div>
+                            <p class="botiga-item-name">Cotxe Bàsic</p>
+                            <span class="botiga-badge-owned">✓ Teu</span>
+                        </div>
+                        <div class="botiga-item">
+                            <div class="botiga-item-emoji">🚙</div>
+                            <p class="botiga-item-name">SUV</p>
+                            <p class="botiga-item-price">500 🪙</p>
+                            <button class="botiga-btn-comprar">Comprar</button>
+                        </div>
+                        <div class="botiga-item">
+                            <div class="botiga-item-emoji">🏎️</div>
+                            <p class="botiga-item-name">Esportiu</p>
+                            <p class="botiga-item-price">1000 🪙</p>
+                            <span class="botiga-badge-locked">🔒 Blocat</span>
+                        </div>
+                        <div class="botiga-item">
+                            <div class="botiga-item-emoji">🚕</div>
+                            <p class="botiga-item-name">Taxi</p>
+                            <p class="botiga-item-price">750 🪙</p>
+                            <span class="botiga-badge-locked">🔒 Blocat</span>
+                        </div>
+                        <div class="botiga-item">
+                            <div class="botiga-item-emoji">🚐</div>
+                            <p class="botiga-item-name">Furgoneta</p>
+                            <p class="botiga-item-price">800 🪙</p>
+                            <span class="botiga-badge-locked">🔒 Blocat</span>
+                        </div>
+                        <div class="botiga-item">
+                            <div class="botiga-item-emoji">🏁</div>
+                            <p class="botiga-item-name">Fórmula 1</p>
+                            <p class="botiga-item-price">2000 🪙</p>
+                            <span class="botiga-badge-locked">🔒 Blocat</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Colors -->
+                <section class="botiga-section">
+                    <h4>🎨 Colors</h4>
+                    <div class="botiga-grid">
+                        <div class="botiga-item">
+                            <div class="botiga-item-emoji">🔴</div>
+                            <p class="botiga-item-name">Vermell</p>
+                            <p class="botiga-item-price">100 🪙</p>
+                        </div>
+                        <div class="botiga-item">
+                            <div class="botiga-item-emoji">🔵</div>
+                            <p class="botiga-item-name">Blau</p>
+                            <p class="botiga-item-price">100 🪙</p>
+                        </div>
+                        <div class="botiga-item">
+                            <div class="botiga-item-emoji">🟢</div>
+                            <p class="botiga-item-name">Verd</p>
+                            <p class="botiga-item-price">100 🪙</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Adhesius -->
+                <section class="botiga-section">
+                    <h4>⭐ Adhesius</h4>
+                    <div class="botiga-grid">
+                        <div class="botiga-item">
+                            <div class="botiga-item-emoji">🔥</div>
+                            <p class="botiga-item-name">Flames</p>
+                            <p class="botiga-item-price">200 🪙</p>
+                        </div>
+                        <div class="botiga-item">
+                            <div class="botiga-item-emoji">⭐</div>
+                            <p class="botiga-item-name">Estrella</p>
+                            <p class="botiga-item-price">150 🪙</p>
+                        </div>
+                        <div class="botiga-item">
+                            <div class="botiga-item-emoji">⚡</div>
+                            <p class="botiga-item-name">Llamp</p>
+                            <p class="botiga-item-price">150 🪙</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Peces Especials -->
+                <section class="botiga-section">
+                    <h4>⚙️ Peces Especials</h4>
+                    <div class="botiga-grid">
+                        <div class="botiga-item">
+                            <div class="botiga-item-emoji">🏁</div>
+                            <p class="botiga-item-name">Spoiler</p>
+                            <p class="botiga-item-price">300 🪙</p>
+                        </div>
+                        <div class="botiga-item">
+                            <div class="botiga-item-emoji">⚙️</div>
+                            <p class="botiga-item-name">Rodes Racing</p>
+                            <p class="botiga-item-price">400 🪙</p>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+    <script src="dashboard.js"></script>
+    <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        if (menuBtn) {
+            menuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('open');
+            });
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('open');
+            });
+        }
+    </script>
+</body>
+</html>

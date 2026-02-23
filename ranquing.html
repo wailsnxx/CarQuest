@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>CarQuest — Rànquing</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-wrap">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-box"></div>
+                <div>
+                    <h1>CarQuest</h1>
+                    <p>Aprèn a conduir jugant</p>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="sidebar-section-label">Principal</div>
+                <a href="inici.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🏠</span> Inici
+                </a>
+                <a href="perfil.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">👤</span> Perfil
+                </a>
+                <div class="sidebar-section-label">Aprendre</div>
+                <a href="teoria.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">📖</span> Teoria
+                </a>
+                <a href="jocs.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🎯</span> Jocs
+                </a>
+                <a href="tests.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">📝</span> Tests
+                </a>
+                <a href="diaris.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">📅</span> Diaris
+                </a>
+                <div class="sidebar-section-label">Comunitat</div>
+                <a href="ranquing.html" class="sidebar-link activo">
+                    <span class="sidebar-link-icon">🏆</span> Rànquing
+                </a>
+                <a href="botiga.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🛒</span> Botiga
+                </a>
+            </nav>
+            <div class="sidebar-bottom">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">🙂</div>
+                    <div class="sidebar-user-info">
+                        <strong>Conductor Novell</strong>
+                        <span>1500 XP · Nivell 2</span>
+                    </div>
+                </div>
+                <a href="index.html" class="sidebar-logout">
+                    <span class="sidebar-link-icon">🚪</span> Tancar sessió
+                </a>
+            </div>
+        </aside>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <main class="main-content">
+            <div class="mobile-header">
+                <button class="mobile-menu-btn" id="menuBtn">☰</button>
+                <span style="font-weight:700; color:#fff;">CarQuest</span>
+            </div>
+            <div class="content-sheet">
+                <div class="page-title">Rànquing de Pilots</div>
+
+                <!-- Posició actual -->
+                <div class="ranquing-posicio">
+                    <div>
+                        <span class="ranquing-label">La Teva Posició</span>
+                        <span class="ranquing-num">#15</span>
+                    </div>
+                    <div>
+                        <span class="ranquing-label">El Teu XP</span>
+                        <span class="ranquing-num">1500 XP</span>
+                    </div>
+                </div>
+
+                <!-- Podium -->
+                <div class="podium">
+                    <div class="podium-place podium-2">
+                        <div class="podium-medal">🥈</div>
+                        <div class="podium-avatar">👩</div>
+                        <h4>Laura M.</h4>
+                        <p class="podium-xp">7200 XP</p>
+                        <p class="podium-rang">Pilot Segur</p>
+                        <div class="podium-car">🚗</div>
+                    </div>
+                    <div class="podium-place podium-1">
+                        <div class="podium-medal">🏆</div>
+                        <div class="podium-avatar">🧑</div>
+                        <h4>Marc P.</h4>
+                        <p class="podium-xp">8500 XP</p>
+                        <p class="podium-rang">Pilot Expert</p>
+                        <div class="podium-car">🏎️</div>
+                    </div>
+                    <div class="podium-place podium-3">
+                        <div class="podium-medal">🥉</div>
+                        <div class="podium-avatar">🧑</div>
+                        <h4>Joan S.</h4>
+                        <p class="podium-xp">6800 XP</p>
+                        <p class="podium-rang">Pilot Segur</p>
+                        <div class="podium-car">🏁</div>
+                    </div>
+                </div>
+
+                <!-- Classificació General -->
+                <div class="classificacio">
+                    <h4>Classificació General</h4>
+                    <div class="classificacio-list">
+                        <div class="classificacio-item">
+                            <span class="classificacio-pos">#1</span>
+                            <div class="classificacio-avatar">🧑</div>
+                            <div class="classificacio-info">
+                                <strong>Marc P.</strong>
+                                <span>Pilot Expert</span>
+                            </div>
+                            <div class="classificacio-car">🏎️</div>
+                            <span class="classificacio-xp">8500 XP</span>
+                        </div>
+                        <div class="classificacio-item">
+                            <span class="classificacio-pos">#2</span>
+                            <div class="classificacio-avatar">👩</div>
+                            <div class="classificacio-info">
+                                <strong>Laura M.</strong>
+                                <span>Pilot Segur</span>
+                            </div>
+                            <div class="classificacio-car">🚗</div>
+                            <span class="classificacio-xp">7200 XP</span>
+                        </div>
+                        <div class="classificacio-item">
+                            <span class="classificacio-pos">#3</span>
+                            <div class="classificacio-avatar">🧑</div>
+                            <div class="classificacio-info">
+                                <strong>Joan S.</strong>
+                                <span>Pilot Segur</span>
+                            </div>
+                            <div class="classificacio-car">🏁</div>
+                            <span class="classificacio-xp">6800 XP</span>
+                        </div>
+                        <div class="classificacio-item classificacio-tu">
+                            <span class="classificacio-pos">#15</span>
+                            <div class="classificacio-avatar">🙂</div>
+                            <div class="classificacio-info">
+                                <strong>Tu</strong>
+                                <span>Conductor Novell</span>
+                            </div>
+                            <div class="classificacio-car">🚗</div>
+                            <span class="classificacio-xp">1500 XP</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+    <script src="dashboard.js"></script>
+    <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        if (menuBtn) {
+            menuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('open');
+            });
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('open');
+            });
+        }
+    </script>
+</body>
+</html>
