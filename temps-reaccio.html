@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>CarQuest — Temps de Reacció</title>
+    <link rel="stylesheet" href="estilos.css">
+    <style>
+        /* ===== TEMPS DE REACCIÓ — estilos propis ===== */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--color-primario);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: opacity .2s;
+        }
+        .back-link:hover { opacity: .7; }
+
+        /* ---- Pantalles ---- */
+        .screen { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+        .hidden { display: none !important; }
+
+        /* ---- Capçalera del joc ---- */
+        .game-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+        .badge {
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .badge-round {
+            background: rgba(255,107,53,.15);
+            border: 1px solid rgba(255,107,53,.3);
+            color: #FF6B35;
+        }
+        .badge-xp {
+            background: rgba(6,167,125,.12);
+            border: 1px solid rgba(6,167,125,.3);
+            color: #06A77D;
+        }
+
+        /* ---- Punts de rondes ---- */
+        .rounds-dots {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .rdot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.12);
+            border: 2px solid rgba(255,255,255,.2);
+            transition: all .3s ease;
+        }
+        .rdot.active  { background: #FF6B35; border-color: #FF6B35; transform: scale(1.3); box-shadow: 0 0 8px rgba(255,107,53,.6); }
+        .rdot.ok      { background: #06A77D; border-color: #06A77D; }
+        .rdot.fail    { background: #E63946; border-color: #E63946; }
+
+        /* ---- Semàfor ---- */
+        .traffic-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+        .traffic-light {
+            background: linear-gradient(160deg, #1c1c2e, #12121e);
+            border: 3px solid #2a2a45;
+            border-radius: 22px;
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            box-shadow: 0 10px 40px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.04);
+        }
+        .traffic-pole {
+            width: 16px;
+            height: 48px;
+            background: linear-gradient(to right, #2a2a45, #1c1c2e, #2a2a45);
+            border-radius: 0 0 6px 6px;
+            align-self: center;
+        }
+        .tl-light {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            background: #0d0d1a;
+            border: 2px solid rgba(255,255,255,.06);
+            transition: background .25s, box-shadow .25s;
+            position: relative;
+        }
+        /* brillantor interna */
+        .tl-light::after {
+            content: '';
+            position: absolute;
+            top: 16%;
+            left: 18%;
+            width: 30%;
+            height: 25%;
+            border-radius: 50%;
+            background: rgba(255,255,255,.0);
+            transition: background .25s;
+        }
+        .tl-light.red-on {
+            background: radial-gradient(circle at 38% 35%, #ff7070, #cc0000 70%);
+            box-shadow: 0 0 18px #cc0000, 0 0 42px rgba(204,0,0,.45);
+        }
+        .tl-light.red-on::after { background: rgba(255,255,255,.25); }
+
+        .tl-light.yellow-on {
+            background: radial-gradient(circle at 38% 35%, #ffe080, #cc9900 70%);
+            box-shadow: 0 0 18px #bb8800, 0 0 42px rgba(204,153,0,.45);
+        }
+        .tl-light.yellow-on::after { background: rgba(255,255,255,.25); }
+
+        .tl-light.green-on {
+            background: radial-gradient(circle at 38% 35%, #70ff70, #00aa00 70%);
+            box-shadow: 0 0 22px #00aa00, 0 0 48px rgba(0,180,0,.5);
+        }
+        .tl-light.green-on::after { background: rgba(255,255,255,.25); }
+
+        /* ---- Zona de clic ---- */
+        .click-zone {
+            width: 100%;
+            border-radius: 16px;
+            border: 2px dashed rgba(255,255,255,.12);
+            background: rgba(255,255,255,.03);
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: default;
+            text-align: center;
+            padding: 28px;
+            transition: background .25s, border-color .25s, box-shadow .25s;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .click-zone.clickable {
+            cursor: pointer;
+            border-color: rgba(204,0,0,.55);
+            background: rgba(204,0,0,.07);
+            animation: glow-red .7s infinite alternate;
+        }
+        .click-zone.clickable:active {
+            transform: scale(.98);
+            background: rgba(204,0,0,.16);
+        }
+        .click-zone.state-tooearly {
+            border-color: rgba(230,57,70,.5);
+            background: rgba(230,57,70,.07);
+        }
+        .click-zone.state-ok {
+            border-color: rgba(6,167,125,.5);
+            background: rgba(6,167,125,.07);
+        }
+
+        @keyframes glow-red {
+            from { box-shadow: 0 0 0 rgba(204,0,0,0); }
+            to   { box-shadow: 0 0 28px rgba(204,0,0,.35); }
+        }
+
+        .cz-icon  { font-size: 48px; line-height: 1; }
+        .cz-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+        }
+        .cz-sub {
+            font-size: 13px;
+            color: rgba(255,255,255,.5);
+        }
+        .cz-time {
+            font-size: 52px;
+            font-weight: 900;
+            color: #FF6B35;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -2px;
+        }
+        .cz-unit {
+            font-size: 13px;
+            color: rgba(255,255,255,.45);
+            font-weight: 600;
+            margin-top: -6px;
+        }
+
+        /* ---- Mini estadístiques ---- */
+        .mini-stats {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+        .mstat {
+            flex: 1;
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.07);
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
+        }
+        .mstat-label {
+            font-size: 10px;
+            color: rgba(255,255,255,.4);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-bottom: 4px;
+        }
+        .mstat-val {
+            font-size: 18px;
+            font-weight: 800;
+            color: #fff;
+            font-variant-numeric: tabular-nums;
+        }
+        .mstat-val.orange { color: #FF6B35; }
+        .mstat-val.green  { color: #06A77D; }
+
+        /* ---- Comptador enrere ---- */
+        .countdown-num {
+            font-size: 88px;
+            font-weight: 900;
+            color: #FF6B35;
+            text-shadow: 0 0 40px rgba(255,107,53,.6);
+            animation: pop-in .35s cubic-bezier(.34,1.56,.64,1);
+            line-height: 1;
+        }
+        @keyframes pop-in {
+            from { transform: scale(1.6); opacity: 0; }
+            to   { transform: scale(1);   opacity: 1; }
+        }
+        .countdown-label {
+            font-size: 14px;
+            color: rgba(255,255,255,.5);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* ---- Pantalla d'inici ---- */
+        .idle-title {
+            font-size: 26px;
+            font-weight: 900;
+            color: #fff;
+            text-align: center;
+        }
+        .idle-desc {
+            font-size: 14px;
+            color: rgba(255,255,255,.6);
+            text-align: center;
+            max-width: 380px;
+            line-height: 1.7;
+        }
+        .rules-list {
+            background: rgba(0,78,137,.12);
+            border: 1px solid rgba(0,78,137,.25);
+            border-radius: 12px;
+            padding: 16px 18px;
+            width: 100%;
+        }
+        .rules-list li {
+            font-size: 13px;
+            color: rgba(255,255,255,.7);
+            padding: 4px 0;
+            list-style: none;
+            padding-left: 24px;
+            position: relative;
+            line-height: 1.5;
+        }
+        .rules-list li::before {
+            content: attr(data-icon);
+            position: absolute;
+            left: 0;
+        }
+
+        /* ---- Pantalla final ---- */
+        .final-title {
+            font-size: 24px;
+            font-weight: 900;
+            color: #fff;
+            text-align: center;
+        }
+        .final-sub {
+            font-size: 14px;
+            color: rgba(255,255,255,.55);
+            text-align: center;
+        }
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+        }
+        .ritem {
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+        .ritem-label {
+            font-size: 11px;
+            color: rgba(255,255,255,.4);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-bottom: 6px;
+        }
+        .ritem-val {
+            font-size: 26px;
+            font-weight: 900;
+            color: #fff;
+            font-variant-numeric: tabular-nums;
+        }
+        .ritem-val.orange { color: #FF6B35; }
+        .ritem-val.green  { color: #06A77D; }
+        .ritem-val.red    { color: #E63946; }
+
+        .rating-card {
+            width: 100%;
+            background: rgba(255,255,255,.04);
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 14px;
+            padding: 18px 20px;
+        }
+        .rating-label {
+            font-size: 12px;
+            color: rgba(255,255,255,.4);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-bottom: 6px;
+        }
+        .rating-name {
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        .rating-bar-bg {
+            background: rgba(255,255,255,.08);
+            border-radius: 100px;
+            height: 10px;
+            overflow: hidden;
+        }
+        .rating-bar-fill {
+            height: 100%;
+            border-radius: 100px;
+            transition: width 1.2s ease;
+        }
+
+        .xp-card {
+            width: 100%;
+            background: linear-gradient(135deg, rgba(255,107,53,.12), rgba(255,107,53,.04));
+            border: 1px solid rgba(255,107,53,.3);
+            border-radius: 14px;
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .xp-card-label {
+            font-size: 13px;
+            color: rgba(255,255,255,.6);
+            font-weight: 600;
+        }
+        .xp-card-amounts {
+            display: flex;
+            gap: 16px;
+        }
+        .xp-item {
+            font-size: 18px;
+            font-weight: 900;
+            color: #FF6B35;
+        }
+        .coin-item {
+            font-size: 18px;
+            font-weight: 900;
+            color: #F77F00;
+        }
+
+        /* ---- Historial de rondes ---- */
+        .rounds-history {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .rh-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255,255,255,.04);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 13px;
+        }
+        .rh-round { color: rgba(255,255,255,.5); font-weight: 600; }
+        .rh-time  { font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; }
+        .rh-time.best   { color: #06A77D; }
+        .rh-time.tooearly { color: #E63946; }
+
+        /* ---- Botó principal ---- */
+        .btn-main {
+            padding: 15px 36px;
+            background: linear-gradient(135deg, #FF6B35, #ff8c5a);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 800;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255,107,53,.4);
+            transition: transform .15s, box-shadow .15s;
+            width: 100%;
+            max-width: 320px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(255,107,53,.5); }
+        .btn-main:active { transform: scale(.97); }
+        .btn-secondary {
+            padding: 12px 28px;
+            background: rgba(255,255,255,.08);
+            color: rgba(255,255,255,.8);
+            font-size: 14px;
+            font-weight: 700;
+            border: 1px solid rgba(255,255,255,.15);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background .2s;
+            width: 100%;
+            max-width: 320px;
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,.13); }
+    </style>
+</head>
+<body class="dashboard-body">
+<div class="dashboard-wrap">
+
+    <!-- ===== Sidebar ===== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-box"></div>
+            <div>
+                <h1>CarQuest</h1>
+                <p>Aprèn a conduir jugant</p>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="sidebar-section-label">Principal</div>
+            <a href="inici.html" class="sidebar-link"><span class="sidebar-link-icon">🏠</span> Inici</a>
+            <a href="perfil.html" class="sidebar-link"><span class="sidebar-link-icon">👤</span> Perfil</a>
+            <div class="sidebar-section-label">Aprendre</div>
+            <a href="teoria.html" class="sidebar-link"><span class="sidebar-link-icon">📖</span> Teoria</a>
+            <a href="jocs.html"   class="sidebar-link activo"><span class="sidebar-link-icon">🎯</span> Jocs</a>
+            <a href="tests.html"  class="sidebar-link"><span class="sidebar-link-icon">📝</span> Tests</a>
+            <a href="diaris.html" class="sidebar-link"><span class="sidebar-link-icon">📅</span> Diaris</a>
+            <div class="sidebar-section-label">Comunitat</div>
+            <a href="ranquing.html" class="sidebar-link"><span class="sidebar-link-icon">🏆</span> Rànquing</a>
+            <a href="botiga.html"   class="sidebar-link"><span class="sidebar-link-icon">🛒</span> Botiga</a>
+        </nav>
+        <div class="sidebar-bottom">
+            <div class="sidebar-user">
+                <div class="sidebar-user-avatar">🙂</div>
+                <div class="sidebar-user-info">
+                    <strong>Conductor Novell</strong>
+                    <span>1500 XP · Nivell 2</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ===== Main ===== -->
+    <main class="main-content">
+        <div class="mobile-header">
+            <button class="mobile-menu-btn" id="menuBtn">☰</button>
+            <span style="font-weight:700;color:#fff;">CarQuest</span>
+        </div>
+
+        <div class="content-sheet">
+            <div class="page-header">
+                <div class="page-title">⚡ Temps de Reacció</div>
+                <a href="index.html" class="btn-logout-header">Tancar sessió</a>
+            </div>
+
+            <a href="jocs.html" class="back-link">← Tornar als Jocs</a>
+
+            <!-- ======================================================
+                 PANTALLA 1 — IDLE (benvinguda)
+            ====================================================== -->
+            <div id="screenIdle" class="screen">
+                <div style="font-size:72px;line-height:1;">🚦</div>
+                <div class="idle-title">Temps de Reacció</div>
+                <div class="idle-desc">
+                    Posa a prova els teus reflexos de frenada! El semàfor estarà en verd — quan es posi <strong style="color:#E63946;">vermell</strong>, clica tan ràpid com puguis. Un bon conductor frena en menys de 250 ms.
+                </div>
+
+                <ul class="rules-list">
+                    <li data-icon="⚡">5 rondes de semàfor</li>
+                    <li data-icon="🟢">El semàfor comença en <strong>verd</strong> — espera i no cliquis!</li>
+                    <li data-icon="🔴">Quan es posi <strong>vermell</strong> — clica immediatament!</li>
+                    <li data-icon="⏱️">El teu temps es mesura en mil·lisegons</li>
+                    <li data-icon="🪙">Guanya fins a <strong>+75 XP</strong> i <strong>+15 monedes</strong></li>
+                </ul>
+
+                <button class="btn-main" id="btnStart">Iniciar Joc</button>
+            </div>
+
+            <!-- ======================================================
+                 PANTALLA 2 — JOC
+            ====================================================== -->
+            <div id="screenGame" class="screen hidden">
+
+                <!-- Capçalera: ronda + XP -->
+                <div class="game-topbar">
+                    <span class="badge badge-round" id="roundLabel">Ronda 1 / 5</span>
+                    <span class="badge badge-xp">⭐ +75 XP · 🪙 +15</span>
+                </div>
+
+                <!-- Punts de progrés -->
+                <div class="rounds-dots" id="roundsDots">
+                    <div class="rdot" id="dot0"></div>
+                    <div class="rdot" id="dot1"></div>
+                    <div class="rdot" id="dot2"></div>
+                    <div class="rdot" id="dot3"></div>
+                    <div class="rdot" id="dot4"></div>
+                </div>
+
+                <!-- Semàfor -->
+                <div class="traffic-wrap">
+                    <div class="traffic-light">
+                        <div class="tl-light" id="lightRed"></div>
+                        <div class="tl-light" id="lightYellow"></div>
+                        <div class="tl-light" id="lightGreen"></div>
+                    </div>
+                    <div class="traffic-pole"></div>
+                </div>
+
+                <!-- Zona de clic / feedback -->
+                <div class="click-zone" id="clickZone">
+                    <!-- El contingut canvia per JS -->
+                    <div class="cz-icon" id="czIcon">🕐</div>
+                    <div class="cz-title" id="czTitle">Preparant...</div>
+                    <div class="cz-sub"  id="czSub"></div>
+                </div>
+
+                <!-- Mini estadístiques -->
+                <div class="mini-stats">
+                    <div class="mstat">
+                        <div class="mstat-label">Última</div>
+                        <div class="mstat-val orange" id="statLast">—</div>
+                    </div>
+                    <div class="mstat">
+                        <div class="mstat-label">Millor</div>
+                        <div class="mstat-val green" id="statBest">—</div>
+                    </div>
+                    <div class="mstat">
+                        <div class="mstat-label">Massa aviat</div>
+                        <div class="mstat-val red" id="statEarly">0</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ======================================================
+                 PANTALLA 3 — RESULTAT FINAL
+            ====================================================== -->
+            <div id="screenGameover" class="screen hidden">
+
+                <div style="font-size:72px;line-height:1;" id="finalEmoji">🏆</div>
+                <div class="final-title" id="finalTitle">Joc acabat!</div>
+                <div class="final-sub" id="finalSub">Aquí tens els teus resultats:</div>
+
+                <!-- Grid de resultats -->
+                <div class="result-grid">
+                    <div class="ritem">
+                        <div class="ritem-label">Temps mitjà</div>
+                        <div class="ritem-val orange" id="resAvg">— ms</div>
+                    </div>
+                    <div class="ritem">
+                        <div class="ritem-label">Millor temps</div>
+                        <div class="ritem-val green" id="resBest">— ms</div>
+                    </div>
+                    <div class="ritem">
+                        <div class="ritem-label">Rondes OK</div>
+                        <div class="ritem-val" id="resOK">—</div>
+                    </div>
+                    <div class="ritem">
+                        <div class="ritem-label">Massa aviat</div>
+                        <div class="ritem-val red" id="resEarly">—</div>
+                    </div>
+                </div>
+
+                <!-- Rating -->
+                <div class="rating-card">
+                    <div class="rating-label">Categoria de conductor</div>
+                    <div class="rating-name" id="ratingName">—</div>
+                    <div class="rating-bar-bg">
+                        <div class="rating-bar-fill" id="ratingBar" style="width:0%"></div>
+                    </div>
+                </div>
+
+                <!-- Historial de rondes -->
+                <div class="rounds-history" id="roundsHistory"></div>
+
+                <!-- XP guanyat -->
+                <div class="xp-card">
+                    <div class="xp-card-label">Recompensa guanyada</div>
+                    <div class="xp-card-amounts">
+                        <span class="xp-item" id="xpEarned">⭐ +75 XP</span>
+                        <span class="coin-item" id="coinsEarned">🪙 +15</span>
+                    </div>
+                </div>
+
+                <button class="btn-main" id="btnReplay">Tornar a jugar</button>
+                <button class="btn-secondary" onclick="location.href='jocs.html'">Altres jocs</button>
+            </div>
+
+        </div><!-- /content-sheet -->
+    </main>
+</div><!-- /dashboard-wrap -->
+
+<script src="dashboard.js"></script>
+<script>
+// ====================================================
+//  Mobile sidebar
+// ====================================================
+const menuBtn = document.getElementById('menuBtn');
+const sidebar  = document.getElementById('sidebar');
+const overlay  = document.getElementById('sidebarOverlay');
+if (menuBtn) {
+    menuBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('open');
+    });
+    overlay.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+    });
+}
+
+// ====================================================
+//  Joc — Temps de Reacció
+// ====================================================
+const TOTAL_ROUNDS = 5;
+
+// Elements
+const screenIdle     = document.getElementById('screenIdle');
+const screenGame     = document.getElementById('screenGame');
+const screenGameover = document.getElementById('screenGameover');
+
+const roundLabel     = document.getElementById('roundLabel');
+const clickZone      = document.getElementById('clickZone');
+const czIcon         = document.getElementById('czIcon');
+const czTitle        = document.getElementById('czTitle');
+const czSub          = document.getElementById('czSub');
+
+const lightRed       = document.getElementById('lightRed');
+const lightYellow    = document.getElementById('lightYellow');
+const lightGreen     = document.getElementById('lightGreen');
+
+const statLast       = document.getElementById('statLast');
+const statBest       = document.getElementById('statBest');
+const statEarly      = document.getElementById('statEarly');
+
+// Estat del joc
+let state       = 'idle';  // idle | countdown | waiting | yellow | go | tooearly | result | gameover
+let round       = 0;
+let times       = [];      // null = massa aviat, number = ms
+let startTime   = null;
+let waitTimer   = null;
+let yellowTimer = null;
+let nextTimer   = null;
+
+// ---- Helpers semàfor ----
+function setLight(r, y, g) {
+    lightRed.className    = 'tl-light' + (r ? ' red-on'    : '');
+    lightYellow.className = 'tl-light' + (y ? ' yellow-on' : '');
+    lightGreen.className  = 'tl-light' + (g ? ' green-on'  : '');
+}
+
+// ---- Helpers punts de ronda ----
+function updateDots() {
+    for (let i = 0; i < TOTAL_ROUNDS; i++) {
+        const dot = document.getElementById('dot' + i);
+        dot.className = 'rdot';
+        if (i < round - 1) {
+            dot.classList.add(times[i] === null ? 'fail' : 'ok');
+        } else if (i === round - 1) {
+            dot.classList.add('active');
+        }
+    }
+}
+
+// ---- Zona de clic: contingut ----
+function setZone({ icon, title, sub, cls }) {
+    czIcon.textContent  = icon  || '';
+    czTitle.textContent = title || '';
+    czSub.textContent   = sub   || '';
+    clickZone.className = 'click-zone' + (cls ? ' ' + cls : '');
+}
+
+// ---- Mini stats ----
+function updateStats() {
+    const valid = times.filter(t => t !== null);
+    const early = times.filter(t => t === null).length;
+
+    statLast.textContent  = valid.length > 0 ? valid[valid.length - 1] + ' ms' : '—';
+    statBest.textContent  = valid.length > 0 ? Math.min(...valid) + ' ms'       : '—';
+    statEarly.textContent = early;
+}
+
+// ====================================================
+//  Flux principal
+// ====================================================
+
+function showScreen(name) {
+    screenIdle.classList.add('hidden');
+    screenGame.classList.add('hidden');
+    screenGameover.classList.add('hidden');
+    document.getElementById('screen' + name).classList.remove('hidden');
+}
+
+// ---- Botó Iniciar ----
+document.getElementById('btnStart').addEventListener('click', startGame);
+document.getElementById('btnReplay').addEventListener('click', startGame);
+
+function startGame() {
+    round = 0;
+    times = [];
+    clearAllTimers();
+    updateStats();
+    showScreen('Game');
+    startCountdown();
+}
+
+// ---- Compte enrere 3-2-1 ----
+function startCountdown() {
+    state = 'countdown';
+    setLight(false, false, false);
+    setZone({ icon: '', title: '', sub: '' });
+    clickZone.className = 'click-zone';
+
+    // Mostrem comptador dins la click-zone
+    let count = 3;
+    showCountdown(count);
+    const iv = setInterval(() => {
+        count--;
+        if (count <= 0) {
+            clearInterval(iv);
+            startRound();
+        } else {
+            showCountdown(count);
+        }
+    }, 900);
+}
+
+function showCountdown(n) {
+    czIcon.innerHTML  = `<span class="countdown-num">${n}</span>`;
+    czTitle.innerHTML = `<span class="countdown-label">Prepara't...</span>`;
+    czSub.textContent = '';
+}
+
+// ---- Ronda ----
+function startRound() {
+    round++;
+    roundLabel.textContent = `Ronda ${round} / ${TOTAL_ROUNDS}`;
+    updateDots();
+
+    state = 'waiting';
+    setLight(false, false, true);
+    setZone({
+        icon: '🟢',
+        title: 'Espera el vermell...',
+        sub: 'No cliquis encara!'
+    });
+    clickZone.className = 'click-zone';
+
+    // Retard aleatori entre 1.5 i 4 s
+    const delay = 1500 + Math.random() * 2500;
+    waitTimer = setTimeout(() => {
+        // Fase groga (250 ms)
+        state = 'yellow';
+        setLight(false, true, false);
+        setZone({ icon: '🟡', title: 'Preparat...', sub: '' });
+
+        yellowTimer = setTimeout(() => {
+            // GO!
+            state     = 'go';
+            startTime = performance.now();
+            setLight(true, false, false);
+            setZone({
+                icon: '🔴',
+                title: 'ARA! FRENA!',
+                sub: 'Clica tan ràpid com puguis!',
+                cls: 'clickable'
+            });
+        }, 250);
+    }, delay);
+}
+
+// ---- Click/tap ----
+clickZone.addEventListener('click', handleZoneClick);
+document.addEventListener('keydown', e => {
+    if (e.code === 'Space' && (state === 'go' || state === 'waiting' || state === 'yellow')) {
+        e.preventDefault();
+        handleZoneClick();
+    }
+});
+
+function handleZoneClick() {
+    if (state === 'idle' || state === 'countdown' || state === 'result' ||
+        state === 'tooearly' || state === 'gameover') return;
+
+    if (state === 'waiting' || state === 'yellow') {
+        // Massa aviat!
+        clearAllTimers();
+        state = 'tooearly';
+        times.push(null);
+        setLight(false, false, false);
+        setZone({
+            icon: '❌',
+            title: 'Massa aviat!',
+            sub: 'Has clicat abans del vermell. Espera el semàfor!',
+            cls: 'state-tooearly'
+        });
+        updateStats();
+        scheduleNext();
+        return;
+    }
+
+    if (state === 'go') {
+        const elapsed = Math.round(performance.now() - startTime);
+        times.push(elapsed);
+        state = 'result';
+        setLight(true, false, false);
+        setZone({
+            icon: '',
+            title: '',
+            sub: '',
+            cls: 'state-ok'
+        });
+        // Mostrem el temps amb animació
+        czIcon.innerHTML  = `<div class="cz-time">${elapsed}</div><div class="cz-unit">mil·lisegons</div>`;
+        czTitle.innerHTML = getRoundComment(elapsed);
+        czSub.textContent = '';
+        updateStats();
+        scheduleNext();
+    }
+}
+
+function getRoundComment(ms) {
+    if (ms < 180) return '⚡ Increïble!';
+    if (ms < 230) return '🚀 Molt ràpid!';
+    if (ms < 300) return '✅ Bé!';
+    if (ms < 400) return '🕐 Normal';
+    return '🐢 Pots millorar!';
+}
+
+function scheduleNext() {
+    nextTimer = setTimeout(() => {
+        if (round < TOTAL_ROUNDS) {
+            startRound();
+        } else {
+            showGameOver();
+        }
+    }, 2200);
+}
+
+function clearAllTimers() {
+    clearTimeout(waitTimer);
+    clearTimeout(yellowTimer);
+    clearTimeout(nextTimer);
+}
+
+// ====================================================
+//  Pantalla final
+// ====================================================
+function showGameOver() {
+    clearAllTimers();
+    state = 'gameover';
+    setLight(false, false, false);
+
+    const valid = times.filter(t => t !== null);
+    const early = times.filter(t => t === null).length;
+    const avg   = valid.length > 0 ? Math.round(valid.reduce((a, b) => a + b, 0) / valid.length) : null;
+    const best  = valid.length > 0 ? Math.min(...valid) : null;
+
+    // XP: base 75, +25 si avg<250, +10 si avg<200, -10 per cada early (mínim 10)
+    let xp    = 75;
+    let coins = 15;
+    if (avg !== null && avg < 250) xp += 25;
+    if (avg !== null && avg < 200) xp += 10;
+    xp    = Math.max(10, xp - early * 10);
+    coins = Math.max(3,  coins - early * 2);
+
+    // Rating
+    const { name, pct, color, emoji } = getRating(avg, early);
+
+    // Omplim els camps
+    document.getElementById('resAvg').textContent   = avg  !== null ? avg  + ' ms' : 'Cap vàlid';
+    document.getElementById('resBest').textContent  = best !== null ? best + ' ms' : '—';
+    document.getElementById('resOK').textContent    = valid.length + ' / ' + TOTAL_ROUNDS;
+    document.getElementById('resEarly').textContent = early;
+    document.getElementById('ratingName').textContent = emoji + ' ' + name;
+    document.getElementById('xpEarned').textContent   = '⭐ +' + xp + ' XP';
+    document.getElementById('coinsEarned').textContent = '🪙 +' + coins;
+    document.getElementById('finalEmoji').textContent = emoji;
+    document.getElementById('finalTitle').textContent =
+        early === TOTAL_ROUNDS ? 'Au va... torna-ho a intentar!' :
+        avg !== null && avg < 230 ? 'Excel·lent reflexos!' : 'Joc completat!';
+
+    // Barra de rating
+    const bar = document.getElementById('ratingBar');
+    bar.style.width      = '0%';
+    bar.style.background = color;
+    setTimeout(() => { bar.style.width = pct + '%'; }, 100);
+
+    // Historial
+    const hist = document.getElementById('roundsHistory');
+    hist.innerHTML = '<div style="font-size:12px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Historial de rondes</div>';
+    times.forEach((t, i) => {
+        const isEarly = t === null;
+        const isBest  = !isEarly && t === best && valid.length > 1;
+        const div = document.createElement('div');
+        div.className = 'rh-row';
+        div.innerHTML = `
+            <span class="rh-round">Ronda ${i + 1}</span>
+            <span class="rh-time ${isEarly ? 'tooearly' : isBest ? 'best' : ''}">
+                ${isEarly ? '❌ Massa aviat' : (isBest ? '⭐ ' : '') + t + ' ms'}
+            </span>`;
+        hist.appendChild(div);
+    });
+
+    showScreen('Gameover');
+    // Petita animació de la barra
+    setTimeout(() => { bar.style.width = pct + '%'; }, 200);
+}
+
+function getRating(avg, early) {
+    if (early === TOTAL_ROUNDS) return { name: 'Sense dades', pct: 5,   color: '#7F8C8D', emoji: '😶' };
+    if (avg === null)           return { name: 'Sense dades', pct: 5,   color: '#7F8C8D', emoji: '😶' };
+    if (avg < 180)  return { name: 'Ultra Pilot',     pct: 100, color: 'linear-gradient(90deg,#FF6B35,#FFD700)', emoji: '👑' };
+    if (avg < 220)  return { name: 'Pilot Experto',   pct: 88,  color: '#06A77D',         emoji: '🏁' };
+    if (avg < 260)  return { name: 'Conductor Ràpid', pct: 72,  color: '#00b894',         emoji: '🚀' };
+    if (avg < 320)  return { name: 'Conductor Àgil',  pct: 56,  color: '#0984e3',         emoji: '✅' };
+    if (avg < 400)  return { name: 'Conductor Normal',pct: 38,  color: '#F77F00',         emoji: '🚗' };
+    return                 { name: 'Conductor Lent',  pct: 18,  color: '#E63946',         emoji: '🐢' };
+}
+</script>
+</body>
+</html>
