@@ -73,7 +73,7 @@ function addRippleEffect(selector = '.ripple') {
 document.addEventListener('DOMContentLoaded', () => {
   // add classes to make elements interactive (non-invasive)
   document.querySelectorAll('.stat-card').forEach(n => n.classList.add('tilt', 'ripple'));
-  document.querySelectorAll('.ranks-list li').forEach(n => n.classList.add('tilt', 'ripple'));
+  document.querySelectorAll('.ranks-list li').forEach(n => n.classList.add('ripple'));
 
   animateCounters();
   animateProgressFill();
