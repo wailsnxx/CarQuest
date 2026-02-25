@@ -155,30 +155,54 @@ entradaContraseñaRegistro.addEventListener('input', (evento) => {
     actualizarRequisitosContraseña(evento.target.value);
 });
 
+// ============================================================
+// API helpers
+// ============================================================
+const API = '/api';
+
+function guardarSesion(token, usuario) {
+    localStorage.setItem('cq_token', token);
+    localStorage.setItem('cq_usuario', JSON.stringify(usuario));
+}
+
 // Enviar formulario de Inicio de Sesión
-elementoFormularioInicio.addEventListener('submit', function(evento) {
+elementoFormularioInicio.addEventListener('submit', async function(evento) {
     evento.preventDefault();
 
     const email = document.getElementById('emailInicio').value.trim();
     const contraseña = document.getElementById('contraseñaInicio').value;
-    const recordarme = document.getElementById('recordarme').checked;
 
-    if (validarFormularioInicio(email, contraseña)) {
-        // Aquí iría la llamada a Firebase
-        console.log('Datos de inicio de sesión:', { email, contraseña, recordarme });
-        
-        mostrarNotificacion('Iniciando sesión...', 'info');
-        
-        // Simulación de envío
+    if (!validarFormularioInicio(email, contraseña)) return;
+
+    mostrarNotificacion('Iniciando sesión...', 'info');
+
+    try {
+        const respuesta = await fetch(`${API}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password: contraseña })
+        });
+
+        const datos = await respuesta.json();
+
+        if (!respuesta.ok) {
+            mostrarNotificacion(datos.error || 'Error al iniciar sesión', 'error');
+            return;
+        }
+
+        guardarSesion(datos.token, datos.usuario);
+        mostrarNotificacion(`¡Bienvenido ${datos.usuario.nombre}!`, 'exito');
+
         setTimeout(() => {
-            mostrarNotificacion('¡Bienvenido ' + email + '!', 'exito');
-            elementoFormularioInicio.reset();
+            window.location.href = 'inici.html';
         }, 1000);
+    } catch (err) {
+        mostrarNotificacion('No se pudo conectar al servidor', 'error');
     }
 });
 
 // Enviar formulario de Registro
-elementoFormularioRegistro.addEventListener('submit', function(evento) {
+elementoFormularioRegistro.addEventListener('submit', async function(evento) {
     evento.preventDefault();
 
     const nombre = document.getElementById('nombreRegistro').value.trim();
@@ -187,23 +211,34 @@ elementoFormularioRegistro.addEventListener('submit', function(evento) {
     const confirmarContraseña = document.getElementById('confirmarContraseñaRegistro').value;
     const aceptarTerminos = document.getElementById('aceptarTerminos').checked;
 
-    if (validarFormularioRegistro(nombre, email, contraseña, confirmarContraseña, aceptarTerminos)) {
-        // Aquí iría la llamada a Firebase
-        console.log('Datos de registro:', { nombre, email, contraseña });
-        
-        mostrarNotificacion('Creando cuenta...', 'info');
-        
-        // Simulación de registro
+    if (!validarFormularioRegistro(nombre, email, contraseña, confirmarContraseña, aceptarTerminos)) return;
+
+    mostrarNotificacion('Creando cuenta...', 'info');
+
+    try {
+        const respuesta = await fetch(`${API}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nombre, email, password: contraseña })
+        });
+
+        const datos = await respuesta.json();
+
+        if (!respuesta.ok) {
+            mostrarNotificacion(datos.error || 'Error al registrarse', 'error');
+            return;
+        }
+
+        guardarSesion(datos.token, datos.usuario);
+        mostrarNotificacion(`¡Cuenta creada! Bienvenido ${datos.usuario.nombre}`, 'exito');
+        elementoFormularioRegistro.reset();
+        limpiarTodosErrores();
+
         setTimeout(() => {
-            mostrarNotificacion('¡Cuenta creada exitosamente! Bienvenido ' + nombre, 'exito');
-            elementoFormularioRegistro.reset();
-            limpiarTodosErrores();
-            
-            // Cambiar automáticamente al formulario de inicio
-            setTimeout(() => {
-                alternarFormularios();
-            }, 1500);
+            window.location.href = 'inici.html';
         }, 1500);
+    } catch (err) {
+        mostrarNotificacion('No se pudo conectar al servidor', 'error');
     }
 });
 
