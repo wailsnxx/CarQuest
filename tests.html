@@ -11,46 +11,27 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
                 <div class="logo-box"></div>
-                <div>
-                    <h1>CarQuest</h1>
-                    <p>Aprèn a conduir jugant</p>
-                </div>
+                <div><h1>CarQuest</h1><p>Aprèn a conduir jugant</p></div>
             </div>
             <nav class="sidebar-nav">
                 <div class="sidebar-section-label">Principal</div>
-                <a href="inici.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">🏠</span> Inici
-                </a>
-                <a href="perfil.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">👤</span> Perfil
-                </a>
+                <a href="inici.html" class="sidebar-link"><span class="sidebar-link-icon">🏠</span> Inici</a>
+                <a href="perfil.html" class="sidebar-link"><span class="sidebar-link-icon">👤</span> Perfil</a>
                 <div class="sidebar-section-label">Aprendre</div>
-                <a href="teoria.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">📖</span> Teoria
-                </a>
-                <a href="jocs.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">🎯</span> Jocs
-                </a>
-                <a href="tests.html" class="sidebar-link activo">
-                    <span class="sidebar-link-icon">📝</span> Tests
-                </a>
-                <a href="diaris.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">📅</span> Diaris
-                </a>
+                <a href="teoria.html" class="sidebar-link"><span class="sidebar-link-icon">📖</span> Teoria</a>
+                <a href="jocs.html" class="sidebar-link"><span class="sidebar-link-icon">🎯</span> Jocs</a>
+                <a href="tests.html" class="sidebar-link activo"><span class="sidebar-link-icon">📝</span> Tests</a>
+                <a href="diaris.html" class="sidebar-link"><span class="sidebar-link-icon">📅</span> Diaris</a>
                 <div class="sidebar-section-label">Comunitat</div>
-                <a href="ranquing.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">🏆</span> Rànquing
-                </a>
-                <a href="botiga.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">🛒</span> Botiga
-                </a>
+                <a href="ranquing.html" class="sidebar-link"><span class="sidebar-link-icon">🏆</span> Rànquing</a>
+                <a href="botiga.html" class="sidebar-link"><span class="sidebar-link-icon">🛒</span> Botiga</a>
             </nav>
             <div class="sidebar-bottom">
                 <div class="sidebar-user">
-                    <div class="sidebar-user-avatar">🙂</div>
+                    <div class="sidebar-user-avatar js-avatar">🙂</div>
                     <div class="sidebar-user-info">
-                        <strong>Conductor Novell</strong>
-                        <span>1500 XP · Nivell 2</span>
+                        <strong class="js-sidebar-nom">...</strong>
+                        <span class="js-sidebar-info">...</span>
                     </div>
                 </div>
             </div>
@@ -64,129 +45,252 @@
             <div class="content-sheet">
                 <div class="page-header">
                     <div class="page-title">Tests de Conducció</div>
-                    <a href="index.html" class="btn-logout-header">Tancar sessió</a>
+                    <a href="#" onclick="tancarSessio()" class="btn-logout-header">Tancar sessió</a>
                 </div>
 
-                <!-- Estadístiques resum -->
                 <div class="test-stats-row">
                     <div class="test-stat-box">
                         <div class="test-stat-icon">📊</div>
                         <div class="test-stat-label">Total</div>
-                        <div class="test-stat-value" style="color:#3b82f6;">10</div>
+                        <div class="test-stat-value js-total" style="color:#3b82f6;">0</div>
                     </div>
                     <div class="test-stat-box">
                         <div class="test-stat-icon">✅</div>
                         <div class="test-stat-label">Aprovats</div>
-                        <div class="test-stat-value" style="color:var(--color-exito);">8</div>
+                        <div class="test-stat-value js-aprovats" style="color:var(--color-exito);">0</div>
                     </div>
                     <div class="test-stat-box">
                         <div class="test-stat-icon">❌</div>
                         <div class="test-stat-label">Suspesos</div>
-                        <div class="test-stat-value" style="color:var(--color-error);">2</div>
+                        <div class="test-stat-value js-suspesos" style="color:var(--color-error);">0</div>
                     </div>
                     <div class="test-stat-box">
                         <div class="test-stat-icon">🎯</div>
                         <div class="test-stat-label">% Èxit</div>
-                        <div class="test-stat-value" style="color:var(--color-primario);">80%</div>
+                        <div class="test-stat-value js-exit" style="color:var(--color-primario);">0%</div>
                     </div>
                 </div>
 
-                <!-- Test cards grid -->
                 <div class="test-cards-grid">
-                    <!-- Test Normal -->
                     <div class="test-card">
                         <div class="test-card-icon">📝</div>
                         <h4 class="test-card-title" style="color:#3b82f6;">Test Normal</h4>
-                        <p class="test-card-desc">30 preguntes amb resposta immediata</p>
+                        <p class="test-card-desc">10 preguntes amb resposta immediata</p>
                         <ul class="test-card-features">
-                            <li>📋 30 preguntes</li>
+                            <li>📋 10 preguntes</li>
                             <li>✓ Resposta immediata</li>
-                            <li>⭐ +50 XP</li>
+                            <li>⭐ +50 XP si aproves</li>
                         </ul>
-                        <button class="repte-btn repte-btn-play">Començar</button>
+                        <button class="repte-btn repte-btn-play" onclick="iniciarTest('normal',10,50,false,false)">Començar</button>
                     </div>
 
-                    <!-- Test Killer -->
                     <div class="test-card test-card-killer">
                         <div class="test-card-icon">🔥</div>
                         <h4 class="test-card-title" style="color:var(--color-error);">Test Killer</h4>
-                        <p class="test-card-desc">Test molt difícil d'aprovar</p>
+                        <p class="test-card-desc">1 error i has acabat!</p>
                         <ul class="test-card-features">
-                            <li>🔥 Preguntes difícils</li>
+                            <li>🔥 Preguntes reals DGT</li>
                             <li>⚠️ 1 error = finalitza</li>
-                            <li>⭐ +150 XP</li>
+                            <li>⭐ +150 XP si arribes al final</li>
                         </ul>
-                        <button class="repte-btn repte-btn-killer">Repte Killer</button>
+                        <button class="repte-btn repte-btn-killer" onclick="iniciarTest('killer',10,150,true,false)">Repte Killer</button>
                     </div>
 
-                    <!-- Test d'Errors -->
-                    <div class="test-card">
-                        <div class="test-card-icon">❌</div>
-                        <h4 class="test-card-title" style="color:var(--color-primario);">Test d'Errors</h4>
-                        <p class="test-card-desc">Practica les fallades</p>
-                        <ul class="test-card-features">
-                            <li>💥 Preguntes fallades</li>
-                            <li>📖 Aprèn dels errors</li>
-                            <li>⭐ +40 XP</li>
-                        </ul>
-                        <button class="repte-btn repte-btn-play">Practicar</button>
-                    </div>
-
-                    <!-- Test per Temes -->
                     <div class="test-card">
                         <div class="test-card-icon">📚</div>
                         <h4 class="test-card-title">Test per Temes</h4>
-                        <p class="test-card-desc">Escull un tema</p>
+                        <p class="test-card-desc">Escull un tema específic</p>
                         <div class="test-temes-list">
-                            <a href="#" class="test-tema-link">Senyals</a>
-                            <a href="#" class="test-tema-link">Normes</a>
-                            <a href="#" class="test-tema-link">Seguretat</a>
+                            <a href="#" class="test-tema-link" onclick="iniciarTest('normal',10,30,false,false)">Senyals</a>
+                            <a href="#" class="test-tema-link" onclick="iniciarTest('normal',10,30,false,false)">Normes</a>
+                            <a href="#" class="test-tema-link" onclick="iniciarTest('normal',10,30,false,false)">Seguretat</a>
                         </div>
+                    </div>
+
+                    <div class="test-card">
+                        <div class="test-card-icon">📋</div>
+                        <h4 class="test-card-title">Examen Oficial</h4>
+                        <p class="test-card-desc">Simulació examen real DGT · 30 preguntes</p>
+                        <ul class="test-card-features">
+                            <li>📝 30 preguntes reals DGT</li>
+                            <li>❓ Resultat al final</li>
+                            <li>⭐ +100 XP si aproves</li>
+                        </ul>
+                        <button class="repte-btn repte-btn-examen" onclick="iniciarTest('examen',30,100,false,true)">🎓 Examen</button>
                     </div>
                 </div>
-
-                <!-- Test Tipus Examen Oficial -->
-                <div class="test-examen-oficial">
-                    <div class="test-examen-header">
-                        <div class="test-examen-icon">📋</div>
-                        <div>
-                            <h4>Test Tipus Examen Oficial</h4>
-                            <p>30 preguntes · Simulació real</p>
-                        </div>
-                    </div>
-                    <div class="test-examen-body">
-                        <div class="test-examen-info">
-                            <p>📝 30 preguntes</p>
-                            <p>⏱️ 30 minuts</p>
-                            <p>❓ Resultat al final</p>
-                        </div>
-                        <div class="test-examen-resultats">
-                            <p>Realitzats: <strong>1</strong></p>
-                            <p>Aprovats: <strong>0</strong></p>
-                            <p>Millor: <strong>24/30</strong></p>
-                        </div>
-                    </div>
-                    <button class="repte-btn repte-btn-examen">🎓 Començar Examen</button>
-                </div>
-
             </div>
         </main>
     </div>
+
+    <!-- MODAL TEST -->
+    <div id="modalTest" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:1000; align-items:center; justify-content:center;">
+        <div style="background:#1a2335; border-radius:16px; padding:28px; max-width:580px; width:92%; max-height:90vh; overflow-y:auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+                <span id="testTipus" style="font-size:13px; opacity:0.6; font-weight:600;"></span>
+                <span id="testProgres" style="font-size:13px; color:var(--color-primario); font-weight:700;"></span>
+            </div>
+            <p id="testPregunta" style="font-size:16px; font-weight:700; margin-bottom:20px; line-height:1.5;"></p>
+            <div id="testOpcions" style="display:flex; flex-direction:column; gap:10px;"></div>
+            <div id="testFeedback" style="display:none; margin-top:14px; padding:12px 16px; border-radius:10px; font-weight:600;"></div>
+            <div id="testExplicacio" style="display:none; margin-top:8px; padding:12px 16px; border-radius:10px; background:#0f1c2e; font-size:13px; opacity:0.8; line-height:1.5;"></div>
+            <button id="testSeguent" style="display:none; margin-top:16px; width:100%;" class="repte-btn repte-btn-play" onclick="seguent()">Següent →</button>
+        </div>
+    </div>
+
+    <!-- MODAL RESULTAT -->
+    <div id="modalResultat" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:1001; align-items:center; justify-content:center;">
+        <div style="background:#1a2335; border-radius:16px; padding:40px; max-width:400px; width:90%; text-align:center;">
+            <div id="resultatEmoji" style="font-size:60px; margin-bottom:12px;"></div>
+            <h2 id="resultatTitol" style="margin-bottom:8px;"></h2>
+            <p id="resultatText" style="opacity:0.7; margin-bottom:20px;"></p>
+            <div id="resultatXP" style="font-size:22px; font-weight:700; color:var(--color-primario); margin-bottom:24px;"></div>
+            <button class="repte-btn repte-btn-play" onclick="tancarResultat()">Tornar als Tests</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
     <script src="dashboard.js"></script>
     <script>
-        const menuBtn = document.getElementById('menuBtn');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        if (menuBtn) {
-            menuBtn.addEventListener('click', () => {
-                sidebar.classList.toggle('open');
-                overlay.classList.toggle('open');
-            });
-            overlay.addEventListener('click', () => {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('open');
-            });
+    let estat = null;
+
+    async function iniciarTest(tipus, numPreguntes, xpMaxim, killer, examen) {
+        const preguntes = await fetch(`/api/preguntes?n=${numPreguntes}`)
+            .then(r => r.json()).catch(() => []);
+
+        if (!preguntes.length) { alert('Error carregant preguntes'); return; }
+
+        estat = { tipus, preguntes, xpMaxim, killer, examen, index: 0, encerts: 0, errors: 0 };
+        document.getElementById('testTipus').textContent = {
+            normal: 'Test Normal', killer: 'Test Killer', examen: 'Examen Oficial'
+        }[tipus] || 'Test';
+
+        mostrarPregunta();
+        document.getElementById('modalTest').style.display = 'flex';
+    }
+
+    function mostrarPregunta() {
+        const { preguntes, index, examen } = estat;
+        const q = preguntes[index];
+
+        document.getElementById('testProgres').textContent = `${index + 1} / ${preguntes.length}`;
+        document.getElementById('testPregunta').textContent = q.pregunta;
+        document.getElementById('testFeedback').style.display = 'none';
+        document.getElementById('testExplicacio').style.display = 'none';
+        document.getElementById('testSeguent').style.display = 'none';
+
+        const opcions = document.getElementById('testOpcions');
+        opcions.innerHTML = '';
+        q.opcions.forEach((op, i) => {
+            const btn = document.createElement('button');
+            btn.style.cssText = 'background:#0f1c2e; border:1px solid #2a3a52; color:#fff; text-align:left; padding:12px 16px; border-radius:10px; cursor:pointer; font-size:14px; transition:background 0.15s; width:100%;';
+            btn.textContent = `${['A','B','C'][i]}. ${op}`;
+            btn.onclick = () => resposta(i, btn, q);
+            opcions.appendChild(btn);
+        });
+    }
+
+    function resposta(idx, btn, q) {
+        const { killer, examen } = estat;
+        const correcte = idx === q.correcta;
+
+        document.querySelectorAll('#testOpcions button').forEach((b, i) => {
+            b.onclick = null;
+            if (i === q.correcta) b.style.background = '#1a4a2e';
+            else if (i === idx && !correcte) b.style.background = '#4a1a1e';
+        });
+
+        if (correcte) {
+            estat.encerts++;
+            if (!examen) {
+                const fb = document.getElementById('testFeedback');
+                fb.textContent = '✅ Correcte!'; fb.style.background = '#1a4a2e'; fb.style.display = 'block';
+            }
+        } else {
+            estat.errors++;
+            if (!examen) {
+                const fb = document.getElementById('testFeedback');
+                fb.textContent = '❌ Incorrecte'; fb.style.background = '#4a1a1e'; fb.style.display = 'block';
+                if (q.explicacio) {
+                    const ex = document.getElementById('testExplicacio');
+                    ex.textContent = q.explicacio; ex.style.display = 'block';
+                }
+            }
+            if (killer) { setTimeout(acabarTest, 900); return; }
         }
+
+        document.getElementById('testSeguent').style.display = 'block';
+    }
+
+    function seguent() {
+        estat.index++;
+        if (estat.index >= estat.preguntes.length) acabarTest();
+        else mostrarPregunta();
+    }
+
+    async function acabarTest() {
+        document.getElementById('modalTest').style.display = 'none';
+        const { encerts, preguntes, xpMaxim, killer } = estat;
+        const total = preguntes.length;
+        const pct = Math.round((encerts / total) * 100);
+        const aprovat = killer ? estat.errors === 0 : pct >= 70;
+        const xpGuanyat = aprovat ? xpMaxim : Math.round(xpMaxim * 0.15);
+
+        const token = localStorage.getItem('cq_token');
+        await fetch('/api/user/xp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ xp_ganado: xpGuanyat, tipus: aprovat ? 'test' : 'test_suspens', nom: estat.tipus, puntuacio: encerts })
+        }).then(r => r.json()).then(d => {
+            if (d.xp !== undefined) {
+                const u = JSON.parse(localStorage.getItem('cq_usuario') || '{}');
+                u.xp = d.xp; u.nivel = d.nivel; u.rang = d.rang;
+                localStorage.setItem('cq_usuario', JSON.stringify(u));
+                actualitzarUIUsuari(u);
+            }
+        }).catch(() => {});
+
+        // Actualitzar comptadors de stats a pantalla
+        const apEl  = document.querySelector('.js-aprovats');
+        const susEl = document.querySelector('.js-suspesos');
+        const totEl = document.querySelector('.js-total');
+        if (aprovat && apEl)  apEl.textContent  = parseInt(apEl.textContent  || 0) + 1;
+        if (!aprovat && susEl) susEl.textContent = parseInt(susEl.textContent || 0) + 1;
+        if (totEl) { totEl.textContent = parseInt(totEl.textContent || 0) + 1; }
+        const ap2 = parseInt(document.querySelector('.js-aprovats')?.textContent || 0);
+        const tot2 = parseInt(document.querySelector('.js-total')?.textContent || 0);
+        const exitEl = document.querySelector('.js-exit');
+        if (exitEl && tot2 > 0) exitEl.textContent = `${Math.round((ap2/tot2)*100)}%`;
+
+        document.getElementById('resultatEmoji').textContent = aprovat ? '🎉' : '😅';
+        document.getElementById('resultatTitol').textContent = aprovat ? 'Aprovat!' : 'Suspès';
+        document.getElementById('resultatText').textContent  = `${encerts} / ${total} correctes (${pct}%)`;
+        document.getElementById('resultatXP').textContent    = `+${xpGuanyat} XP guanyats`;
+        document.getElementById('modalResultat').style.display = 'flex';
+    }
+
+    function tancarResultat() {
+        document.getElementById('modalResultat').style.display = 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        if (!requireAuth()) return;
+        initSidebar();
+        await carregarUsuari();
+
+        const token = localStorage.getItem('cq_token');
+        const stats = await fetch('/api/user/stats', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        }).then(r => r.json()).catch(() => ({}));
+
+        const ap  = parseInt(stats.tests_aprovats  || 0);
+        const sus = parseInt(stats.tests_suspesos  || 0);
+        const tot = ap + sus;
+        document.querySelector('.js-aprovats').textContent = ap;
+        document.querySelector('.js-suspesos').textContent = sus;
+        document.querySelector('.js-total').textContent    = tot;
+        document.querySelector('.js-exit').textContent     = tot > 0 ? `${Math.round((ap/tot)*100)}%` : '0%';
+    });
     </script>
 </body>
 </html>

@@ -8,7 +8,6 @@
 </head>
 <body class="dashboard-body">
     <div class="dashboard-wrap">
-        <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
                 <div class="logo-box"></div>
@@ -17,138 +16,130 @@
                     <p>Aprèn a conduir jugant</p>
                 </div>
             </div>
-
             <nav class="sidebar-nav">
                 <div class="sidebar-section-label">Principal</div>
-                <a href="inici.html" class="sidebar-link activo">
-                    <span class="sidebar-link-icon">🏠</span> Inici
-                </a>
-                <a href="perfil.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">👤</span> Perfil
-                </a>
-
+                <a href="inici.html" class="sidebar-link activo"><span class="sidebar-link-icon">🏠</span> Inici</a>
+                <a href="perfil.html" class="sidebar-link"><span class="sidebar-link-icon">👤</span> Perfil</a>
                 <div class="sidebar-section-label">Aprendre</div>
-                <a href="teoria.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">📖</span> Teoria
-                </a>
-                <a href="jocs.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">🎯</span> Jocs
-                </a>
-                <a href="tests.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">📝</span> Tests
-                </a>
-                <a href="diaris.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">📅</span> Diaris
-                </a>
-
+                <a href="teoria.html" class="sidebar-link"><span class="sidebar-link-icon">📖</span> Teoria</a>
+                <a href="jocs.html" class="sidebar-link"><span class="sidebar-link-icon">🎯</span> Jocs</a>
+                <a href="tests.html" class="sidebar-link"><span class="sidebar-link-icon">📝</span> Tests</a>
+                <a href="diaris.html" class="sidebar-link"><span class="sidebar-link-icon">📅</span> Diaris</a>
                 <div class="sidebar-section-label">Comunitat</div>
-                <a href="ranquing.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">🏆</span> Rànquing
-                </a>
-                <a href="botiga.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">🛒</span> Botiga
-                </a>
+                <a href="ranquing.html" class="sidebar-link"><span class="sidebar-link-icon">🏆</span> Rànquing</a>
+                <a href="botiga.html" class="sidebar-link"><span class="sidebar-link-icon">🛒</span> Botiga</a>
             </nav>
-
             <div class="sidebar-bottom">
                 <div class="sidebar-user">
-                    <div class="sidebar-user-avatar">🙂</div>
+                    <div class="sidebar-user-avatar js-avatar">🙂</div>
                     <div class="sidebar-user-info">
-                        <strong>Conductor Novell</strong>
-                        <span>1500 XP · Nivell 2</span>
+                        <strong class="js-sidebar-nom">...</strong>
+                        <span class="js-sidebar-info">... XP</span>
                     </div>
                 </div>
             </div>
         </aside>
-
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-        <!-- Main content -->
         <main class="main-content">
             <div class="mobile-header">
                 <button class="mobile-menu-btn" id="menuBtn">☰</button>
                 <span style="font-weight:700; color:#fff;">CarQuest</span>
             </div>
-
             <div class="content-sheet">
                 <div class="page-header">
                     <div class="page-title">Inici</div>
-                    <a href="index.html" class="btn-logout-header">Tancar sessió</a>
+                    <a href="#" onclick="tancarSessio()" class="btn-logout-header">Tancar sessió</a>
                 </div>
 
                 <section class="panel-user">
-                    <div class="avatar">🙂</div>
+                    <div class="avatar js-avatar">🙂</div>
                     <div class="user-info">
-                        <h3 id="userName">Conductor Novell</h3>
-                        <p>Nivell 2</p>
-                        <p style="font-size:13px; opacity:0.9">1500 XP · 450 monedes · 5 dies</p>
+                        <h3 class="js-nom">...</h3>
+                        <p>Nivell <span class="js-nivel">...</span></p>
+                        <p style="font-size:13px; opacity:0.9"><span class="js-xp">0</span> XP · <span class="js-monedes">0</span> monedes</p>
                     </div>
                 </section>
 
                 <div class="progress-card">
                     <div style="display:flex; align-items:center; justify-content:space-between;">
-                        <div style="font-weight:700;">60% cap a Conductor Urbà</div>
+                        <div style="font-weight:700;"><span class="js-progres-pct">0</span>% cap a <span class="js-rang-seguent">...</span></div>
                         <div style="opacity:0.6; font-size:13px;">Progrés</div>
                     </div>
                     <div class="progress-track">
-                        <div class="progress-fill" data-progress="60"></div>
+                        <div class="progress-fill js-progres-fill" data-progress="0"></div>
                     </div>
-                    <div class="progress-note">60% cap a Conductor Urbà</div>
+                    <div class="progress-note"><span class="js-rang-actual">...</span> → <span class="js-rang-seguent">...</span></div>
                 </div>
 
                 <section class="ranks-card">
                     <h4>Rangs de Conductor</h4>
-                    <ul class="ranks-list">
-                        <li class="active"><div class="rank-emoji">🙂</div><div>1. Conductor Novell (TU)</div></li>
-                        <li><div class="rank-emoji">🚗</div><div>2. Conductor Urbà</div></li>
-                        <li><div class="rank-emoji">🛣️</div><div>3. Expert en Carretera</div></li>
-                        <li><div class="rank-emoji">🏁</div><div>4. Pilot Segur</div></li>
-                        <li><div class="rank-emoji">👑</div><div>5. Pilot Expert</div></li>
+                    <ul class="ranks-list" id="rangsList">
+                        <li><div class="rank-emoji">🙂</div><div>Conductor Novell</div></li>
+                        <li><div class="rank-emoji">🚗</div><div>Conductor Intermedi</div></li>
+                        <li><div class="rank-emoji">🛣️</div><div>Pilot Segur</div></li>
+                        <li><div class="rank-emoji">👑</div><div>Pilot Expert</div></li>
+                        <li><div class="rank-emoji">🏆</div><div>Pilot Mestre</div></li>
                     </ul>
                 </section>
 
                 <section class="stats-grid">
                     <div class="stat-card">
                         <div class="icon">🎯</div>
-                        <div class="stat-title">Reptes</div>
-                        <div class="stat-value" data-value="24">0</div>
+                        <div class="stat-title">Jocs</div>
+                        <div class="stat-value js-stat-jocs" data-value="0">0</div>
                     </div>
                     <div class="stat-card">
                         <div class="icon">✅</div>
                         <div class="stat-title">Tests</div>
-                        <div class="stat-value" data-value="8">0</div>
+                        <div class="stat-value js-stat-tests" data-value="0">0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="icon">🏆</div>
-                        <div class="stat-title">Insígnies</div>
-                        <div class="stat-value" data-value="5">0</div>
+                        <div class="icon">⭐</div>
+                        <div class="stat-title">XP Total</div>
+                        <div class="stat-value js-stat-xp" data-value="0">0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="icon">🔥</div>
-                        <div class="stat-title">Ràtio</div>
-                        <div class="stat-value" data-value="5">5 dies</div>
+                        <div class="icon">🏅</div>
+                        <div class="stat-title">Nivell</div>
+                        <div class="stat-value js-stat-nivel" data-value="1">1</div>
                     </div>
                 </section>
             </div>
         </main>
     </div>
 
+    <script src="app.js"></script>
     <script src="dashboard.js"></script>
     <script>
-        // Mobile sidebar toggle
-        const menuBtn = document.getElementById('menuBtn');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        if (menuBtn) {
-            menuBtn.addEventListener('click', () => {
-                sidebar.classList.toggle('open');
-                overlay.classList.toggle('open');
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!requireAuth()) return;
+            initSidebar();
+            const user = await carregarUsuari();
+            if (!user) return;
+
+            document.querySelectorAll('.js-monedes').forEach(el => el.textContent = user.monedes || 0);
+            document.querySelectorAll('.js-avatar').forEach(el => el.textContent = user.avatar || '🙂');
+
+            // Marcar rang actual
+            const rangs = ['Conductor Novell','Conductor Intermedi','Pilot Segur','Pilot Expert','Pilot Mestre'];
+            document.querySelectorAll('#rangsList li').forEach((li, i) => {
+                li.classList.toggle('active', rangs[i] === user.rang);
             });
-            overlay.addEventListener('click', () => {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('open');
-            });
-        }
+
+            // Stats
+            const token = localStorage.getItem('cq_token');
+            const stats = await fetch('/api/user/stats', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            }).then(r => r.json()).catch(() => ({}));
+
+            document.querySelector('.js-stat-jocs').dataset.value  = stats.jocs_completats || 0;
+            document.querySelector('.js-stat-tests').dataset.value = stats.tests_aprovats  || 0;
+            document.querySelector('.js-stat-xp').dataset.value    = user.xp;
+            document.querySelector('.js-stat-nivel').dataset.value = user.nivel;
+
+            animateCounters();
+            animateProgressFill();
+        });
     </script>
 </body>
 </html>

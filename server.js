@@ -4,7 +4,28 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 require('dotenv').config();
+
+// Cargar banco de preguntas DGT (2947 preguntas oficiales)
+const todasPreguntes = JSON.parse(fs.readFileSync(path.join(__dirname, 'preguntes_dgt.json'), 'utf8'));
+
+// Normalizar formato: { pregunta, opcions:[a,b,c], correcta:0|1|2, explicacio }
+const PREGUNTES_DGT = todasPreguntes
+    .filter(q => q.question && q['a.'] && q['b.'] && q['c.'])
+    .map(q => {
+        const bits = q.correct.trim().split(' ').map(Number);
+        const correcta = bits.indexOf(1);
+        return {
+            pregunta:   q.question,
+            opcions:    [q['a.'], q['b.'], q['c.']],
+            correcta:   correcta >= 0 ? correcta : 0,
+            explicacio: q.explanation || '',
+            img:        q.img || null
+        };
+    });
+
+console.log(`📚 ${PREGUNTES_DGT.length} preguntes DGT carregades`);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -121,7 +142,7 @@ app.post('/api/auth/login', async (req, res) => {
 app.get('/api/user/me', verificarToken, async (req, res) => {
     try {
         const result = await pool.query(
-            'SELECT id, nombre, email, xp, nivel, rang, created_at FROM users WHERE id = $1',
+            'SELECT id, nombre, email, xp, nivel, rang, avatar, monedes, created_at FROM users WHERE id = $1',
             [req.user.id]
         );
         if (result.rows.length === 0) return res.status(404).json({ error: 'Usuario no encontrado' });
@@ -200,6 +221,45 @@ app.get('/api/ranking/meva-posicio', verificarToken, async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
+});
+
+// GET /api/user/stats — estadísticas del usuario (tests, juegos completados)
+app.get('/api/user/stats', verificarToken, async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT
+                COUNT(*) FILTER (WHERE tipus = 'test' AND completat = true)  AS tests_aprovats,
+                COUNT(*) FILTER (WHERE tipus = 'test' AND completat = false) AS tests_suspesos,
+                COUNT(*) FILTER (WHERE tipus = 'joc'  AND completat = true)  AS jocs_completats
+            FROM progres WHERE user_id = $1
+        `, [req.user.id]);
+        res.json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+
+// POST /api/user/avatar — guardar avatar seleccionado
+app.post('/api/user/avatar', verificarToken, async (req, res) => {
+    const { avatar } = req.body;
+    if (!avatar) return res.status(400).json({ error: 'Avatar requerido' });
+    try {
+        await pool.query('UPDATE users SET avatar = $1 WHERE id = $2', [avatar, req.user.id]);
+        res.json({ ok: true });
+    } catch (err) {
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+
+// ============================================================
+// RUTAS DE PREGUNTES DGT
+// ============================================================
+
+// GET /api/preguntes?n=10&tema=all — devuelve N preguntas aleatorias
+app.get('/api/preguntes', (req, res) => {
+    const n = Math.min(parseInt(req.query.n) || 10, 30);
+    const barrejades = [...PREGUNTES_DGT].sort(() => Math.random() - 0.5);
+    res.json(barrejades.slice(0, n));
 });
 
 // ============================================================
