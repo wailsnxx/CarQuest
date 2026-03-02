@@ -75,25 +75,38 @@
                     <div class="test-card">
                         <div class="test-card-icon">📝</div>
                         <h4 class="test-card-title" style="color:#3b82f6;">Test Normal</h4>
-                        <p class="test-card-desc">10 preguntes amb resposta immediata</p>
+                        <p class="test-card-desc">30 preguntes amb resposta immediata</p>
                         <ul class="test-card-features">
-                            <li>📋 10 preguntes</li>
+                            <li>📋 30 preguntes</li>
                             <li>✓ Resposta immediata</li>
                             <li>⭐ +50 XP si aproves</li>
                         </ul>
-                        <button class="repte-btn repte-btn-play" onclick="iniciarTest('normal',10,50,false,false)">Començar</button>
+                        <button class="repte-btn repte-btn-play" onclick="iniciarTest('normal',30,50,false,false)">Començar</button>
+                    </div>
+
+                    <div class="test-card test-card-killer" id="killerCard">
+                        <div class="test-card-icon">🔥</div>
+                        <h4 class="test-card-title" style="color:var(--color-error);">Test Killer</h4>
+                        <p class="test-card-desc">El test més difícil. Arribes al final?</p>
+                        <ul class="test-card-features">
+                            <li>🔥 Preguntes reals DGT</li>
+                            <li>💀 Nivell extrem de dificultat</li>
+                            <li>⭐ +150 XP si arribes al final</li>
+                            <li id="killerProgress" style="color:#f59e0b;"></li>
+                        </ul>
+                        <button id="killerBtn" class="repte-btn repte-btn-killer" onclick="iniciarTest('killer',10,150,true,false)">Repte Killer</button>
                     </div>
 
                     <div class="test-card test-card-killer">
-                        <div class="test-card-icon">🔥</div>
-                        <h4 class="test-card-title" style="color:var(--color-error);">Test Killer</h4>
-                        <p class="test-card-desc">1 error i has acabat!</p>
+                        <div class="test-card-icon">❌</div>
+                        <h4 class="test-card-title" style="color:#e74c3c;">Test d'Errors</h4>
+                        <p class="test-card-desc">Repassa les preguntes que has fallat</p>
                         <ul class="test-card-features">
-                            <li>🔥 Preguntes reals DGT</li>
-                            <li>⚠️ 1 error = finalitza</li>
-                            <li>⭐ +150 XP si arribes al final</li>
+                            <li>❌ Preguntes fallades anteriorment</li>
+                            <li>🔁 Repassa fins dominar-les</li>
+                            <li>⭐ +60 XP si aproves</li>
                         </ul>
-                        <button class="repte-btn repte-btn-killer" onclick="iniciarTest('killer',10,150,true,false)">Repte Killer</button>
+                        <button class="repte-btn repte-btn-killer" onclick="iniciarTestErrors()">Repassar errors</button>
                     </div>
 
                     <div class="test-card">
@@ -107,8 +120,9 @@
                         </div>
                     </div>
 
-                    <div class="test-card">
-                        <div class="test-card-icon">📋</div>
+                    <div class="test-card" style="grid-column: 1 / -1; display: flex; flex-direction: row; align-items: center; gap: 24px; text-align: left;">
+                        <div class="test-card-icon" style="font-size: 48px; flex-shrink: 0;">📋</div>
+                        <div style="flex: 1;">
                         <h4 class="test-card-title">Examen Oficial</h4>
                         <p class="test-card-desc">Simulació examen real DGT · 30 preguntes</p>
                         <ul class="test-card-features">
@@ -117,6 +131,7 @@
                             <li>⭐ +100 XP si aproves</li>
                         </ul>
                         <button class="repte-btn repte-btn-examen" onclick="iniciarTest('examen',30,100,false,true)">🎓 Examen</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -130,10 +145,11 @@
                 <span id="testTipus" style="font-size:13px; opacity:0.6; font-weight:600;"></span>
                 <span id="testProgres" style="font-size:13px; color:var(--color-primario); font-weight:700;"></span>
             </div>
+            <img id="testImatge" src="" alt="" style="display:none; width:100%; max-height:220px; object-fit:contain; border-radius:10px; margin-bottom:14px; background:#0f1c2e;">
             <p id="testPregunta" style="font-size:16px; font-weight:700; margin-bottom:20px; line-height:1.5;"></p>
             <div id="testOpcions" style="display:flex; flex-direction:column; gap:10px;"></div>
             <div id="testFeedback" style="display:none; margin-top:14px; padding:12px 16px; border-radius:10px; font-weight:600;"></div>
-            <div id="testExplicacio" style="display:none; margin-top:8px; padding:12px 16px; border-radius:10px; background:#0f1c2e; font-size:13px; opacity:0.8; line-height:1.5;"></div>
+            <div id="testExplicacio" style="display:none; margin-top:10px; padding:14px 16px; border-radius:10px; background:#1e2d1a; border-left:4px solid #f59e0b; font-size:13px; line-height:1.6; color:#e8d5a3;"></div>
             <button id="testSeguent" style="display:none; margin-top:16px; width:100%;" class="repte-btn repte-btn-play" onclick="seguent()">Següent →</button>
         </div>
     </div>
@@ -153,6 +169,26 @@
     <script src="dashboard.js"></script>
     <script>
     let estat = null;
+
+    function errKey() {
+        const u = obtUsuari();
+        return `cq_errors_${u ? u.id : 'anon'}`;
+    }
+
+    async function iniciarTestErrors() {
+        const preguntes = JSON.parse(localStorage.getItem(errKey()) || '[]')
+            .sort(() => Math.random() - 0.5);
+
+        if (!preguntes.length) {
+            alert('Encara no tens preguntes fallades. Fes un test primer!');
+            return;
+        }
+
+        estat = { tipus: 'errors', preguntes, xpMaxim: 60, killer: false, examen: false, index: 0, encerts: 0, errors: 0 };
+        document.getElementById('testTipus').textContent = 'Test d\'Errors';
+        mostrarPregunta();
+        document.getElementById('modalTest').style.display = 'flex';
+    }
 
     async function iniciarTest(tipus, numPreguntes, xpMaxim, killer, examen) {
         const preguntes = await fetch(`/api/preguntes?n=${numPreguntes}`)
@@ -179,6 +215,16 @@
         document.getElementById('testExplicacio').style.display = 'none';
         document.getElementById('testSeguent').style.display = 'none';
 
+        const imgEl = document.getElementById('testImatge');
+        if (q.img) {
+            imgEl.src = `/imgs/${q.img}`;
+            imgEl.style.display = 'block';
+            imgEl.onerror = () => { imgEl.style.display = 'none'; };
+        } else {
+            imgEl.style.display = 'none';
+            imgEl.src = '';
+        }
+
         const opcions = document.getElementById('testOpcions');
         opcions.innerHTML = '';
         q.opcions.forEach((op, i) => {
@@ -200,21 +246,32 @@
             else if (i === idx && !correcte) b.style.background = '#4a1a1e';
         });
 
+        const key = errKey();
         if (correcte) {
             estat.encerts++;
+            // Si estem al test d'errors i ho encertem, eliminar de la llista
+            if (estat.tipus === 'errors') {
+                const stored = JSON.parse(localStorage.getItem(key) || '[]');
+                localStorage.setItem(key, JSON.stringify(stored.filter(e => e.pregunta !== q.pregunta)));
+            }
             if (!examen) {
                 const fb = document.getElementById('testFeedback');
                 fb.textContent = '✅ Correcte!'; fb.style.background = '#1a4a2e'; fb.style.display = 'block';
             }
         } else {
             estat.errors++;
+            // Guardar pregunta fallada a localStorage (sense duplicats)
+            const stored = JSON.parse(localStorage.getItem(key) || '[]');
+            if (!stored.find(e => e.pregunta === q.pregunta)) {
+                stored.push(q);
+                localStorage.setItem(key, JSON.stringify(stored));
+            }
             if (!examen) {
                 const fb = document.getElementById('testFeedback');
                 fb.textContent = '❌ Incorrecte'; fb.style.background = '#4a1a1e'; fb.style.display = 'block';
-                if (q.explicacio) {
-                    const ex = document.getElementById('testExplicacio');
-                    ex.textContent = q.explicacio; ex.style.display = 'block';
-                }
+                const ex = document.getElementById('testExplicacio');
+                ex.innerHTML = `<strong>💡 Explicació:</strong> ${q.explicacio || 'La resposta correcta és l\'opció marcada en verd.'}`;
+                ex.style.display = 'block';
             }
             if (killer) { setTimeout(acabarTest, 900); return; }
         }
@@ -290,6 +347,19 @@
         document.querySelector('.js-suspesos').textContent = sus;
         document.querySelector('.js-total').textContent    = tot;
         document.querySelector('.js-exit').textContent     = tot > 0 ? `${Math.round((ap/tot)*100)}%` : '0%';
+
+        // Desbloqueig Killer: cal fer 15 tests normals o d'examen
+        const KILLER_REQUIRED = 15;
+        if (tot < KILLER_REQUIRED) {
+            const killerBtn = document.getElementById('killerBtn');
+            const killerProgress = document.getElementById('killerProgress');
+            killerBtn.disabled = true;
+            killerBtn.textContent = `🔒 Bloquejat`;
+            killerBtn.style.opacity = '0.45';
+            killerBtn.style.cursor = 'not-allowed';
+            killerBtn.onclick = null;
+            killerProgress.textContent = `🔓 Fes ${KILLER_REQUIRED - tot} tests més per desbloquejar (${tot}/${KILLER_REQUIRED})`;
+        }
     });
     </script>
 </body>

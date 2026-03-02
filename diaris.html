@@ -47,10 +47,10 @@
             </nav>
             <div class="sidebar-bottom">
                 <div class="sidebar-user">
-                    <div class="sidebar-user-avatar">🙂</div>
+                    <div class="sidebar-user-avatar js-avatar">🙂</div>
                     <div class="sidebar-user-info">
-                        <strong>Conductor Novell</strong>
-                        <span>1500 XP · Nivell 2</span>
+                        <strong class="js-sidebar-nom">...</strong>
+                        <span class="js-sidebar-info">...</span>
                     </div>
                 </div>
             </div>
@@ -64,7 +64,7 @@
             <div class="content-sheet">
                 <div class="page-header">
                     <div class="page-title">Reptes Diaris</div>
-                    <a href="index.html" class="btn-logout-header">Tancar sessió</a>
+                    <a href="#" onclick="tancarSessio()" class="btn-logout-header">Tancar sessió</a>
                 </div>
 
                 <!-- Capçalera del dia -->
@@ -138,21 +138,14 @@
             </div>
         </main>
     </div>
+    <script src="app.js"></script>
     <script src="dashboard.js"></script>
     <script>
-        const menuBtn = document.getElementById('menuBtn');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        if (menuBtn) {
-            menuBtn.addEventListener('click', () => {
-                sidebar.classList.toggle('open');
-                overlay.classList.toggle('open');
-            });
-            overlay.addEventListener('click', () => {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('open');
-            });
-        }
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!requireAuth()) return;
+            initSidebar();
+            await carregarUsuari();
+        });
     </script>
 </body>
 </html>

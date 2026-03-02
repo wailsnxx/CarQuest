@@ -42,6 +42,7 @@ function actualitzarUIUsuari(user) {
     document.querySelectorAll('.js-xp').forEach(el => el.textContent = user.xp);
     document.querySelectorAll('.js-rang').forEach(el => el.textContent = user.rang);
     document.querySelectorAll('.js-nivel').forEach(el => el.textContent = user.nivel);
+    document.querySelectorAll('.js-monedes').forEach(el => el.textContent = user.monedes || 0);
     // Progrés
     const info = calcularRangInfo(user.xp);
     document.querySelectorAll('.js-progres-pct').forEach(el => el.textContent = `${info.progres}%`);

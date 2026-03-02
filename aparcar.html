@@ -329,7 +329,7 @@
         <div class="content-sheet">
             <div class="page-header">
                 <div class="page-title">🅿️ Aparcament Perfecte</div>
-                <a href="index.html" class="btn-logout-header">Tancar sessió</a>
+                <a href="#" onclick="tancarSessio()" class="btn-logout-header">Tancar sessió</a>
             </div>
 
             <a href="jocs.html" class="back-link">← Tornar als Jocs</a>
@@ -429,10 +429,6 @@
                     <div class="ritem">
                         <div class="ritem-label">Cops totals</div>
                         <div class="ritem-val red"    id="resHits">—</div>
-                    </div>
-                    <div class="ritem">
-                        <div class="ritem-label">Maniobres</div>
-                        <div class="ritem-val orange" id="resMoves">—</div>
                     </div>
                     <div class="ritem">
                         <div class="ritem-label">Precisió final</div>
@@ -597,7 +593,6 @@ function loadLevel(idx) {
     car.angle = lvl.carStart.angle;
     car.speed = 0;
     updateHUD();
-    document.getElementById('statMoves').textContent = totalMoves;
     document.getElementById('statHits').textContent  = totalHits;
     document.getElementById('statAcc').textContent   = '—';
     hideOverlay();
@@ -705,9 +700,6 @@ function updateCar() {
     car.y = Math.max(CAR_H / 2, Math.min(CANVAS_H - CAR_H / 2, car.y));
 
     // Actualitzar maniobres (limitant el recompte)
-    if (up || down) {
-        document.getElementById('statMoves').textContent = totalMoves;
-    }
 }
 
 // ====================================================
@@ -857,7 +849,6 @@ function showGameover() {
 
     document.getElementById('resLevels').textContent  = levelsOK + ' / ' + total;
     document.getElementById('resHits').textContent    = totalHits;
-    document.getElementById('resMoves').textContent   = totalMoves;
     document.getElementById('resAcc').textContent     = accNum + '%';
     document.getElementById('xpEarned').textContent   = '⭐ +' + xp + ' XP';
     document.getElementById('coinsEarned').textContent= '🪙 +' + coins;
@@ -984,25 +975,64 @@ function drawRefs(lvl) {
         ctx.setLineDash([]);
 
     } else if (lvl.roadY) {
-        // =============================================
-        // Aparcament perpendicular — línia de centre
-        // =============================================
-        const spotCX = lvl.spot.x + lvl.spot.w / 2;
+        const spotCX  = lvl.spot.x + lvl.spot.w / 2;
+        const spotCY  = lvl.spot.y + lvl.spot.h / 2;
+        const hasObs  = lvl.obstacles && lvl.obstacles.length > 0;
 
-        // Línia de centre cap a la plaça
-        ctx.strokeStyle = 'rgba(100,200,255,0.4)';
+        // =============================================
+        // REFERÈNCIA ①: avança fins davant la plaça
+        // =============================================
+        // Fletxa horitzontal al llarg de la carretera fins al centre de la plaça
+        ctx.strokeStyle = 'rgba(100,200,255,0.55)';
         ctx.lineWidth   = 2;
-        ctx.setLineDash([10, 7]);
+        ctx.setLineDash([8, 5]);
+        ctx.beginPath();
+        ctx.moveTo(80, lvl.roadY + 20);
+        ctx.lineTo(spotCX, lvl.roadY + 20);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        // punta de fletxa →
+        drawPathArrow(spotCX - 4, lvl.roadY + 20, 0);
+
+        ctx.fillStyle = 'rgba(100,200,255,0.9)';
+        ctx.textAlign = 'center';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.fillText('① Avança fins davant la plaça', spotCX - 30, lvl.roadY + 35);
+
+        // =============================================
+        // REFERÈNCIA ②: entra perpendicular a la plaça
+        // =============================================
+        // Línia vertical des de roadY fins al centre de la plaça
+        ctx.strokeStyle = 'rgba(255,200,80,0.55)';
+        ctx.lineWidth   = 2;
+        ctx.setLineDash([8, 5]);
         ctx.beginPath();
         ctx.moveTo(spotCX, lvl.roadY + 5);
         ctx.lineTo(spotCX, lvl.spot.y + lvl.spot.h);
         ctx.stroke();
         ctx.setLineDash([]);
+        // punta de fletxa ↑
+        drawPathArrow(spotCX, lvl.spot.y + lvl.spot.h + 6, -90);
 
-        // Label
-        ctx.fillStyle = 'rgba(100,200,255,0.75)';
+        ctx.fillStyle = 'rgba(255,200,80,0.9)';
         ctx.textAlign = 'center';
-        ctx.fillText('Apunta al centre', spotCX, lvl.roadY - 5);
+        ctx.fillText('② Gira i entra perpendicular', spotCX, lvl.roadY - 5);
+
+        // =============================================
+        // REFERÈNCIA ③: centra el cotxe dins la plaça
+        // =============================================
+        ctx.fillStyle = 'rgba(100,255,150,0.85)';
+        ctx.textAlign = 'center';
+        if (hasObs) {
+            ctx.fillText('③ Centra entre els cotxes', spotCX, lvl.spot.y - 6);
+        } else {
+            ctx.fillText('③ Centra el cotxe', spotCX, lvl.spot.y - 6);
+        }
+        // Punt central de la plaça
+        ctx.fillStyle = 'rgba(100,255,150,0.45)';
+        ctx.beginPath();
+        ctx.arc(spotCX, spotCY, 6, 0, Math.PI * 2);
+        ctx.fill();
     }
 
     ctx.restore();
