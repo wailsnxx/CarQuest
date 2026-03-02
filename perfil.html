@@ -11,46 +11,27 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
                 <div class="logo-box"></div>
-                <div>
-                    <h1>CarQuest</h1>
-                    <p>Aprèn a conduir jugant</p>
-                </div>
+                <div><h1>CarQuest</h1><p>Aprèn a conduir jugant</p></div>
             </div>
             <nav class="sidebar-nav">
                 <div class="sidebar-section-label">Principal</div>
-                <a href="inici.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">🏠</span> Inici
-                </a>
-                <a href="perfil.html" class="sidebar-link activo">
-                    <span class="sidebar-link-icon">👤</span> Perfil
-                </a>
+                <a href="inici.html" class="sidebar-link"><span class="sidebar-link-icon">🏠</span> Inici</a>
+                <a href="perfil.html" class="sidebar-link activo"><span class="sidebar-link-icon">👤</span> Perfil</a>
                 <div class="sidebar-section-label">Aprendre</div>
-                <a href="teoria.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">📖</span> Teoria
-                </a>
-                <a href="jocs.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">🎯</span> Jocs
-                </a>
-                <a href="tests.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">📝</span> Tests
-                </a>
-                <a href="diaris.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">📅</span> Diaris
-                </a>
+                <a href="teoria.html" class="sidebar-link"><span class="sidebar-link-icon">📖</span> Teoria</a>
+                <a href="jocs.html" class="sidebar-link"><span class="sidebar-link-icon">🎯</span> Jocs</a>
+                <a href="tests.html" class="sidebar-link"><span class="sidebar-link-icon">📝</span> Tests</a>
+                <a href="diaris.html" class="sidebar-link"><span class="sidebar-link-icon">📅</span> Diaris</a>
                 <div class="sidebar-section-label">Comunitat</div>
-                <a href="ranquing.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">🏆</span> Rànquing
-                </a>
-                <a href="botiga.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">🛒</span> Botiga
-                </a>
+                <a href="ranquing.html" class="sidebar-link"><span class="sidebar-link-icon">🏆</span> Rànquing</a>
+                <a href="botiga.html" class="sidebar-link"><span class="sidebar-link-icon">🛒</span> Botiga</a>
             </nav>
             <div class="sidebar-bottom">
                 <div class="sidebar-user">
-                    <div class="sidebar-user-avatar">🙂</div>
+                    <div class="sidebar-user-avatar js-avatar">🙂</div>
                     <div class="sidebar-user-info">
-                        <strong>Conductor Novell</strong>
-                        <span>1500 XP · Nivell 2</span>
+                        <strong class="js-sidebar-nom">...</strong>
+                        <span class="js-sidebar-info">...</span>
                     </div>
                 </div>
             </div>
@@ -64,17 +45,16 @@
             <div class="content-sheet">
                 <div class="page-header">
                     <div class="page-title">El Meu Perfil</div>
-                    <a href="index.html" class="btn-logout-header">Tancar sessió</a>
+                    <a href="#" onclick="tancarSessio()" class="btn-logout-header">Tancar sessió</a>
                 </div>
 
-                <!-- Secció perfil principal amb avatar i cotxe -->
                 <section class="perfil-principal-card">
                     <div class="perfil-conductor">
                         <div class="avatar-cercle avatar-lila">
-                            <span class="avatar-emoji" id="avatarActual">👨</span>
+                            <span class="avatar-emoji js-avatar" id="avatarActual">🙂</span>
                         </div>
-                        <h3>Conductor</h3>
-                        <span class="badge-rang">Conductor Urbà</span>
+                        <h3 class="js-nom">...</h3>
+                        <span class="badge-rang js-rang">...</span>
                     </div>
                     <div class="perfil-cotxe">
                         <div class="avatar-cercle avatar-verd">
@@ -85,142 +65,133 @@
                     </div>
                 </section>
 
-                <!-- Estadístiques -->
                 <section class="perfil-stats-row">
                     <div class="perfil-stat-card">
                         <div class="stat-icon-big">⭐</div>
                         <div class="stat-label">XP Total</div>
-                        <div class="stat-number">3000</div>
+                        <div class="stat-number js-xp">0</div>
                     </div>
                     <div class="perfil-stat-card">
                         <div class="stat-icon-big">🏅</div>
                         <div class="stat-label">Monedes</div>
-                        <div class="stat-number">450</div>
+                        <div class="stat-number js-monedes">0</div>
                     </div>
                     <div class="perfil-stat-card">
-                        <div class="stat-icon-big">🏆</div>
-                        <div class="stat-label">Insígnies</div>
-                        <div class="stat-number">2</div>
+                        <div class="stat-icon-big">✅</div>
+                        <div class="stat-label">Tests Aprovats</div>
+                        <div class="stat-number js-tests-aprovats">0</div>
                     </div>
                     <div class="perfil-stat-card">
-                        <div class="stat-icon-big">🔥</div>
-                        <div class="stat-label">Ratxa</div>
-                        <div class="stat-number">5 dies</div>
+                        <div class="stat-icon-big">🎯</div>
+                        <div class="stat-label">Jocs Completats</div>
+                        <div class="stat-number js-jocs-completats">0</div>
                     </div>
                 </section>
 
-                <!-- Tria el teu Avatar -->
                 <section class="perfil-section-card">
                     <h4>👤 Tria el teu Avatar</h4>
                     <div class="avatar-selector">
-                        <div class="avatar-option selected" data-avatar="👨">
-                            <span>👨</span>
-                            <p>Home</p>
-                        </div>
-                        <div class="avatar-option" data-avatar="👩">
-                            <span>👩</span>
-                            <p>Dona</p>
-                        </div>
-                        <div class="avatar-option" data-avatar="👦">
-                            <span>👦</span>
-                            <p>Noi</p>
-                        </div>
-                        <div class="avatar-option" data-avatar="👧">
-                            <span>👧</span>
-                            <p>Noia</p>
-                        </div>
-                        <div class="avatar-option" data-avatar="🧑">
-                            <span>🧑</span>
-                            <p>Persona 1</p>
-                        </div>
-                        <div class="avatar-option" data-avatar="🧔">
-                            <span>🧔</span>
-                            <p>Persona 2</p>
-                        </div>
+                        <div class="avatar-option" data-avatar="👨"><span>👨</span><p>Home</p></div>
+                        <div class="avatar-option" data-avatar="👩"><span>👩</span><p>Dona</p></div>
+                        <div class="avatar-option" data-avatar="👦"><span>👦</span><p>Noi</p></div>
+                        <div class="avatar-option" data-avatar="👧"><span>👧</span><p>Noia</p></div>
+                        <div class="avatar-option" data-avatar="🧑"><span>🧑</span><p>Persona 1</p></div>
+                        <div class="avatar-option" data-avatar="🧔"><span>🧔</span><p>Persona 2</p></div>
                     </div>
                 </section>
 
-                <!-- Els Meus Cotxes -->
                 <section class="perfil-section-card">
                     <h4>🚙 Els Meus Cotxes</h4>
                     <div class="cotxes-selector">
-                        <div class="cotxe-option selected" data-cotxe="🚗">
-                            <span>🚗</span>
-                            <p>Cotxe Bàsic</p>
-                        </div>
+                        <div class="cotxe-option selected" data-cotxe="🚗"><span>🚗</span><p>Cotxe Bàsic</p></div>
                     </div>
                     <p class="cotxes-hint">💡 Compra més cotxes a la Botiga!</p>
                 </section>
 
-                <!-- Progrés al Següent Rang -->
                 <section class="perfil-section-card">
                     <h4>📈 Progrés al Següent Rang</h4>
                     <div class="rang-progress">
                         <div class="rang-labels">
-                            <span>Conductor Urbà</span>
-                            <span>Pilot Expert</span>
+                            <span class="js-rang-actual">...</span>
+                            <span class="js-rang-seguent">...</span>
                         </div>
                         <div class="rang-progress-track">
-                            <div class="rang-progress-fill" style="width: 40%"></div>
+                            <div class="rang-progress-fill js-progres-fill" style="width:0%"></div>
                         </div>
-                        <p class="rang-hint">Necessites 2000 XP més per arribar a Pilot Expert</p>
+                        <p class="rang-hint" id="rangHint">Carregant...</p>
                     </div>
                 </section>
 
-                <!-- Resum d'Activitat -->
                 <section class="perfil-section-card">
                     <h4>📊 Resum d'Activitat</h4>
                     <div class="activitat-resum-grid">
                         <div class="activitat-resum-card card-green">
-                            <div class="activitat-resum-label">Reptes Completats</div>
-                            <div class="activitat-resum-value">24</div>
+                            <div class="activitat-resum-label">Jocs Completats</div>
+                            <div class="activitat-resum-value js-jocs-completats">0</div>
                         </div>
                         <div class="activitat-resum-card card-purple">
                             <div class="activitat-resum-label">Tests Aprovats</div>
-                            <div class="activitat-resum-value">8</div>
+                            <div class="activitat-resum-value js-tests-aprovats">0</div>
                         </div>
                         <div class="activitat-resum-card card-red">
                             <div class="activitat-resum-label">Tests Suspesos</div>
-                            <div class="activitat-resum-value">2</div>
+                            <div class="activitat-resum-value js-tests-suspesos">0</div>
                         </div>
                     </div>
                 </section>
-
             </div>
         </main>
     </div>
+
+    <script src="app.js"></script>
     <script src="dashboard.js"></script>
     <script>
-        const menuBtn = document.getElementById('menuBtn');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        if (menuBtn) {
-            menuBtn.addEventListener('click', () => {
-                sidebar.classList.toggle('open');
-                overlay.classList.toggle('open');
-            });
-            overlay.addEventListener('click', () => {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('open');
-            });
-        }
-    </script>
-    <script>
-        // Selector d'avatar
-        document.querySelectorAll('.avatar-option').forEach(opt => {
-            opt.addEventListener('click', function() {
-                document.querySelectorAll('.avatar-option').forEach(o => o.classList.remove('selected'));
-                this.classList.add('selected');
-                document.getElementById('avatarActual').textContent = this.dataset.avatar;
-            });
-        });
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!requireAuth()) return;
+            initSidebar();
+            const user = await carregarUsuari();
+            if (!user) return;
 
-        // Selector de cotxe
-        document.querySelectorAll('.cotxe-option').forEach(opt => {
-            opt.addEventListener('click', function() {
-                document.querySelectorAll('.cotxe-option').forEach(o => o.classList.remove('selected'));
-                this.classList.add('selected');
-                document.getElementById('cotxeActual').textContent = this.dataset.cotxe;
+            const token = localStorage.getItem('cq_token');
+
+            document.querySelectorAll('.js-monedes').forEach(el => el.textContent = user.monedes || 0);
+            document.querySelectorAll('.js-avatar').forEach(el => el.textContent = user.avatar || '🙂');
+
+            // Rang progress hint
+            const info = calcularRangInfo(user.xp);
+            const hint = document.getElementById('rangHint');
+            if (hint) {
+                hint.textContent = info.seguent
+                    ? `Necessites ${info.seguent.min - user.xp} XP més per arribar a ${info.seguent.nom}`
+                    : 'Has assolit el rang màxim! 🏆';
+            }
+
+            // Stats
+            const stats = await fetch('/api/user/stats', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            }).then(r => r.json()).catch(() => ({}));
+
+            document.querySelectorAll('.js-tests-aprovats').forEach(el => el.textContent = stats.tests_aprovats || 0);
+            document.querySelectorAll('.js-tests-suspesos').forEach(el => el.textContent = stats.tests_suspesos || 0);
+            document.querySelectorAll('.js-jocs-completats').forEach(el => el.textContent = stats.jocs_completats || 0);
+
+            // Marcar avatar actual
+            document.querySelectorAll('.avatar-option').forEach(opt => {
+                opt.classList.toggle('selected', opt.dataset.avatar === (user.avatar || '🙂'));
+                opt.addEventListener('click', async function() {
+                    const nouAvatar = this.dataset.avatar;
+                    document.querySelectorAll('.avatar-option').forEach(o => o.classList.remove('selected'));
+                    this.classList.add('selected');
+                    document.querySelectorAll('.js-avatar').forEach(el => el.textContent = nouAvatar);
+                    await fetch('/api/user/avatar', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify({ avatar: nouAvatar })
+                    });
+                    const u = JSON.parse(localStorage.getItem('cq_usuario') || '{}');
+                    u.avatar = nouAvatar;
+                    localStorage.setItem('cq_usuario', JSON.stringify(u));
+                });
             });
         });
     </script>

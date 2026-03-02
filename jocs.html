@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>CarQuest — Reptes</title>
+    <title>CarQuest — Jocs</title>
     <link rel="stylesheet" href="estilos.css">
 </head>
 <body class="dashboard-body">
@@ -11,46 +11,27 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
                 <div class="logo-box"></div>
-                <div>
-                    <h1>CarQuest</h1>
-                    <p>Aprèn a conduir jugant</p>
-                </div>
+                <div><h1>CarQuest</h1><p>Aprèn a conduir jugant</p></div>
             </div>
             <nav class="sidebar-nav">
                 <div class="sidebar-section-label">Principal</div>
-                <a href="inici.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">🏠</span> Inici
-                </a>
-                <a href="perfil.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">👤</span> Perfil
-                </a>
+                <a href="inici.html" class="sidebar-link"><span class="sidebar-link-icon">🏠</span> Inici</a>
+                <a href="perfil.html" class="sidebar-link"><span class="sidebar-link-icon">👤</span> Perfil</a>
                 <div class="sidebar-section-label">Aprendre</div>
-                <a href="teoria.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">📖</span> Teoria
-                </a>
-                <a href="jocs.html" class="sidebar-link activo">
-                    <span class="sidebar-link-icon">🎯</span> Jocs
-                </a>
-                <a href="tests.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">📝</span> Tests
-                </a>
-                <a href="diaris.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">📅</span> Diaris
-                </a>
+                <a href="teoria.html" class="sidebar-link"><span class="sidebar-link-icon">📖</span> Teoria</a>
+                <a href="jocs.html" class="sidebar-link activo"><span class="sidebar-link-icon">🎯</span> Jocs</a>
+                <a href="tests.html" class="sidebar-link"><span class="sidebar-link-icon">📝</span> Tests</a>
+                <a href="diaris.html" class="sidebar-link"><span class="sidebar-link-icon">📅</span> Diaris</a>
                 <div class="sidebar-section-label">Comunitat</div>
-                <a href="ranquing.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">🏆</span> Rànquing
-                </a>
-                <a href="botiga.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">🛒</span> Botiga
-                </a>
+                <a href="ranquing.html" class="sidebar-link"><span class="sidebar-link-icon">🏆</span> Rànquing</a>
+                <a href="botiga.html" class="sidebar-link"><span class="sidebar-link-icon">🛒</span> Botiga</a>
             </nav>
             <div class="sidebar-bottom">
                 <div class="sidebar-user">
-                    <div class="sidebar-user-avatar">🙂</div>
+                    <div class="sidebar-user-avatar js-avatar">🙂</div>
                     <div class="sidebar-user-info">
-                        <strong>Conductor Novell</strong>
-                        <span>1500 XP · Nivell 2</span>
+                        <strong class="js-sidebar-nom">...</strong>
+                        <span class="js-sidebar-info">...</span>
                     </div>
                 </div>
             </div>
@@ -64,95 +45,183 @@
             <div class="content-sheet">
                 <div class="page-header">
                     <div class="page-title">Reptes i Minijocs</div>
-                    <a href="index.html" class="btn-logout-header">Tancar sessió</a>
+                    <a href="#" onclick="tancarSessio()" class="btn-logout-header">Tancar sessió</a>
                 </div>
 
                 <div class="reptes-grid">
-                    <!-- Senyal Challenge -->
                     <div class="repte-card">
                         <div class="repte-icon">🚦</div>
                         <h4 class="repte-nom">Senyal Challenge</h4>
                         <p class="repte-desc">Identifica els senyals de trànsit</p>
-                        <div class="repte-rewards">
-                            <span>⭐ +50 XP</span> | <span>🪙 +10</span>
-                        </div>
-                        <button class="repte-btn repte-btn-play">Jugar</button>
+                        <div class="repte-rewards"><span>⭐ +50 XP</span> | <span>🪙 +10</span></div>
+                        <button class="repte-btn" style="opacity:0.4; cursor:not-allowed;">Pròximament</button>
                     </div>
 
-                    <!-- Temps de Reacció -->
                     <div class="repte-card">
                         <div class="repte-icon">⚡</div>
                         <h4 class="repte-nom">Temps de Reacció</h4>
-                        <p class="repte-desc">Millora la velocitat de resposta</p>
-                        <div class="repte-rewards">
-                            <span>⭐ +75 XP</span> | <span>🪙 +15</span>
-                        </div>
-                        <button class="repte-btn repte-btn-play" onclick="location.href='temps-reaccio.html'">Jugar</button>
+                        <p class="repte-desc">Prem quan aparegui el semàfor verd</p>
+                        <div class="repte-rewards"><span>⭐ +75 XP</span> | <span>🪙 +15</span></div>
+                        <button class="repte-btn repte-btn-play" onclick="iniciarReaccio()">Jugar</button>
                     </div>
 
-                    <!-- Tria Responsable -->
                     <div class="repte-card">
                         <div class="repte-icon">🥺</div>
                         <h4 class="repte-nom">Tria Responsable</h4>
-                        <p class="repte-desc">Decisions en situacions reals</p>
-                        <div class="repte-rewards">
-                            <span>⭐ +60 XP</span> | <span>🪙 +12</span>
-                        </div>
-                        <button class="repte-btn repte-btn-play">Jugar</button>
+                        <p class="repte-desc">Decisions en situacions reals de conducció</p>
+                        <div class="repte-rewards"><span>⭐ +60 XP</span> | <span>🪙 +12</span></div>
+                        <button class="repte-btn" style="opacity:0.4; cursor:not-allowed;">Pròximament</button>
                     </div>
 
-                    <!-- Conducció Segura -->
-                    <div class="repte-card">
-                        <div class="repte-icon">🚗</div>
-                        <h4 class="repte-nom">Conducció Segura</h4>
-                        <p class="repte-desc">Simulador de conducció</p>
-                        <div class="repte-rewards">
-                            <span>⭐ +100 XP</span> | <span>🪙 +20</span>
-                        </div>
-                        <button class="repte-btn repte-btn-play">Jugar</button>
-                    </div>
-
-                    <!-- Aparcament Perfecte -->
-                    <div class="repte-card">
-                        <div class="repte-icon">🅿️</div>
-                        <h4 class="repte-nom">Aparcament Perfecte</h4>
-                        <p class="repte-desc">Aprèn a aparcar bé</p>
-                        <div class="repte-rewards">
-                            <span>⭐ +80 XP</span> | <span>🪙 +16</span>
-                        </div>
-                        <button class="repte-btn repte-btn-play">Jugar</button>
-                    </div>
-
-                    <!-- Prioritats -->
                     <div class="repte-card">
                         <div class="repte-icon">🔀</div>
                         <h4 class="repte-nom">Prioritats</h4>
-                        <p class="repte-desc">Qui passa primer?</p>
-                        <div class="repte-rewards">
-                            <span>⭐ +90 XP</span> | <span>🪙 +18</span>
-                        </div>
-                        <button class="repte-btn repte-btn-play">Jugar</button>
+                        <p class="repte-desc">Qui passa primer a la intersecció?</p>
+                        <div class="repte-rewards"><span>⭐ +90 XP</span> | <span>🪙 +18</span></div>
+                        <button class="repte-btn" style="opacity:0.4; cursor:not-allowed;">Pròximament</button>
                     </div>
                 </div>
-
             </div>
         </main>
     </div>
+
+    <!-- MODAL JOC -->
+    <div id="modalJoc" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:1000; align-items:center; justify-content:center;">
+        <div style="background:#1a2335; border-radius:16px; padding:32px; max-width:520px; width:90%; position:relative;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <span id="jocTitol" style="font-weight:700; font-size:16px;"></span>
+                <span id="jocProgres" style="font-size:13px; color:var(--color-primario); font-weight:700;"></span>
+            </div>
+            <div id="jocContingut"></div>
+        </div>
+    </div>
+
+    <!-- MODAL RESULTAT JOC -->
+    <div id="modalResultatJoc" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1001; align-items:center; justify-content:center;">
+        <div style="background:#1a2335; border-radius:16px; padding:40px; max-width:380px; width:90%; text-align:center;">
+            <div id="jocResultatEmoji" style="font-size:64px; margin-bottom:16px;"></div>
+            <h2 id="jocResultatTitol" style="margin-bottom:8px;"></h2>
+            <p id="jocResultatText" style="opacity:0.7; margin-bottom:16px;"></p>
+            <div id="jocResultatXP" style="font-size:22px; font-weight:700; color:var(--color-primario); margin-bottom:24px;"></div>
+            <button class="repte-btn repte-btn-play" onclick="tancarResultatJoc()">Tornar als Jocs</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
     <script src="dashboard.js"></script>
     <script>
-        const menuBtn = document.getElementById('menuBtn');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        if (menuBtn) {
-            menuBtn.addEventListener('click', () => {
-                sidebar.classList.toggle('open');
-                overlay.classList.toggle('open');
-            });
-            overlay.addEventListener('click', () => {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('open');
-            });
+    let jocEstat = null;
+
+    // ============================================================
+    // Joc: Temps de Reacció
+    // ============================================================
+    function iniciarReaccio() {
+        jocEstat = { tipus: 'reaccio', ronda: 0, temps: [], nom: 'Temps de Reacció', xp: 75 };
+        document.getElementById('jocTitol').textContent = '⚡ Temps de Reacció';
+        document.getElementById('jocProgres').textContent = '';
+        document.getElementById('modalJoc').style.display = 'flex';
+        mostrarReaccio();
+    }
+
+    function mostrarReaccio() {
+        document.getElementById('jocContingut').innerHTML = `
+            <p style="text-align:center; opacity:0.6; margin-bottom:20px;">Prem el botó quan es posi VERD!</p>
+            <div id="semafar" onclick="premut()" style="width:120px; height:120px; border-radius:50%; background:#c0392b; margin:0 auto 20px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:40px; transition:background 0.1s;">🔴</div>
+            <p id="reaccioMsg" style="text-align:center; opacity:0.6;">Espera...</p>
+        `;
+        let espera = 1500 + Math.random() * 3000;
+        jocEstat.inici = null;
+        jocEstat.esperant = true;
+        jocEstat._timeout = setTimeout(() => {
+            jocEstat.inici = Date.now();
+            jocEstat.esperant = false;
+            const sem = document.getElementById('semafar');
+            if (sem) { sem.style.background = '#27ae60'; sem.textContent = '🟢'; }
+            document.getElementById('reaccioMsg').textContent = '¡ARA!';
+        }, espera);
+    }
+
+    function premut() {
+        if (jocEstat.tipus !== 'reaccio') return;
+        clearTimeout(jocEstat._timeout);
+
+        if (jocEstat.esperant) {
+            document.getElementById('reaccioMsg').textContent = '⚠️ Massa aviat! Espera el verd.';
+            setTimeout(mostrarReaccio, 1200);
+            return;
         }
+
+        const temps = Date.now() - jocEstat.inici;
+        jocEstat.temps.push(temps);
+        jocEstat.ronda++;
+
+        document.getElementById('reaccioMsg').textContent = `${temps} ms`;
+
+        if (jocEstat.ronda >= 5) {
+            setTimeout(acabarJoc, 800);
+        } else {
+            document.getElementById('jocProgres').textContent = `${jocEstat.ronda} / 5`;
+            setTimeout(mostrarReaccio, 1000);
+        }
+    }
+
+    // ============================================================
+    // Acabar joc
+    // ============================================================
+    async function acabarJoc() {
+        document.getElementById('modalJoc').style.display = 'none';
+
+        let encerts, total, xpGuanyat, text;
+
+        if (jocEstat.tipus === 'reaccio') {
+            const temps = jocEstat.temps;
+            const avg = Math.round(temps.reduce((a,b) => a+b, 0) / temps.length);
+            encerts = temps.length;
+            total = 5;
+            xpGuanyat = avg < 300 ? 75 : avg < 500 ? 50 : 25;
+            text = `Temps mitjà: ${avg} ms`;
+        } else {
+            total = jocEstat.preguntes.length;
+            encerts = jocEstat.encerts;
+            const pct = encerts / total;
+            xpGuanyat = Math.round(jocEstat.xp * Math.max(0.2, pct));
+            text = `${encerts} / ${total} correctes`;
+        }
+
+        // Guardar XP a la BD
+        const token = localStorage.getItem('cq_token');
+        await fetch('/api/user/xp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ xp_ganado: xpGuanyat, tipus: 'joc', nom: jocEstat.nom, puntuacio: encerts })
+        }).then(r => r.json()).then(d => {
+            if (d.xp !== undefined) {
+                const u = JSON.parse(localStorage.getItem('cq_usuario') || '{}');
+                u.xp = d.xp; u.nivel = d.nivel; u.rang = d.rang;
+                localStorage.setItem('cq_usuario', JSON.stringify(u));
+                actualitzarUIUsuari(u);
+            }
+        }).catch(() => {});
+
+        document.getElementById('jocResultatEmoji').textContent = xpGuanyat >= jocEstat.xp * 0.7 ? '🎉' : '👍';
+        document.getElementById('jocResultatTitol').textContent = jocEstat.nom + ' completat!';
+        document.getElementById('jocResultatText').textContent  = text;
+        document.getElementById('jocResultatXP').textContent    = `+${xpGuanyat} XP guanyats`;
+        document.getElementById('modalResultatJoc').style.display = 'flex';
+    }
+
+    function tancarResultatJoc() {
+        document.getElementById('modalResultatJoc').style.display = 'none';
+    }
+
+    // ============================================================
+    // Init
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', async () => {
+        if (!requireAuth()) return;
+        initSidebar();
+        await carregarUsuari();
+    });
     </script>
 </body>
 </html>
