@@ -347,10 +347,12 @@
 
                 <ul class="rules-list">
                     <li data-icon="🎮">Controla el cotxe amb les tecles de cursor o WASD</li>
-                    <li data-icon="🅿️">Aparca completament dins la plaça groga</li>
+                    <li data-icon="🅿️">Segueix els passos ①②③ indicats a la pantalla</li>
+                    <li data-icon="🛑">Atura el cotxe dins la plaça per confirmar l'aparcat</li>
                     <li data-icon="💥">Si xoques amb un obstacle perds una vida</li>
-                    <li data-icon="⭐">Quant més centrat, millor puntuació</li>
-                    <li data-icon="🪙">Guanya fins a <strong>+80 XP</strong> i <strong>+16 monedes</strong></li>
+                    <li data-icon="⭐">Quant més centrat i quiet, millor precisió</li>
+                    <li data-icon="🎓">Seguir els passos correctes dona <strong>+25 XP</strong> extra per nivell</li>
+                    <li data-icon="🪙">Guanya fins a <strong>+155 XP</strong> i <strong>+21 monedes</strong></li>
                 </ul>
 
                 <div>
@@ -430,7 +432,7 @@
                         <div class="ritem-label">Cops totals</div>
                         <div class="ritem-val red"    id="resHits">—</div>
                     </div>
-                    <div class="ritem">
+                    <div class="ritem" style="grid-column: 1 / -1;">
                         <div class="ritem-label">Precisió final</div>
                         <div class="ritem-val green"  id="resAcc">—</div>
                     </div>
@@ -534,6 +536,12 @@ let levelsOK     = 0;
 let loopId       = null;
 let overlayTimer = null;
 
+// Seguiment de passos
+let stepsCompleted = [false, false]; // [step1, step2] per nivell actual
+let stepsBonus     = 0;             // XP bonus acumulat pels passos correctes
+let parkedFrames   = 0;             // frames que el cotxe porta quiet dins la plaça
+const PARK_HOLD    = 45;            // frames necessaris per registrar aparcat (~0.75s)
+
 // Cotxe
 const car = {
     x: 0, y: 0,
@@ -575,6 +583,7 @@ function startGame() {
     totalMoves = 0;
     levelsOK   = 0;
     levelIndex = 0;
+    stepsBonus = 0;
 
     showScreen('Game');
     loadLevel(levelIndex);
@@ -592,6 +601,8 @@ function loadLevel(idx) {
     car.y     = lvl.carStart.y;
     car.angle = lvl.carStart.angle;
     car.speed = 0;
+    stepsCompleted = [false, false];
+    parkedFrames   = 0;
     updateHUD();
     document.getElementById('statHits').textContent  = totalHits;
     document.getElementById('statAcc').textContent   = '—';
@@ -703,6 +714,39 @@ function updateCar() {
 }
 
 // ====================================================
+//  Seguiment de passos
+// ====================================================
+function trackSteps(lvl, carBox) {
+    const carCX = carBox.x + carBox.w / 2;
+    const carCY = carBox.y + carBox.h / 2;
+
+    if (lvl.requireHorizontal) {
+        // ---- Aparcament en paral·lel ----
+        // Pas 1: el cotxe passa per davant del cotxe de davant (dreta)
+        const frontObs = lvl.obstacles[1];
+        if (!stepsCompleted[0] && carCX > frontObs.x) {
+            stepsCompleted[0] = true;
+        }
+        // Pas 2: el cotxe fa marxa enrere cap a la plaça
+        if (stepsCompleted[0] && !stepsCompleted[1] &&
+                carCY > lvl.spot.y - 60 && car.speed < -0.2) {
+            stepsCompleted[1] = true;
+        }
+    } else if (lvl.roadY) {
+        // ---- Aparcament perpendicular / en bateria ----
+        // Pas 1: el cotxe s'alinea a la carretera davant la plaça
+        if (!stepsCompleted[0] && carCY > lvl.roadY + 10 &&
+                carCX > lvl.spot.x - 30 && carCX < lvl.spot.x + lvl.spot.w + 30) {
+            stepsCompleted[0] = true;
+        }
+        // Pas 2: el cotxe entra a la zona d'aparcar creuant la línia de carretera
+        if (stepsCompleted[0] && !stepsCompleted[1] && carCY < lvl.roadY) {
+            stepsCompleted[1] = true;
+        }
+    }
+}
+
+// ====================================================
 //  Col·lisions i detecció d'aparcat
 // ====================================================
 function checkCollisions() {
@@ -714,25 +758,50 @@ function checkCollisions() {
     // Xoc amb obstacles
     for (const obs of lvl.obstacles) {
         if (rectsOverlap(carBox, obs)) {
+            parkedFrames = 0;
             handleHit();
             return;
         }
     }
+
+    // Seguiment de passos (sempre que el cotxe es mou)
+    trackSteps(lvl, carBox);
 
     // Verificació que el cotxe és completament dins la plaça
     if (isCarInsideSpot(carBox, lvl.spot)) {
         // Si cal alineació horitzontal (aparcament en paral·lel),
         // comprova que el cotxe estigui alineat ±35° respecte a l'horitzontal
         if (lvl.requireHorizontal && Math.abs(Math.cos(car.angle)) > 0.57) {
-            // Cotxe a dins però mal alineat — mostra pista
             showAlignHint();
+            parkedFrames = 0;
             return;
         }
         hideAlignHint();
-        const accuracy = computeAccuracy(carBox, lvl.spot);
-        handleParked(accuracy);
+
+        // El cotxe ha d'estar quiet dins la plaça per registrar l'aparcat
+        if (Math.abs(car.speed) < 0.08) {
+            parkedFrames++;
+            if (parkedFrames < PARK_HOLD) {
+                // Mostra progrés d'aparcat (0→100%)
+                const pct = Math.round((parkedFrames / PARK_HOLD) * 100);
+                document.getElementById('statAcc').textContent = '🅿️ ' + pct + '%';
+            } else if (parkedFrames === PARK_HOLD) {
+                const accuracy = computeAccuracy(carBox, lvl.spot);
+                handleParked(accuracy);
+            }
+        } else {
+            // El cotxe s'ha mogut: reinicia el comptador
+            if (parkedFrames > 0) {
+                parkedFrames = 0;
+                document.getElementById('statAcc').textContent = '—';
+            }
+        }
     } else {
         hideAlignHint();
+        if (parkedFrames > 0) {
+            parkedFrames = 0;
+            document.getElementById('statAcc').textContent = '—';
+        }
     }
 }
 
@@ -792,9 +861,16 @@ function handleParked(accuracy) {
     levelsOK++;
     document.getElementById('statAcc').textContent = accuracy + '%';
 
+    // Bonus per seguir els passos correctes
+    const allStepsDone = stepsCompleted[0] && stepsCompleted[1];
+    if (allStepsDone) stepsBonus += 25; // +25 XP per nivell amb passos correctes
+
     const emoji = accuracy >= 90 ? '🏆' : accuracy >= 70 ? '⭐' : '✅';
     const text  = accuracy >= 90 ? 'Perfecte!' : accuracy >= 70 ? 'Molt bé!' : 'Aparcat!';
-    showOverlay(emoji, text, `Precisió: ${accuracy}%`);
+    let sub = `Precisió: ${accuracy}%`;
+    if (allStepsDone) sub += ' · 🎓 Passos correctes! +25 XP';
+
+    showOverlay(emoji, text, sub);
 
     overlayTimer = setTimeout(() => {
         levelIndex++;
@@ -804,7 +880,7 @@ function handleParked(accuracy) {
             loadLevel(levelIndex);
             gameState = 'playing';
         }
-    }, 2000);
+    }, 2500);
 }
 
 // ====================================================
@@ -844,8 +920,8 @@ function showGameover() {
 
     let xp    = 80;
     let coins = 16;
-    xp    = Math.max(10, xp - totalHits * 8 + levelsOK * 15);
-    coins = Math.max(3,  coins - totalHits * 2 + levelsOK * 3);
+    xp    = Math.max(10, xp - totalHits * 8 + levelsOK * 15 + stepsBonus);
+    coins = Math.max(3,  coins - totalHits * 2 + levelsOK * 3 + Math.round(stepsBonus / 5));
 
     document.getElementById('resLevels').textContent  = levelsOK + ' / ' + total;
     document.getElementById('resHits').textContent    = totalHits;
@@ -875,6 +951,36 @@ function render() {
     drawObstacles(lvl.obstacles);
     drawCar();
     drawArrow(lvl);
+    drawParkProgress(lvl.spot);
+}
+
+/* --- Barra de progrés d'aparcat (quan el cotxe s'atura dins la plaça) --- */
+function drawParkProgress(spot) {
+    if (parkedFrames <= 0 || gameState !== 'playing') return;
+    const pct  = Math.min(parkedFrames / PARK_HOLD, 1);
+    const bw   = spot.w + 12;
+    const bx   = spot.x - 6;
+    const by   = spot.y + spot.h + 6;
+    const bh   = 8;
+
+    // Fons
+    ctx.fillStyle = 'rgba(0,0,0,0.4)';
+    ctx.beginPath();
+    ctx.roundRect(bx, by, bw, bh, 4);
+    ctx.fill();
+
+    // Omplerta
+    const fillColor = pct >= 1 ? '#06A77D' : '#FFD700';
+    ctx.fillStyle = fillColor;
+    ctx.beginPath();
+    ctx.roundRect(bx, by, bw * pct, bh, 4);
+    ctx.fill();
+
+    // Text
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.font = 'bold 10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Manté quiet per aparcar!', spot.x + spot.w / 2, by + bh + 12);
 }
 
 /* --- Sòl i murs --- */
@@ -933,9 +1039,9 @@ function drawRefs(lvl) {
         ctx.stroke();
         ctx.setLineDash([]);
 
-        ctx.fillStyle   = 'rgba(100,200,255,0.9)';
+        ctx.fillStyle   = stepsCompleted[0] ? 'rgba(100,255,150,1)' : 'rgba(100,200,255,0.9)';
         ctx.textAlign   = 'center';
-        ctx.fillText('① Para aquí quan la passis', frontCarX, 26);
+        ctx.fillText((stepsCompleted[0] ? '✓ ' : '') + '① Para aquí quan la passis', frontCarX, 26);
 
         // --- REFERÈNCIA ②: arc de trajectòria de marxa enrere ---
         // En la vida real: gira cap a la dreta mentre fas marxa enrere
@@ -956,9 +1062,9 @@ function drawRefs(lvl) {
         drawPathArrow(frontCarX - 20, roadY + 22, 110);
         drawPathArrow(spotCX + 35,    spotCY - 8,  160);
 
-        ctx.fillStyle = 'rgba(255,200,80,0.9)';
+        ctx.fillStyle = stepsCompleted[1] ? 'rgba(100,255,150,1)' : 'rgba(255,200,80,0.9)';
         ctx.textAlign = 'left';
-        ctx.fillText('② Marxa enrere + gira a la dreta', frontCarX - 90, roadY + 14);
+        ctx.fillText((stepsCompleted[1] ? '✓ ' : '') + '② Marxa enrere + gira a la dreta', frontCarX - 90, roadY + 14);
 
         // --- REFERÈNCIA ③: endreça dins la plaça ---
         ctx.fillStyle = 'rgba(100,255,150,0.85)';
@@ -994,10 +1100,10 @@ function drawRefs(lvl) {
         // punta de fletxa →
         drawPathArrow(spotCX - 4, lvl.roadY + 20, 0);
 
-        ctx.fillStyle = 'rgba(100,200,255,0.9)';
+        ctx.fillStyle = stepsCompleted[0] ? 'rgba(100,255,150,1)' : 'rgba(100,200,255,0.9)';
         ctx.textAlign = 'center';
         ctx.font = 'bold 11px sans-serif';
-        ctx.fillText('① Avança fins davant la plaça', spotCX - 30, lvl.roadY + 35);
+        ctx.fillText((stepsCompleted[0] ? '✓ ' : '') + '① Avança fins davant la plaça', spotCX - 30, lvl.roadY + 35);
 
         // =============================================
         // REFERÈNCIA ②: entra perpendicular a la plaça
@@ -1014,9 +1120,9 @@ function drawRefs(lvl) {
         // punta de fletxa ↑
         drawPathArrow(spotCX, lvl.spot.y + lvl.spot.h + 6, -90);
 
-        ctx.fillStyle = 'rgba(255,200,80,0.9)';
+        ctx.fillStyle = stepsCompleted[1] ? 'rgba(100,255,150,1)' : 'rgba(255,200,80,0.9)';
         ctx.textAlign = 'center';
-        ctx.fillText('② Gira i entra perpendicular', spotCX, lvl.roadY - 5);
+        ctx.fillText((stepsCompleted[1] ? '✓ ' : '') + '② Gira i entra perpendicular', spotCX, lvl.roadY - 5);
 
         // =============================================
         // REFERÈNCIA ③: centra el cotxe dins la plaça
