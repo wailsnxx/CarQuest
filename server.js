@@ -27,6 +27,14 @@ const PREGUNTES_DGT = todasPreguntes
 
 console.log(`📚 ${PREGUNTES_DGT.length} preguntes DGT carregades`);
 
+// Primera meitat dividida en tests de 30 preguntes
+const meitat = Math.floor(PREGUNTES_DGT.length / 2);
+const TESTS_NORMALS = [];
+for (let i = 0; i < meitat; i += 30) {
+    TESTS_NORMALS.push(PREGUNTES_DGT.slice(i, i + 30));
+}
+console.log(`📋 ${TESTS_NORMALS.length} tests numerats creats (${meitat} preguntes)`);
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -260,6 +268,20 @@ app.get('/api/preguntes', (req, res) => {
     const n = Math.min(parseInt(req.query.n) || 10, 30);
     const barrejades = [...PREGUNTES_DGT].sort(() => Math.random() - 0.5);
     res.json(barrejades.slice(0, n));
+});
+
+// GET /api/tests/list — llista de tests numerats
+app.get('/api/tests/list', (req, res) => {
+    res.json(TESTS_NORMALS.map((t, i) => ({ num: i + 1, total: t.length })));
+});
+
+// GET /api/tests/:num — preguntes d'un test concret
+app.get('/api/tests/:num', (req, res) => {
+    const num = parseInt(req.params.num);
+    if (isNaN(num) || num < 1 || num > TESTS_NORMALS.length) {
+        return res.status(404).json({ error: 'Test no trobat' });
+    }
+    res.json(TESTS_NORMALS[num - 1]);
 });
 
 // ============================================================

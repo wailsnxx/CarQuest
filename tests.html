@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ca">
+<html lang="es">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -11,20 +11,20 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
                 <div class="logo-box"></div>
-                <div><h1>CarQuest</h1><p>Aprèn a conduir jugant</p></div>
+                <div><h1>CarQuest</h1><p>Aprende a conducir jugando</p></div>
             </div>
             <nav class="sidebar-nav">
                 <div class="sidebar-section-label">Principal</div>
-                <a href="inici.html" class="sidebar-link"><span class="sidebar-link-icon">🏠</span> Inici</a>
+                <a href="inici.html" class="sidebar-link"><span class="sidebar-link-icon">🏠</span> Inicio</a>
                 <a href="perfil.html" class="sidebar-link"><span class="sidebar-link-icon">👤</span> Perfil</a>
-                <div class="sidebar-section-label">Aprendre</div>
-                <a href="teoria.html" class="sidebar-link"><span class="sidebar-link-icon">📖</span> Teoria</a>
-                <a href="jocs.html" class="sidebar-link"><span class="sidebar-link-icon">🎯</span> Jocs</a>
+                <div class="sidebar-section-label">Aprender</div>
+                <a href="teoria.html" class="sidebar-link"><span class="sidebar-link-icon">📖</span> Teoría</a>
+                <a href="jocs.html" class="sidebar-link"><span class="sidebar-link-icon">🎯</span> Juegos</a>
                 <a href="tests.html" class="sidebar-link activo"><span class="sidebar-link-icon">📝</span> Tests</a>
-                <a href="diaris.html" class="sidebar-link"><span class="sidebar-link-icon">📅</span> Diaris</a>
-                <div class="sidebar-section-label">Comunitat</div>
-                <a href="ranquing.html" class="sidebar-link"><span class="sidebar-link-icon">🏆</span> Rànquing</a>
-                <a href="botiga.html" class="sidebar-link"><span class="sidebar-link-icon">🛒</span> Botiga</a>
+                <a href="diaris.html" class="sidebar-link"><span class="sidebar-link-icon">📅</span> Diarios</a>
+                <div class="sidebar-section-label">Comunidad</div>
+                <a href="ranquing.html" class="sidebar-link"><span class="sidebar-link-icon">🏆</span> Ranking</a>
+                <a href="botiga.html" class="sidebar-link"><span class="sidebar-link-icon">🛒</span> Tienda</a>
             </nav>
             <div class="sidebar-bottom">
                 <div class="sidebar-user">
@@ -44,8 +44,8 @@
             </div>
             <div class="content-sheet">
                 <div class="page-header">
-                    <div class="page-title">Tests de Conducció</div>
-                    <a href="#" onclick="tancarSessio()" class="btn-logout-header">Tancar sessió</a>
+                    <div class="page-title">Tests de Conducción</div>
+                    <a href="#" onclick="tancarSessio()" class="btn-logout-header">Cerrar sesión</a>
                 </div>
 
                 <div class="test-stats-row">
@@ -56,67 +56,67 @@
                     </div>
                     <div class="test-stat-box">
                         <div class="test-stat-icon">✅</div>
-                        <div class="test-stat-label">Aprovats</div>
+                        <div class="test-stat-label">Aprobados</div>
                         <div class="test-stat-value js-aprovats" style="color:var(--color-exito);">0</div>
                     </div>
                     <div class="test-stat-box">
                         <div class="test-stat-icon">❌</div>
-                        <div class="test-stat-label">Suspesos</div>
+                        <div class="test-stat-label">Suspendidos</div>
                         <div class="test-stat-value js-suspesos" style="color:var(--color-error);">0</div>
                     </div>
                     <div class="test-stat-box">
                         <div class="test-stat-icon">🎯</div>
-                        <div class="test-stat-label">% Èxit</div>
+                        <div class="test-stat-label">% Éxito</div>
                         <div class="test-stat-value js-exit" style="color:var(--color-primario);">0%</div>
                     </div>
                 </div>
 
-                <div class="test-cards-grid">
+                <div id="vistaCards" class="test-cards-grid">
                     <div class="test-card">
                         <div class="test-card-icon">📝</div>
-                        <h4 class="test-card-title" style="color:#3b82f6;">Test Normal</h4>
-                        <p class="test-card-desc">30 preguntes amb resposta immediata</p>
+                        <h4 class="test-card-title" style="color:#3b82f6;">Tests Numerados</h4>
+                        <p class="test-card-desc">Practica con tests ordenados del 1 al final</p>
                         <ul class="test-card-features">
-                            <li>📋 30 preguntes</li>
-                            <li>✓ Resposta immediata</li>
-                            <li>⭐ +50 XP si aproves</li>
+                            <li>📋 30 preguntas por test</li>
+                            <li>✓ Respuesta inmediata</li>
+                            <li>⭐ +50 XP si apruebas</li>
                         </ul>
-                        <button class="repte-btn repte-btn-play" onclick="iniciarTest('normal',30,50,false,false)">Començar</button>
+                        <button class="repte-btn repte-btn-play" onclick="mostrarTestsNumerados()">Ver Tests</button>
                     </div>
 
                     <div class="test-card test-card-killer" id="killerCard">
                         <div class="test-card-icon">🔥</div>
                         <h4 class="test-card-title" style="color:var(--color-error);">Test Killer</h4>
-                        <p class="test-card-desc">El test més difícil. Arribes al final?</p>
+                        <p class="test-card-desc">El test más difícil. ¿Llegas al final?</p>
                         <ul class="test-card-features">
-                            <li>🔥 Preguntes reals DGT</li>
-                            <li>💀 Nivell extrem de dificultat</li>
-                            <li>⭐ +150 XP si arribes al final</li>
+                            <li>🔥 Preguntas reales DGT</li>
+                            <li>💀 Nivel extremo de dificultad</li>
+                            <li>⭐ +150 XP si llegas al final</li>
                             <li id="killerProgress" style="color:#f59e0b;"></li>
                         </ul>
-                        <button id="killerBtn" class="repte-btn repte-btn-killer" onclick="iniciarTest('killer',10,150,true,false)">Repte Killer</button>
+                        <button id="killerBtn" class="repte-btn repte-btn-killer" onclick="iniciarTest('killer',10,150,true,false)">Reto Killer</button>
                     </div>
 
                     <div class="test-card test-card-killer">
                         <div class="test-card-icon">❌</div>
-                        <h4 class="test-card-title" style="color:#e74c3c;">Test d'Errors</h4>
-                        <p class="test-card-desc">Repassa les preguntes que has fallat</p>
+                        <h4 class="test-card-title" style="color:#e74c3c;">Test de Errores</h4>
+                        <p class="test-card-desc">Repasa las preguntas que has fallado</p>
                         <ul class="test-card-features">
-                            <li>❌ Preguntes fallades anteriorment</li>
-                            <li>🔁 Repassa fins dominar-les</li>
-                            <li>⭐ +60 XP si aproves</li>
+                            <li>❌ Preguntas falladas anteriormente</li>
+                            <li>🔁 Repasa hasta dominarlas</li>
+                            <li>⭐ +60 XP si apruebas</li>
                         </ul>
-                        <button class="repte-btn repte-btn-killer" onclick="iniciarTestErrors()">Repassar errors</button>
+                        <button class="repte-btn repte-btn-killer" onclick="iniciarTestErrores()">Repasar errores</button>
                     </div>
 
                     <div class="test-card">
                         <div class="test-card-icon">📚</div>
-                        <h4 class="test-card-title">Test per Temes</h4>
-                        <p class="test-card-desc">Escull un tema específic</p>
+                        <h4 class="test-card-title">Test por Temas</h4>
+                        <p class="test-card-desc">Elige un tema específico</p>
                         <div class="test-temes-list">
-                            <a href="#" class="test-tema-link" onclick="iniciarTest('normal',10,30,false,false)">Senyals</a>
-                            <a href="#" class="test-tema-link" onclick="iniciarTest('normal',10,30,false,false)">Normes</a>
-                            <a href="#" class="test-tema-link" onclick="iniciarTest('normal',10,30,false,false)">Seguretat</a>
+                            <a href="#" class="test-tema-link" onclick="iniciarTest('normal',10,30,false,false)">Señales</a>
+                            <a href="#" class="test-tema-link" onclick="iniciarTest('normal',10,30,false,false)">Normas</a>
+                            <a href="#" class="test-tema-link" onclick="iniciarTest('normal',10,30,false,false)">Seguridad</a>
                         </div>
                     </div>
 
@@ -124,16 +124,28 @@
                         <div class="test-card-icon" style="font-size: 48px; flex-shrink: 0;">📋</div>
                         <div style="flex: 1;">
                         <h4 class="test-card-title">Examen Oficial</h4>
-                        <p class="test-card-desc">Simulació examen real DGT · 30 preguntes</p>
+                        <p class="test-card-desc">Simulación examen real DGT · 30 preguntas</p>
                         <ul class="test-card-features">
-                            <li>📝 30 preguntes reals DGT</li>
-                            <li>❓ Resultat al final</li>
-                            <li>⭐ +100 XP si aproves</li>
+                            <li>📝 30 preguntas reales DGT</li>
+                            <li>❓ Resultado al final</li>
+                            <li>⭐ +100 XP si apruebas</li>
                         </ul>
                         <button class="repte-btn repte-btn-examen" onclick="iniciarTest('examen',30,100,false,true)">🎓 Examen</button>
                         </div>
                     </div>
                 </div>
+
+                <!-- VISTA TESTS NUMERADOS -->
+                <div id="vistaTestsNumerados" style="display:none;">
+                    <div style="display:flex; align-items:center; gap:14px; margin-bottom:24px;">
+                        <button onclick="volverACards()" style="background:#0f1c2e; border:1px solid #2a3a52; color:#3b82f6; padding:8px 16px; border-radius:8px; cursor:pointer; font-size:14px; font-weight:600;">← Volver</button>
+                        <h3 style="margin:0; color:#fff; font-size:18px;">Tests Numerados</h3>
+                    </div>
+                    <div id="testsNumeradosLista" style="display:flex; flex-direction:column; gap:10px;">
+                        <span style="opacity:0.5; font-size:13px;">Cargando...</span>
+                    </div>
+                </div>
+
             </div>
         </main>
     </div>
@@ -150,18 +162,19 @@
             <div id="testOpcions" style="display:flex; flex-direction:column; gap:10px;"></div>
             <div id="testFeedback" style="display:none; margin-top:14px; padding:12px 16px; border-radius:10px; font-weight:600;"></div>
             <div id="testExplicacio" style="display:none; margin-top:10px; padding:14px 16px; border-radius:10px; background:#1e2d1a; border-left:4px solid #f59e0b; font-size:13px; line-height:1.6; color:#e8d5a3;"></div>
-            <button id="testSeguent" style="display:none; margin-top:16px; width:100%;" class="repte-btn repte-btn-play" onclick="seguent()">Següent →</button>
+            <button id="testSeguent" style="display:none; margin-top:16px; width:100%;" class="repte-btn repte-btn-play" onclick="siguiente()">Siguiente →</button>
         </div>
     </div>
 
-    <!-- MODAL RESULTAT -->
+    <!-- MODAL RESULTADO -->
     <div id="modalResultat" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:1001; align-items:center; justify-content:center;">
         <div style="background:#1a2335; border-radius:16px; padding:40px; max-width:400px; width:90%; text-align:center;">
             <div id="resultatEmoji" style="font-size:60px; margin-bottom:12px;"></div>
             <h2 id="resultatTitol" style="margin-bottom:8px;"></h2>
-            <p id="resultatText" style="opacity:0.7; margin-bottom:20px;"></p>
+            <p id="resultatText" style="opacity:0.7; margin-bottom:8px;"></p>
+            <p id="resultatErrors" style="margin-bottom:20px; font-size:14px;"></p>
             <div id="resultatXP" style="font-size:22px; font-weight:700; color:var(--color-primario); margin-bottom:24px;"></div>
-            <button class="repte-btn repte-btn-play" onclick="tancarResultat()">Tornar als Tests</button>
+            <button class="repte-btn repte-btn-play" onclick="cerrarResultado()">Volver a los Tests</button>
         </div>
     </div>
 
@@ -170,22 +183,78 @@
     <script>
     let estat = null;
 
+    function testResultsKey() {
+        const u = obtUsuari();
+        return `cq_test_results_${u ? u.id : 'anon'}`;
+    }
+
+    async function cargarTestsNumerados() {
+        const lista = await fetch('/api/tests/list').then(r => r.json()).catch(() => []);
+        const results = JSON.parse(localStorage.getItem(testResultsKey()) || '{}');
+        const contenedor = document.getElementById('testsNumeradosLista');
+        contenedor.innerHTML = '';
+        lista.forEach(t => {
+            const res = results[t.num];
+            let borderColor = '#2a3a52';
+            let badge = '';
+            if (res) {
+                if (res.aprovat) {
+                    borderColor = '#22c55e';
+                    badge = `<div style="margin-top:4px; color:#22c55e; font-size:12px; font-weight:600;">✅ Aprobado · ${res.errors} error${res.errors !== 1 ? 'es' : ''}</div>`;
+                } else {
+                    borderColor = '#ef4444';
+                    badge = `<div style="margin-top:4px; color:#ef4444; font-size:12px; font-weight:600;">❌ Suspendido · ${res.errors} errores</div>`;
+                }
+            }
+            const fila = document.createElement('div');
+            fila.style.cssText = `display:flex; align-items:center; justify-content:space-between; background:#1a2335; border:1px solid ${borderColor}; border-radius:12px; padding:14px 18px;`;
+            fila.innerHTML = `
+                <div>
+                    <span style="font-weight:700; color:#fff; font-size:15px;">Test ${t.num}</span>
+                    <span style="color:#888; font-size:13px; margin-left:10px;">${t.total} preguntas</span>
+                    ${badge}
+                </div>
+                <button class="repte-btn repte-btn-play" style="width:auto; padding:7px 18px; font-size:13px;" onclick="iniciarTestNumerado(${t.num})">${res ? 'Repetir' : 'Empezar'}</button>
+            `;
+            contenedor.appendChild(fila);
+        });
+    }
+
+    function mostrarTestsNumerados() {
+        document.getElementById('vistaCards').style.display = 'none';
+        document.getElementById('vistaTestsNumerados').style.display = 'block';
+    }
+
+    function volverACards() {
+        document.getElementById('vistaTestsNumerados').style.display = 'none';
+        document.getElementById('vistaCards').style.display = 'grid';
+    }
+
+    async function iniciarTestNumerado(num) {
+        const preguntes = await fetch(`/api/tests/${num}`).then(r => r.json()).catch(() => []);
+        if (!preguntes.length) { alert('Error cargando el test'); return; }
+        estat = { tipus: 'normal', preguntes, xpMaxim: 50, killer: false, examen: false, index: 0, encerts: 0, errors: 0, testNum: num };
+        document.getElementById('testTipus').textContent = `Test ${num}`;
+        mostrarPregunta();
+        document.getElementById('modalTest').style.display = 'flex';
+    }
+
     function errKey() {
         const u = obtUsuari();
         return `cq_errors_${u ? u.id : 'anon'}`;
     }
 
-    async function iniciarTestErrors() {
+    async function iniciarTestErrores() {
         const preguntes = JSON.parse(localStorage.getItem(errKey()) || '[]')
             .sort(() => Math.random() - 0.5);
 
         if (!preguntes.length) {
-            alert('Encara no tens preguntes fallades. Fes un test primer!');
+            alert('Todavía no tienes preguntas falladas. ¡Haz un test primero!');
             return;
         }
 
         estat = { tipus: 'errors', preguntes, xpMaxim: 60, killer: false, examen: false, index: 0, encerts: 0, errors: 0 };
-        document.getElementById('testTipus').textContent = 'Test d\'Errors';
+        document.getElementById('testTipus').textContent = 'Test de Errores';
         mostrarPregunta();
         document.getElementById('modalTest').style.display = 'flex';
     }
@@ -194,7 +263,7 @@
         const preguntes = await fetch(`/api/preguntes?n=${numPreguntes}`)
             .then(r => r.json()).catch(() => []);
 
-        if (!preguntes.length) { alert('Error carregant preguntes'); return; }
+        if (!preguntes.length) { alert('Error cargando preguntas'); return; }
 
         estat = { tipus, preguntes, xpMaxim, killer, examen, index: 0, encerts: 0, errors: 0 };
         document.getElementById('testTipus').textContent = {
@@ -231,12 +300,12 @@
             const btn = document.createElement('button');
             btn.style.cssText = 'background:#0f1c2e; border:1px solid #2a3a52; color:#fff; text-align:left; padding:12px 16px; border-radius:10px; cursor:pointer; font-size:14px; transition:background 0.15s; width:100%;';
             btn.textContent = `${['A','B','C'][i]}. ${op}`;
-            btn.onclick = () => resposta(i, btn, q);
+            btn.onclick = () => respuesta(i, btn, q);
             opcions.appendChild(btn);
         });
     }
 
-    function resposta(idx, btn, q) {
+    function respuesta(idx, btn, q) {
         const { killer, examen } = estat;
         const correcte = idx === q.correcta;
 
@@ -249,18 +318,16 @@
         const key = errKey();
         if (correcte) {
             estat.encerts++;
-            // Si estem al test d'errors i ho encertem, eliminar de la llista
             if (estat.tipus === 'errors') {
                 const stored = JSON.parse(localStorage.getItem(key) || '[]');
                 localStorage.setItem(key, JSON.stringify(stored.filter(e => e.pregunta !== q.pregunta)));
             }
             if (!examen) {
                 const fb = document.getElementById('testFeedback');
-                fb.textContent = '✅ Correcte!'; fb.style.background = '#1a4a2e'; fb.style.display = 'block';
+                fb.textContent = '✅ ¡Correcto!'; fb.style.background = '#1a4a2e'; fb.style.display = 'block';
             }
         } else {
             estat.errors++;
-            // Guardar pregunta fallada a localStorage (sense duplicats)
             const stored = JSON.parse(localStorage.getItem(key) || '[]');
             if (!stored.find(e => e.pregunta === q.pregunta)) {
                 stored.push(q);
@@ -268,9 +335,9 @@
             }
             if (!examen) {
                 const fb = document.getElementById('testFeedback');
-                fb.textContent = '❌ Incorrecte'; fb.style.background = '#4a1a1e'; fb.style.display = 'block';
+                fb.textContent = '❌ Incorrecto'; fb.style.background = '#4a1a1e'; fb.style.display = 'block';
                 const ex = document.getElementById('testExplicacio');
-                ex.innerHTML = `<strong>💡 Explicació:</strong> ${q.explicacio || 'La resposta correcta és l\'opció marcada en verd.'}`;
+                ex.innerHTML = `<strong>💡 Explicación:</strong> ${q.explicacio || 'La respuesta correcta es la opción marcada en verde.'}`;
                 ex.style.display = 'block';
             }
             if (killer) { setTimeout(acabarTest, 900); return; }
@@ -279,7 +346,7 @@
         document.getElementById('testSeguent').style.display = 'block';
     }
 
-    function seguent() {
+    function siguiente() {
         estat.index++;
         if (estat.index >= estat.preguntes.length) acabarTest();
         else mostrarPregunta();
@@ -307,7 +374,6 @@
             }
         }).catch(() => {});
 
-        // Actualitzar comptadors de stats a pantalla
         const apEl  = document.querySelector('.js-aprovats');
         const susEl = document.querySelector('.js-suspesos');
         const totEl = document.querySelector('.js-total');
@@ -319,21 +385,38 @@
         const exitEl = document.querySelector('.js-exit');
         if (exitEl && tot2 > 0) exitEl.textContent = `${Math.round((ap2/tot2)*100)}%`;
 
+        const { errors } = estat;
+
+        if (estat.testNum) {
+            const rKey = testResultsKey();
+            const results = JSON.parse(localStorage.getItem(rKey) || '{}');
+            results[estat.testNum] = { errors, aprovat: errors <= 3 };
+            localStorage.setItem(rKey, JSON.stringify(results));
+        }
+
         document.getElementById('resultatEmoji').textContent = aprovat ? '🎉' : '😅';
-        document.getElementById('resultatTitol').textContent = aprovat ? 'Aprovat!' : 'Suspès';
-        document.getElementById('resultatText').textContent  = `${encerts} / ${total} correctes (${pct}%)`;
-        document.getElementById('resultatXP').textContent    = `+${xpGuanyat} XP guanyats`;
+        document.getElementById('resultatTitol').textContent = aprovat ? '¡Aprobado!' : 'Suspenso';
+        document.getElementById('resultatText').textContent  = `${encerts} / ${total} correctas (${pct}%)`;
+        const errEl = document.getElementById('resultatErrors');
+        if (errors > 0) {
+            errEl.innerHTML = `<span style="color:#ef4444;">❌ ${errors} pregunta${errors > 1 ? 's' : ''} fallada${errors > 1 ? 's' : ''} · guardadas en el Test de Errores</span>`;
+        } else {
+            errEl.innerHTML = `<span style="color:#22c55e;">✅ ¡Sin errores! Test perfecto</span>`;
+        }
+        document.getElementById('resultatXP').textContent    = `+${xpGuanyat} XP ganados`;
         document.getElementById('modalResultat').style.display = 'flex';
     }
 
-    function tancarResultat() {
+    function cerrarResultado() {
         document.getElementById('modalResultat').style.display = 'none';
+        cargarTestsNumerados();
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
         if (!requireAuth()) return;
         initSidebar();
         await carregarUsuari();
+        cargarTestsNumerados();
 
         const token = localStorage.getItem('cq_token');
         const stats = await fetch('/api/user/stats', {
@@ -348,17 +431,16 @@
         document.querySelector('.js-total').textContent    = tot;
         document.querySelector('.js-exit').textContent     = tot > 0 ? `${Math.round((ap/tot)*100)}%` : '0%';
 
-        // Desbloqueig Killer: cal fer 15 tests normals o d'examen
         const KILLER_REQUIRED = 15;
         if (tot < KILLER_REQUIRED) {
             const killerBtn = document.getElementById('killerBtn');
             const killerProgress = document.getElementById('killerProgress');
             killerBtn.disabled = true;
-            killerBtn.textContent = `🔒 Bloquejat`;
+            killerBtn.textContent = `🔒 Bloqueado`;
             killerBtn.style.opacity = '0.45';
             killerBtn.style.cursor = 'not-allowed';
             killerBtn.onclick = null;
-            killerProgress.textContent = `🔓 Fes ${KILLER_REQUIRED - tot} tests més per desbloquejar (${tot}/${KILLER_REQUIRED})`;
+            killerProgress.textContent = `🔓 Haz ${KILLER_REQUIRED - tot} tests más para desbloquearlo (${tot}/${KILLER_REQUIRED})`;
         }
     });
     </script>
