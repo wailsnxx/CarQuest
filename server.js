@@ -236,8 +236,8 @@ app.get('/api/user/stats', verificarToken, async (req, res) => {
     try {
         const result = await pool.query(`
             SELECT
-                COUNT(*) FILTER (WHERE tipus = 'test' AND completat = true)  AS tests_aprovats,
-                COUNT(*) FILTER (WHERE tipus = 'test' AND completat = false) AS tests_suspesos,
+                COUNT(*) FILTER (WHERE tipus = 'test')          AS tests_aprovats,
+                COUNT(*) FILTER (WHERE tipus = 'test_suspens')  AS tests_suspesos,
                 COUNT(*) FILTER (WHERE tipus = 'joc'  AND completat = true)  AS jocs_completats
             FROM progres WHERE user_id = $1
         `, [req.user.id]);
