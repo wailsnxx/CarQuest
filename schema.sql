@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS users (
     xp          INTEGER DEFAULT 0,
     nivel       INTEGER DEFAULT 1,
     rang        VARCHAR(50) DEFAULT 'Conductor Novell',
+    racha       INTEGER DEFAULT 0,
+    ultima_activitat DATE DEFAULT NULL,
     created_at  TIMESTAMP DEFAULT NOW()
 );
 
@@ -42,6 +44,14 @@ BEGIN
     END IF;
 END;
 $$ LANGUAGE plpgsql;
+
+-- ============================================================
+-- ============================================================
+-- MIGRATION: add racha columns if they don't exist yet
+-- Run this if the DB was created before this update
+-- ============================================================
+ALTER TABLE users ADD COLUMN IF NOT EXISTS racha INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS ultima_activitat DATE DEFAULT NULL;
 
 -- ============================================================
 -- Sample data to test the ranking (optional, delete if needed)

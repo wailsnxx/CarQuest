@@ -82,6 +82,15 @@
                     </ul>
                 </section>
 
+                <div class="streak-card" id="streakCard">
+                    <div class="streak-fire">🔥</div>
+                    <div class="streak-info">
+                        <div class="streak-num js-streak">0</div>
+                        <div class="streak-label">dies de racha</div>
+                    </div>
+                    <div class="streak-msg js-streak-msg">Fes un test avui per començar!</div>
+                </div>
+
                 <section class="stats-grid">
                     <div class="stat-card">
                         <div class="icon">🎯</div>
@@ -126,8 +135,24 @@
                 li.classList.toggle('active', rangs[i] === user.rang);
             });
 
-            // Stats
+            // Racha
             const token = localStorage.getItem('cq_token');
+            fetch('/api/user/streak', { headers: { 'Authorization': `Bearer ${token}` } })
+                .then(r => r.json()).then(data => {
+                    const racha = data.racha || 0;
+                    document.querySelector('.js-streak').textContent = racha;
+                    const msg = racha === 0
+                        ? 'Fes un test avui per començar!'
+                        : racha === 1
+                        ? 'Bon inici! Torna demà 💪'
+                        : racha < 7
+                        ? `${racha} dies seguits, continua així!`
+                        : `Increïble! ${racha} dies de racha 🏆`;
+                    document.querySelector('.js-streak-msg').textContent = msg;
+                    if (racha > 0) document.getElementById('streakCard').classList.add('active');
+                }).catch(() => {});
+
+            // Stats
             const stats = await fetch('/api/user/stats', {
                 headers: { 'Authorization': `Bearer ${token}` }
             }).then(r => r.json()).catch(() => ({}));
@@ -141,5 +166,6 @@
             animateProgressFill();
         });
     </script>
+<script src="chatbot.js"></script>
 </body>
 </html>

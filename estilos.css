@@ -713,6 +713,55 @@ body {
 }
 .ranks-list li:hover .rank-emoji { transform: scale(1.08); }
 
+/* Streak card */
+.streak-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-top: 18px;
+    transition: border-color 0.3s, background 0.3s;
+}
+.streak-card.active {
+    background: linear-gradient(135deg, rgba(255,107,53,0.12), rgba(247,127,0,0.08));
+    border-color: rgba(255,107,53,0.4);
+}
+.streak-fire {
+    font-size: 2.4rem;
+    line-height: 1;
+    filter: drop-shadow(0 0 8px rgba(255,107,53,0.5));
+    animation: fireWiggle 2s ease-in-out infinite;
+}
+@keyframes fireWiggle {
+    0%,100% { transform: rotate(-4deg) scale(1); }
+    50%      { transform: rotate(4deg) scale(1.08); }
+}
+.streak-card:not(.active) .streak-fire { filter: none; animation: none; }
+.streak-info { display: flex; flex-direction: column; align-items: center; min-width: 56px; }
+.streak-num {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #FF6B35;
+    line-height: 1;
+}
+.streak-card:not(.active) .streak-num { color: rgba(255,255,255,0.3); }
+.streak-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+}
+.streak-msg {
+    font-size: 13px;
+    color: rgba(255,255,255,0.65);
+    flex: 1;
+}
+.streak-card.active .streak-msg { color: rgba(255,255,255,0.85); }
+
 /* Stats cards */
 .stats-grid { display:flex; gap:14px; margin-top:18px; }
 .stat-card {

@@ -166,16 +166,39 @@ app.post('/api/user/xp', verificarToken, async (req, res) => {
     if (!xp_ganado || xp_ganado < 0) return res.status(400).json({ error: 'XP inválido' });
 
     try {
-        // Sumar XP y recalcular nivel y rango
+        const avui = new Date().toISOString().slice(0, 10); // YYYY-MM-DD UTC
+
+        // Leer racha actual
+        const userRes = await pool.query(
+            'SELECT racha, ultima_activitat FROM users WHERE id = $1',
+            [req.user.id]
+        );
+        const { racha: rachaActual, ultima_activitat } = userRes.rows[0];
+        const ultimaStr = ultima_activitat ? ultima_activitat.toISOString().slice(0, 10) : null;
+
+        let novaRacha;
+        if (ultimaStr === avui) {
+            // Ja ha jugat avui, la racha no canvia
+            novaRacha = rachaActual;
+        } else {
+            const ahir = new Date(avui + 'T00:00:00Z');
+            ahir.setUTCDate(ahir.getUTCDate() - 1);
+            const ahirStr = ahir.toISOString().slice(0, 10);
+            novaRacha = ultimaStr === ahirStr ? rachaActual + 1 : 1;
+        }
+
+        // Sumar XP, recalcular nivel/rang y actualizar racha
         const result = await pool.query(`
             UPDATE users
             SET
-                xp    = xp + $1,
-                nivel = GREATEST(1, FLOOR((xp + $1) / 1000) + 1),
-                rang  = update_rang(xp + $1)
+                xp               = xp + $1,
+                nivel            = GREATEST(1, FLOOR((xp + $1) / 1000) + 1),
+                rang             = update_rang(xp + $1),
+                racha            = $3,
+                ultima_activitat = $4
             WHERE id = $2
-            RETURNING xp, nivel, rang
-        `, [xp_ganado, req.user.id]);
+            RETURNING xp, nivel, rang, racha
+        `, [xp_ganado, req.user.id, novaRacha, avui]);
 
         // Guardar registro de progreso si se pasa tipo y nombre
         if (tipus && nom) {
@@ -247,6 +270,30 @@ app.get('/api/user/stats', verificarToken, async (req, res) => {
     }
 });
 
+// GET /api/user/streak — dies consecutius fent activitat
+app.get('/api/user/streak', verificarToken, async (req, res) => {
+    try {
+        const result = await pool.query(
+            'SELECT racha, ultima_activitat FROM users WHERE id = $1',
+            [req.user.id]
+        );
+        const { racha, ultima_activitat } = result.rows[0];
+
+        // Si l'última activitat no és avui ni ahir, la racha s'ha perdut
+        const avui = new Date().toISOString().slice(0, 10);
+        const ahir = new Date(avui + 'T00:00:00Z');
+        ahir.setUTCDate(ahir.getUTCDate() - 1);
+        const ahirStr = ahir.toISOString().slice(0, 10);
+        const ultimaStr = ultima_activitat ? ultima_activitat.toISOString().slice(0, 10) : null;
+
+        const rachaActiva = (ultimaStr === avui || ultimaStr === ahirStr) ? racha : 0;
+        res.json({ racha: rachaActiva });
+    } catch (err) {
+        console.error('Error calculant racha:', err);
+        res.status(500).json({ error: 'Error intern' });
+    }
+});
+
 // POST /api/user/avatar — guardar avatar seleccionado
 app.post('/api/user/avatar', verificarToken, async (req, res) => {
     const { avatar } = req.body;
@@ -282,6 +329,54 @@ app.get('/api/tests/:num', (req, res) => {
         return res.status(404).json({ error: 'Test no trobat' });
     }
     res.json(TESTS_NORMALS[num - 1]);
+});
+
+// ============================================================
+// RUTAS DE TEMPS DE REACCIÓ
+// ============================================================
+
+// POST /api/temps-reaccio/score — guarda la millor puntuació
+app.post('/api/temps-reaccio/score', verificarToken, async (req, res) => {
+    const { avg_ms } = req.body;
+    if (!avg_ms || avg_ms <= 0) return res.status(400).json({ error: 'Score invàlid' });
+    try {
+        // Només guardem si és millor que l'anterior
+        const existing = await pool.query(
+            "SELECT puntuacio FROM progres WHERE user_id = $1 AND tipus = 'temps-reaccio' ORDER BY puntuacio ASC LIMIT 1",
+            [req.user.id]
+        );
+        if (existing.rows.length === 0 || avg_ms < existing.rows[0].puntuacio) {
+            await pool.query(
+                "INSERT INTO progres (user_id, tipus, nom, puntuacio, completat) VALUES ($1, 'temps-reaccio', 'Temps de Reacció', $2, true)",
+                [req.user.id, avg_ms]
+            );
+        }
+        res.json({ ok: true });
+    } catch (err) {
+        console.error('Error guardant score temps-reaccio:', err);
+        res.status(500).json({ error: 'Error intern' });
+    }
+});
+
+// GET /api/temps-reaccio/ranking — top 10 per menor temps mitjà
+app.get('/api/temps-reaccio/ranking', async (_req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT u.nombre, u.rang, u.avatar,
+                   MIN(p.puntuacio) AS best_avg,
+                   RANK() OVER (ORDER BY MIN(p.puntuacio) ASC) AS posicio
+            FROM progres p
+            JOIN users u ON u.id = p.user_id
+            WHERE p.tipus = 'temps-reaccio' AND p.completat = true AND p.puntuacio > 0
+            GROUP BY u.id, u.nombre, u.rang, u.avatar
+            ORDER BY best_avg ASC
+            LIMIT 10
+        `);
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error obtenint ranking temps-reaccio:', err);
+        res.status(500).json({ error: 'Error intern' });
+    }
 });
 
 // ============================================================
