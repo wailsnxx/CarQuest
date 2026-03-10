@@ -1,43 +1,43 @@
-// chatbot.js — Widget de xat flotant per a totes les pàgines de CarQuest
+// chatbot.js — Widget de chat flotante para todas las páginas de CarQuest
 
 (function () {
     // ── HTML del widget ────────────────────────────────────────────────────
     const html = `
     <div id="cq-chat-widget">
-        <!-- Botó flotant -->
-        <button id="cq-chat-btn" aria-label="Obrir assistent">
+        <!-- Botón flotante -->
+        <button id="cq-chat-btn" aria-label="Abrir asistente">
             <span class="cq-icon-chat">💬</span>
             <span class="cq-icon-close">✕</span>
             <span class="cq-badge" id="cq-badge" hidden>1</span>
         </button>
 
-        <!-- Panell de xat -->
+        <!-- Panel de chat -->
         <div id="cq-chat-panel" aria-hidden="true">
-            <!-- Capçalera -->
+            <!-- Cabecera -->
             <div class="cq-header">
                 <div class="cq-header-avatar">🚗</div>
                 <div class="cq-header-info">
-                    <div class="cq-header-name">Assistent CarQuest</div>
+                    <div class="cq-header-name">Asistente CarQuest</div>
                     <div class="cq-header-status">
-                        <span class="cq-dot"></span> En línia
+                        <span class="cq-dot"></span> En línea
                     </div>
                 </div>
-                <button class="cq-header-close" id="cq-close-btn" aria-label="Tancar">✕</button>
+                <button class="cq-header-close" id="cq-close-btn" aria-label="Cerrar">✕</button>
             </div>
 
-            <!-- Missatges -->
+            <!-- Mensajes -->
             <div class="cq-messages" id="cq-messages">
                 <div class="cq-msg cq-msg-bot">
                     <div class="cq-msg-avatar">🚗</div>
                     <div class="cq-msg-bubble">
-                        Hola! Soc l'assistent de <strong>CarQuest</strong>.<br>
-                        Puc ajudar-te amb teoria de conducció, preguntes del test i consells per aprovar. Com et puc ajudar?
+                        ¡Hola! Soy el asistente de <strong>CarQuest</strong>.<br>
+                        Puedo ayudarte con teoría de conducción, preguntas del test y consejos para aprobar. ¿Cómo puedo ayudarte?
                     </div>
                 </div>
                 <div class="cq-suggestions">
-                    <button class="cq-sugg" data-text="Explica'm una norma de circulació">📖 Normes de circulació</button>
-                    <button class="cq-sugg" data-text="Com puc millorar la meva racha?">🔥 Millorar la racha</button>
-                    <button class="cq-sugg" data-text="Quins jocs hi ha disponibles?">🎯 Jocs disponibles</button>
+                    <button class="cq-sugg" data-text="Explícame una norma de circulación">📖 Normas de circulación</button>
+                    <button class="cq-sugg" data-text="¿Cómo puedo mejorar mi racha?">🔥 Mejorar la racha</button>
+                    <button class="cq-sugg" data-text="¿Qué juegos hay disponibles?">🎯 Juegos disponibles</button>
                 </div>
             </div>
 
@@ -46,7 +46,7 @@
                 <textarea
                     id="cq-input"
                     class="cq-input"
-                    placeholder="Escriu la teva pregunta..."
+                    placeholder="Escribe tu pregunta..."
                     rows="1"
                     maxlength="500"
                 ></textarea>

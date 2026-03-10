@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ca">
+<html lang="es">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>CarQuest — Rànquing</title>
+    <title>CarQuest — Ranking</title>
     <link rel="stylesheet" href="estilos.css">
     <style>
         .tabs {
@@ -36,20 +36,20 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
                 <div class="logo-box"></div>
-                <div><h1>CarQuest</h1><p>Aprèn a conduir jugant</p></div>
+                <div><h1>CarQuest</h1><p>Aprende a conducir jugando</p></div>
             </div>
             <nav class="sidebar-nav">
                 <div class="sidebar-section-label">Principal</div>
-                <a href="inici.html" class="sidebar-link"><span class="sidebar-link-icon">🏠</span> Inici</a>
+                <a href="inici.html" class="sidebar-link"><span class="sidebar-link-icon">🏠</span> Inicio</a>
                 <a href="perfil.html" class="sidebar-link"><span class="sidebar-link-icon">👤</span> Perfil</a>
-                <div class="sidebar-section-label">Aprendre</div>
-                <a href="teoria.html" class="sidebar-link"><span class="sidebar-link-icon">📖</span> Teoria</a>
-                <a href="jocs.html" class="sidebar-link"><span class="sidebar-link-icon">🎯</span> Jocs</a>
+                <div class="sidebar-section-label">Aprender</div>
+                <a href="teoria.html" class="sidebar-link"><span class="sidebar-link-icon">📖</span> Teoría</a>
+                <a href="jocs.html" class="sidebar-link"><span class="sidebar-link-icon">🎯</span> Juegos</a>
                 <a href="tests.html" class="sidebar-link"><span class="sidebar-link-icon">📝</span> Tests</a>
-                <a href="diaris.html" class="sidebar-link"><span class="sidebar-link-icon">📅</span> Diaris</a>
-                <div class="sidebar-section-label">Comunitat</div>
-                <a href="ranquing.html" class="sidebar-link activo"><span class="sidebar-link-icon">🏆</span> Rànquing</a>
-                <a href="botiga.html" class="sidebar-link"><span class="sidebar-link-icon">🛒</span> Botiga</a>
+                <a href="diaris.html" class="sidebar-link"><span class="sidebar-link-icon">📅</span> Diarios</a>
+                <div class="sidebar-section-label">Comunidad</div>
+                <a href="ranquing.html" class="sidebar-link activo"><span class="sidebar-link-icon">🏆</span> Ranking</a>
+                <a href="botiga.html" class="sidebar-link"><span class="sidebar-link-icon">🛒</span> Tienda</a>
             </nav>
             <div class="sidebar-bottom">
                 <div class="sidebar-user">
@@ -69,28 +69,20 @@
             </div>
             <div class="content-sheet">
                 <div class="page-header">
-                    <div class="page-title">Rànquings</div>
-                    <a href="#" onclick="tancarSessio()" class="btn-logout-header">Tancar sessió</a>
+                    <div class="page-title">Ranking de Pilotos</div>
+                    <a href="#" onclick="tancarSessio()" class="btn-logout-header">Cerrar sesión</a>
                 </div>
 
-                <!-- Tabs -->
-                <div class="tabs">
-                    <button class="tab-btn activa" id="tab-pilots" onclick="canviarTab('pilots')">🏆 Rànquing de Pilots</button>
-                    <button class="tab-btn" id="tab-jocs" onclick="canviarTab('jocs')">🎮 Rànquing de Jocs</button>
-                </div>
-
-                <!-- Panel: Pilots -->
-                <div class="tab-panel activa" id="panel-pilots">
-                    <div class="ranquing-posicio">
-                        <div>
-                            <span class="ranquing-label">La Teva Posició</span>
-                            <span class="ranquing-num" id="mevaPosicio">#...</span>
-                        </div>
-                        <div>
-                            <span class="ranquing-label">El Teu XP</span>
-                            <span class="ranquing-num"><span class="js-xp">0</span> XP</span>
-                        </div>
+                <div class="ranquing-posicio">
+                    <div>
+                        <span class="ranquing-label">Tu Posición</span>
+                        <span class="ranquing-num" id="mevaPosicio">#...</span>
                     </div>
+                    <div>
+                        <span class="ranquing-label">Tu XP</span>
+                        <span class="ranquing-num"><span class="js-xp">0</span> XP</span>
+                    </div>
+                </div>
 
                     <!-- Podium (top 3) -->
                     <div class="podium" id="podium">
@@ -120,26 +112,11 @@
                         </div>
                     </div>
 
-                    <!-- Classificació General -->
-                    <div class="classificacio">
-                        <h4>Classificació General</h4>
-                        <div class="classificacio-list" id="classificacioList">
-                            <div style="text-align:center; opacity:0.5; padding:20px;">Carregant...</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Panel: Jocs -->
-                <div class="tab-panel" id="panel-jocs">
-                    <div class="classificacio">
-                        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
-                            <span style="font-size:1.3rem;">⚡</span>
-                            <strong style="font-size:1rem; color:#fff;">Temps de Reacció</strong>
-                            <span style="font-size:0.8rem; opacity:0.55; margin-left:auto;">menor temps = millor</span>
-                        </div>
-                        <div class="classificacio-list" id="rankingTempsReaccio">
-                            <div style="text-align:center; opacity:0.5; padding:20px;">Carregant...</div>
-                        </div>
+                <!-- Clasificación General -->
+                <div class="classificacio">
+                    <h4>Clasificación General</h4>
+                    <div class="classificacio-list" id="classificacioList">
+                        <div style="text-align:center; opacity:0.5; padding:20px;">Cargando...</div>
                     </div>
                 </div>
             </div>
@@ -164,7 +141,8 @@
 
             const token = localStorage.getItem('cq_token');
 
-            const [ranking, posData, rankingReaccio] = await Promise.all([
+            // Cargar ranking y posición propia en paralelo
+            const [ranking, posData] = await Promise.all([
                 fetch('/api/ranking').then(r => r.json()).catch(() => []),
                 fetch('/api/ranking/meva-posicio', {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -172,7 +150,7 @@
                 fetch('/api/temps-reaccio/ranking').then(r => r.json()).catch(() => [])
             ]);
 
-            // Posició pròpia
+            // Posición propia
             document.getElementById('mevaPosicio').textContent = posData.posicio ? `#${posData.posicio}` : '#-';
 
             // Podium (top 3)
@@ -185,7 +163,7 @@
                 document.getElementById(`pod${pos}-rang`).textContent   = p.rang;
             });
 
-            // Llista completa XP
+            // Lista completa
             const list = document.getElementById('classificacioList');
             list.innerHTML = '';
             ranking.forEach(p => {
