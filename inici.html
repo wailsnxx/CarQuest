@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ca">
+<html lang="es">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>CarQuest — Inici</title>
+    <title>CarQuest — Inicio</title>
     <link rel="stylesheet" href="estilos.css">
 </head>
 <body class="dashboard-body">
@@ -13,21 +13,21 @@
                 <div class="logo-box"></div>
                 <div>
                     <h1>CarQuest</h1>
-                    <p>Aprèn a conduir jugant</p>
+                    <p>Aprende a conducir jugando</p>
                 </div>
             </div>
             <nav class="sidebar-nav">
                 <div class="sidebar-section-label">Principal</div>
-                <a href="inici.html" class="sidebar-link activo"><span class="sidebar-link-icon">🏠</span> Inici</a>
+                <a href="inici.html" class="sidebar-link activo"><span class="sidebar-link-icon">🏠</span> Inicio</a>
                 <a href="perfil.html" class="sidebar-link"><span class="sidebar-link-icon">👤</span> Perfil</a>
-                <div class="sidebar-section-label">Aprendre</div>
-                <a href="teoria.html" class="sidebar-link"><span class="sidebar-link-icon">📖</span> Teoria</a>
-                <a href="jocs.html" class="sidebar-link"><span class="sidebar-link-icon">🎯</span> Jocs</a>
+                <div class="sidebar-section-label">Aprender</div>
+                <a href="teoria.html" class="sidebar-link"><span class="sidebar-link-icon">📖</span> Teoría</a>
+                <a href="jocs.html" class="sidebar-link"><span class="sidebar-link-icon">🎯</span> Juegos</a>
                 <a href="tests.html" class="sidebar-link"><span class="sidebar-link-icon">📝</span> Tests</a>
-                <a href="diaris.html" class="sidebar-link"><span class="sidebar-link-icon">📅</span> Diaris</a>
-                <div class="sidebar-section-label">Comunitat</div>
-                <a href="ranquing.html" class="sidebar-link"><span class="sidebar-link-icon">🏆</span> Rànquing</a>
-                <a href="botiga.html" class="sidebar-link"><span class="sidebar-link-icon">🛒</span> Botiga</a>
+                <a href="diaris.html" class="sidebar-link"><span class="sidebar-link-icon">📅</span> Diarios</a>
+                <div class="sidebar-section-label">Comunidad</div>
+                <a href="ranquing.html" class="sidebar-link"><span class="sidebar-link-icon">🏆</span> Ranking</a>
+                <a href="botiga.html" class="sidebar-link"><span class="sidebar-link-icon">🛒</span> Tienda</a>
             </nav>
             <div class="sidebar-bottom">
                 <div class="sidebar-user">
@@ -47,23 +47,23 @@
             </div>
             <div class="content-sheet">
                 <div class="page-header">
-                    <div class="page-title">Inici</div>
-                    <a href="#" onclick="tancarSessio()" class="btn-logout-header">Tancar sessió</a>
+                    <div class="page-title">Inicio</div>
+                    <a href="#" onclick="tancarSessio()" class="btn-logout-header">Cerrar sesión</a>
                 </div>
 
                 <section class="panel-user">
                     <div class="avatar js-avatar">🙂</div>
                     <div class="user-info">
                         <h3 class="js-nom">...</h3>
-                        <p>Nivell <span class="js-nivel">...</span></p>
-                        <p style="font-size:13px; opacity:0.9"><span class="js-xp">0</span> XP · <span class="js-monedes">0</span> monedes</p>
+                        <p>Nivel <span class="js-nivel">...</span></p>
+                        <p style="font-size:13px; opacity:0.9"><span class="js-xp">0</span> XP · <span class="js-monedes">0</span> monedas</p>
                     </div>
                 </section>
 
                 <div class="progress-card">
                     <div style="display:flex; align-items:center; justify-content:space-between;">
-                        <div style="font-weight:700;"><span class="js-progres-pct">0</span> cap a <span class="js-rang-seguent">...</span></div>
-                        <div style="opacity:0.6; font-size:13px;">Progrés</div>
+                        <div style="font-weight:700;"><span class="js-progres-pct">0</span> hacia <span class="js-rang-seguent">...</span></div>
+                        <div style="opacity:0.6; font-size:13px;">Progreso</div>
                     </div>
                     <div class="progress-track">
                         <div class="progress-fill js-progres-fill" data-progress="0"></div>
@@ -72,13 +72,13 @@
                 </div>
 
                 <section class="ranks-card">
-                    <h4>Rangs de Conductor</h4>
+                    <h4>Rangos de Conductor</h4>
                     <ul class="ranks-list" id="rangsList">
-                        <li><div class="rank-emoji">🙂</div><div>Conductor Novell</div></li>
-                        <li><div class="rank-emoji">🚗</div><div>Conductor Intermedi</div></li>
-                        <li><div class="rank-emoji">🛣️</div><div>Pilot Segur</div></li>
-                        <li><div class="rank-emoji">👑</div><div>Pilot Expert</div></li>
-                        <li><div class="rank-emoji">🏆</div><div>Pilot Mestre</div></li>
+                        <li><div class="rank-emoji">🙂</div><div>Conductor Novato</div></li>
+                        <li><div class="rank-emoji">🚗</div><div>Conductor Intermedio</div></li>
+                        <li><div class="rank-emoji">🛣️</div><div>Piloto Seguro</div></li>
+                        <li><div class="rank-emoji">👑</div><div>Piloto Experto</div></li>
+                        <li><div class="rank-emoji">🏆</div><div>Piloto Maestro</div></li>
                     </ul>
                 </section>
 
@@ -86,15 +86,15 @@
                     <div class="streak-fire">🔥</div>
                     <div class="streak-info">
                         <div class="streak-num js-streak">0</div>
-                        <div class="streak-label">dies de racha</div>
+                        <div class="streak-label">días de racha</div>
                     </div>
-                    <div class="streak-msg js-streak-msg">Fes un test avui per començar!</div>
+                    <div class="streak-msg js-streak-msg">¡Haz un test hoy para empezar!</div>
                 </div>
 
                 <section class="stats-grid">
                     <div class="stat-card">
                         <div class="icon">🎯</div>
-                        <div class="stat-title">Jocs</div>
+                        <div class="stat-title">Juegos</div>
                         <div class="stat-value js-stat-jocs" data-value="0">0</div>
                     </div>
                     <div class="stat-card">
@@ -109,7 +109,7 @@
                     </div>
                     <div class="stat-card">
                         <div class="icon">🏅</div>
-                        <div class="stat-title">Nivell</div>
+                        <div class="stat-title">Nivel</div>
                         <div class="stat-value js-stat-nivel" data-value="1">1</div>
                     </div>
                 </section>
@@ -130,7 +130,7 @@
             document.querySelectorAll('.js-avatar').forEach(el => el.textContent = user.avatar || '🙂');
 
             // Marcar rang actual
-            const rangs = ['Conductor Novell','Conductor Intermedi','Pilot Segur','Pilot Expert','Pilot Mestre'];
+            const rangs = ['Conductor Novato','Conductor Intermedio','Piloto Seguro','Piloto Experto','Piloto Maestro'];
             document.querySelectorAll('#rangsList li').forEach((li, i) => {
                 li.classList.toggle('active', rangs[i] === user.rang);
             });
@@ -142,12 +142,12 @@
                     const racha = data.racha || 0;
                     document.querySelector('.js-streak').textContent = racha;
                     const msg = racha === 0
-                        ? 'Fes un test avui per començar!'
+                        ? '¡Haz un test hoy para empezar!'
                         : racha === 1
-                        ? 'Bon inici! Torna demà 💪'
+                        ? '¡Buen inicio! Vuelve mañana 💪'
                         : racha < 7
-                        ? `${racha} dies seguits, continua així!`
-                        : `Increïble! ${racha} dies de racha 🏆`;
+                        ? `${racha} días seguidos, ¡sigue así!`
+                        : `¡Increíble! ${racha} días de racha 🏆`;
                     document.querySelector('.js-streak-msg').textContent = msg;
                     if (racha > 0) document.getElementById('streakCard').classList.add('active');
                 }).catch(() => {});

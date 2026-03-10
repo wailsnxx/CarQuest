@@ -25,15 +25,15 @@ const PREGUNTES_DGT = todasPreguntes
         };
     });
 
-console.log(`📚 ${PREGUNTES_DGT.length} preguntes DGT carregades`);
+console.log(`📚 ${PREGUNTES_DGT.length} preguntas DGT cargadas`);
 
-// Primera meitat dividida en tests de 30 preguntes
+// Primera mitad dividida en tests de 30 preguntas
 const meitat = Math.floor(PREGUNTES_DGT.length / 2);
 const TESTS_NORMALS = [];
 for (let i = 0; i < meitat; i += 30) {
     TESTS_NORMALS.push(PREGUNTES_DGT.slice(i, i + 30));
 }
-console.log(`📋 ${TESTS_NORMALS.length} tests numerats creats (${meitat} preguntes)`);
+console.log(`📋 ${TESTS_NORMALS.length} tests numerados creados (${meitat} preguntas)`);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -178,7 +178,7 @@ app.post('/api/user/xp', verificarToken, async (req, res) => {
 
         let novaRacha;
         if (ultimaStr === avui) {
-            // Ja ha jugat avui, la racha no canvia
+            // Ya ha jugado hoy, la racha no cambia
             novaRacha = rachaActual;
         } else {
             const ahir = new Date(avui + 'T00:00:00Z');
@@ -270,7 +270,7 @@ app.get('/api/user/stats', verificarToken, async (req, res) => {
     }
 });
 
-// GET /api/user/streak — dies consecutius fent activitat
+// GET /api/user/streak — días consecutivos con actividad
 app.get('/api/user/streak', verificarToken, async (req, res) => {
     try {
         const result = await pool.query(
@@ -279,7 +279,7 @@ app.get('/api/user/streak', verificarToken, async (req, res) => {
         );
         const { racha, ultima_activitat } = result.rows[0];
 
-        // Si l'última activitat no és avui ni ahir, la racha s'ha perdut
+        // Si la última actividad no es hoy ni ayer, la racha se ha perdido
         const avui = new Date().toISOString().slice(0, 10);
         const ahir = new Date(avui + 'T00:00:00Z');
         ahir.setUTCDate(ahir.getUTCDate() - 1);
@@ -289,8 +289,8 @@ app.get('/api/user/streak', verificarToken, async (req, res) => {
         const rachaActiva = (ultimaStr === avui || ultimaStr === ahirStr) ? racha : 0;
         res.json({ racha: rachaActiva });
     } catch (err) {
-        console.error('Error calculant racha:', err);
-        res.status(500).json({ error: 'Error intern' });
+        console.error('Error calculando racha:', err);
+        res.status(500).json({ error: 'Error interno' });
     }
 });
 
@@ -317,30 +317,30 @@ app.get('/api/preguntes', (req, res) => {
     res.json(barrejades.slice(0, n));
 });
 
-// GET /api/tests/list — llista de tests numerats
+// GET /api/tests/list — lista de tests numerados
 app.get('/api/tests/list', (req, res) => {
     res.json(TESTS_NORMALS.map((t, i) => ({ num: i + 1, total: t.length })));
 });
 
-// GET /api/tests/:num — preguntes d'un test concret
+// GET /api/tests/:num — preguntas de un test concreto
 app.get('/api/tests/:num', (req, res) => {
     const num = parseInt(req.params.num);
     if (isNaN(num) || num < 1 || num > TESTS_NORMALS.length) {
-        return res.status(404).json({ error: 'Test no trobat' });
+        return res.status(404).json({ error: 'Test no encontrado' });
     }
     res.json(TESTS_NORMALS[num - 1]);
 });
 
 // ============================================================
-// RUTAS DE TEMPS DE REACCIÓ
+// RUTAS DE TIEMPO DE REACCIÓN
 // ============================================================
 
-// POST /api/temps-reaccio/score — guarda la millor puntuació
+// POST /api/temps-reaccio/score — guarda la mejor puntuación
 app.post('/api/temps-reaccio/score', verificarToken, async (req, res) => {
     const { avg_ms } = req.body;
-    if (!avg_ms || avg_ms <= 0) return res.status(400).json({ error: 'Score invàlid' });
+    if (!avg_ms || avg_ms <= 0) return res.status(400).json({ error: 'Score inválido' });
     try {
-        // Només guardem si és millor que l'anterior
+        // Solo guardamos si es mejor que el anterior
         const existing = await pool.query(
             "SELECT puntuacio FROM progres WHERE user_id = $1 AND tipus = 'temps-reaccio' ORDER BY puntuacio ASC LIMIT 1",
             [req.user.id]
@@ -353,12 +353,12 @@ app.post('/api/temps-reaccio/score', verificarToken, async (req, res) => {
         }
         res.json({ ok: true });
     } catch (err) {
-        console.error('Error guardant score temps-reaccio:', err);
-        res.status(500).json({ error: 'Error intern' });
+        console.error('Error guardando score temps-reaccio:', err);
+        res.status(500).json({ error: 'Error interno' });
     }
 });
 
-// GET /api/temps-reaccio/ranking — top 10 per menor temps mitjà
+// GET /api/temps-reaccio/ranking — top 10 por menor tiempo medio
 app.get('/api/temps-reaccio/ranking', async (_req, res) => {
     try {
         const result = await pool.query(`
@@ -374,8 +374,8 @@ app.get('/api/temps-reaccio/ranking', async (_req, res) => {
         `);
         res.json(result.rows);
     } catch (err) {
-        console.error('Error obtenint ranking temps-reaccio:', err);
-        res.status(500).json({ error: 'Error intern' });
+        console.error('Error obteniendo ranking temps-reaccio:', err);
+        res.status(500).json({ error: 'Error interno' });
     }
 });
 

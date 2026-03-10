@@ -1,12 +1,12 @@
-// app.js — Mòdul compartit per totes les pàgines de CarQuest
-// Gestiona: autenticació, càrrega d'usuari, guanyar XP
+// app.js — Módulo compartido por todas las páginas de CarQuest
+// Gestiona: autenticación, carga de usuario, ganar XP
 
 const API = '/api';
 
 function obtToken() { return localStorage.getItem('cq_token'); }
 function obtUsuari() { return JSON.parse(localStorage.getItem('cq_usuario') || 'null'); }
 
-// Redirigeix a login si no hi ha sessió activa
+// Redirige a login si no hay sesión activa
 function requireAuth() {
     if (!obtToken() || !obtUsuari()) {
         window.location.href = 'index.html';
@@ -15,14 +15,14 @@ function requireAuth() {
     return true;
 }
 
-// Calcula el rang i progrés segons XP
+// Calcula el rango y progreso según XP
 function calcularRangInfo(xp) {
     const rangs = [
-        { nom: 'Conductor Novell',    emoji: '🙂',  min: 0,     max: 500  },
-        { nom: 'Conductor Intermedi', emoji: '🚗',  min: 500,   max: 2000 },
-        { nom: 'Pilot Segur',         emoji: '🛣️', min: 2000,  max: 5000 },
-        { nom: 'Pilot Expert',        emoji: '👑',  min: 5000,  max: 10000},
-        { nom: 'Pilot Mestre',        emoji: '🏆',  min: 10000, max: 10000},
+        { nom: 'Conductor Novato',     emoji: '🙂',  min: 0,     max: 500  },
+        { nom: 'Conductor Intermedio',  emoji: '🚗',  min: 500,   max: 2000 },
+        { nom: 'Piloto Seguro',        emoji: '🛣️', min: 2000,  max: 5000 },
+        { nom: 'Piloto Experto',       emoji: '👑',  min: 5000,  max: 10000},
+        { nom: 'Piloto Maestro',       emoji: '🏆',  min: 10000, max: 10000},
     ];
     const actual = rangs.findLast(r => xp >= r.min) || rangs[0];
     const seguent = rangs[rangs.indexOf(actual) + 1];
@@ -32,26 +32,26 @@ function calcularRangInfo(xp) {
     return { actual, seguent, progres };
 }
 
-// Actualitza tots els elements de la UI amb les dades de l'usuari
+// Actualiza todos los elementos de la UI con los datos del usuario
 function actualitzarUIUsuari(user) {
     // Sidebar
     document.querySelectorAll('.js-sidebar-nom').forEach(el => el.textContent = user.nombre);
-    document.querySelectorAll('.js-sidebar-info').forEach(el => el.textContent = `${user.xp} XP · Nivell ${user.nivel}`);
-    // Genèrics
+    document.querySelectorAll('.js-sidebar-info').forEach(el => el.textContent = `${user.xp} XP · Nivel ${user.nivel}`);
+    // Genéricos
     document.querySelectorAll('.js-nom').forEach(el => el.textContent = user.nombre);
     document.querySelectorAll('.js-xp').forEach(el => el.textContent = user.xp);
     document.querySelectorAll('.js-rang').forEach(el => el.textContent = user.rang);
     document.querySelectorAll('.js-nivel').forEach(el => el.textContent = user.nivel);
     document.querySelectorAll('.js-monedes').forEach(el => el.textContent = user.monedes || 0);
-    // Progrés
+    // Progreso
     const info = calcularRangInfo(user.xp);
     document.querySelectorAll('.js-progres-pct').forEach(el => el.textContent = `${info.progres}%`);
     document.querySelectorAll('.js-progres-fill').forEach(el => el.style.width = `${info.progres}%`);
-    document.querySelectorAll('.js-rang-seguent').forEach(el => el.textContent = info.seguent ? info.seguent.nom : 'Màxim rang!');
+    document.querySelectorAll('.js-rang-seguent').forEach(el => el.textContent = info.seguent ? info.seguent.nom : '¡Rango máximo!');
     document.querySelectorAll('.js-rang-actual').forEach(el => el.textContent = info.actual.nom);
 }
 
-// Carrega l'usuari des de l'API i actualitza la UI
+// Carga el usuario desde la API y actualiza la UI
 async function carregarUsuari() {
     const token = obtToken();
     if (!token) return null;
@@ -76,7 +76,7 @@ async function carregarUsuari() {
     }
 }
 
-// Envia XP guanyat a la base de dades
+// Envía XP ganado a la base de datos
 async function guanyarXP(xp, tipus, nom, puntuacio = 0) {
     const token = obtToken();
     if (!token) return null;
@@ -100,19 +100,19 @@ async function guanyarXP(xp, tipus, nom, puntuacio = 0) {
         }
         return data;
     } catch (e) {
-        console.error('Error guanyant XP:', e);
+        console.error('Error ganando XP:', e);
         return null;
     }
 }
 
-// Tanca la sessió
+// Cerrar sesión
 function tancarSessio() {
     localStorage.removeItem('cq_token');
     localStorage.removeItem('cq_usuario');
     window.location.href = 'index.html';
 }
 
-// Inicialitzar sidebar mòbil (comú a totes les pàgines)
+// Inicializar sidebar móvil (común a todas las páginas)
 function initSidebar() {
     const btn     = document.getElementById('menuBtn');
     const sidebar = document.getElementById('sidebar');
