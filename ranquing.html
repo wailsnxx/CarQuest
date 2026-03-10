@@ -5,6 +5,31 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>CarQuest — Rànquing</title>
     <link rel="stylesheet" href="estilos.css">
+    <style>
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 0.65rem 1rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: rgba(255,255,255,0.07);
+            color: rgba(255,255,255,0.55);
+            transition: background 0.2s, color 0.2s;
+        }
+        .tab-btn.activa {
+            background: var(--accent, #f59e0b);
+            color: #000;
+        }
+        .tab-panel { display: none; }
+        .tab-panel.activa { display: block; }
+    </style>
 </head>
 <body class="dashboard-body">
     <div class="dashboard-wrap">
@@ -44,54 +69,77 @@
             </div>
             <div class="content-sheet">
                 <div class="page-header">
-                    <div class="page-title">Rànquing de Pilots</div>
+                    <div class="page-title">Rànquings</div>
                     <a href="#" onclick="tancarSessio()" class="btn-logout-header">Tancar sessió</a>
                 </div>
 
-                <div class="ranquing-posicio">
-                    <div>
-                        <span class="ranquing-label">La Teva Posició</span>
-                        <span class="ranquing-num" id="mevaPosicio">#...</span>
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab-btn activa" id="tab-pilots" onclick="canviarTab('pilots')">🏆 Rànquing de Pilots</button>
+                    <button class="tab-btn" id="tab-jocs" onclick="canviarTab('jocs')">🎮 Rànquing de Jocs</button>
+                </div>
+
+                <!-- Panel: Pilots -->
+                <div class="tab-panel activa" id="panel-pilots">
+                    <div class="ranquing-posicio">
+                        <div>
+                            <span class="ranquing-label">La Teva Posició</span>
+                            <span class="ranquing-num" id="mevaPosicio">#...</span>
+                        </div>
+                        <div>
+                            <span class="ranquing-label">El Teu XP</span>
+                            <span class="ranquing-num"><span class="js-xp">0</span> XP</span>
+                        </div>
                     </div>
-                    <div>
-                        <span class="ranquing-label">El Teu XP</span>
-                        <span class="ranquing-num"><span class="js-xp">0</span> XP</span>
+
+                    <!-- Podium (top 3) -->
+                    <div class="podium" id="podium">
+                        <div class="podium-place podium-2">
+                            <div class="podium-medal">🥈</div>
+                            <div class="podium-avatar" id="pod2-avatar">...</div>
+                            <h4 id="pod2-nom">...</h4>
+                            <p class="podium-xp" id="pod2-xp">...</p>
+                            <p class="podium-rang" id="pod2-rang">...</p>
+                            <div class="podium-car">🚗</div>
+                        </div>
+                        <div class="podium-place podium-1">
+                            <div class="podium-medal">🏆</div>
+                            <div class="podium-avatar" id="pod1-avatar">...</div>
+                            <h4 id="pod1-nom">...</h4>
+                            <p class="podium-xp" id="pod1-xp">...</p>
+                            <p class="podium-rang" id="pod1-rang">...</p>
+                            <div class="podium-car">🏎️</div>
+                        </div>
+                        <div class="podium-place podium-3">
+                            <div class="podium-medal">🥉</div>
+                            <div class="podium-avatar" id="pod3-avatar">...</div>
+                            <h4 id="pod3-nom">...</h4>
+                            <p class="podium-xp" id="pod3-xp">...</p>
+                            <p class="podium-rang" id="pod3-rang">...</p>
+                            <div class="podium-car">🏁</div>
+                        </div>
+                    </div>
+
+                    <!-- Classificació General -->
+                    <div class="classificacio">
+                        <h4>Classificació General</h4>
+                        <div class="classificacio-list" id="classificacioList">
+                            <div style="text-align:center; opacity:0.5; padding:20px;">Carregant...</div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Podium (top 3) -->
-                <div class="podium" id="podium">
-                    <div class="podium-place podium-2">
-                        <div class="podium-medal">🥈</div>
-                        <div class="podium-avatar" id="pod2-avatar">...</div>
-                        <h4 id="pod2-nom">...</h4>
-                        <p class="podium-xp" id="pod2-xp">...</p>
-                        <p class="podium-rang" id="pod2-rang">...</p>
-                        <div class="podium-car">🚗</div>
-                    </div>
-                    <div class="podium-place podium-1">
-                        <div class="podium-medal">🏆</div>
-                        <div class="podium-avatar" id="pod1-avatar">...</div>
-                        <h4 id="pod1-nom">...</h4>
-                        <p class="podium-xp" id="pod1-xp">...</p>
-                        <p class="podium-rang" id="pod1-rang">...</p>
-                        <div class="podium-car">🏎️</div>
-                    </div>
-                    <div class="podium-place podium-3">
-                        <div class="podium-medal">🥉</div>
-                        <div class="podium-avatar" id="pod3-avatar">...</div>
-                        <h4 id="pod3-nom">...</h4>
-                        <p class="podium-xp" id="pod3-xp">...</p>
-                        <p class="podium-rang" id="pod3-rang">...</p>
-                        <div class="podium-car">🏁</div>
-                    </div>
-                </div>
-
-                <!-- Classificació General -->
-                <div class="classificacio">
-                    <h4>Classificació General</h4>
-                    <div class="classificacio-list" id="classificacioList">
-                        <div style="text-align:center; opacity:0.5; padding:20px;">Carregant...</div>
+                <!-- Panel: Jocs -->
+                <div class="tab-panel" id="panel-jocs">
+                    <div class="classificacio">
+                        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
+                            <span style="font-size:1.3rem;">⚡</span>
+                            <strong style="font-size:1rem; color:#fff;">Temps de Reacció</strong>
+                            <span style="font-size:0.8rem; opacity:0.55; margin-left:auto;">menor temps = millor</span>
+                        </div>
+                        <div class="classificacio-list" id="rankingTempsReaccio">
+                            <div style="text-align:center; opacity:0.5; padding:20px;">Carregant...</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -101,6 +149,13 @@
     <script src="app.js"></script>
     <script src="dashboard.js"></script>
     <script>
+        function canviarTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('activa'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('activa'));
+            document.getElementById('tab-' + tab).classList.add('activa');
+            document.getElementById('panel-' + tab).classList.add('activa');
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             if (!requireAuth()) return;
             initSidebar();
@@ -109,19 +164,18 @@
 
             const token = localStorage.getItem('cq_token');
 
-            // Carregar ranking i posició pròpia en paral·lel
-            const [ranking, posData] = await Promise.all([
+            const [ranking, posData, rankingReaccio] = await Promise.all([
                 fetch('/api/ranking').then(r => r.json()).catch(() => []),
                 fetch('/api/ranking/meva-posicio', {
                     headers: { 'Authorization': `Bearer ${token}` }
-                }).then(r => r.json()).catch(() => ({}))
+                }).then(r => r.json()).catch(() => ({})),
+                fetch('/api/temps-reaccio/ranking').then(r => r.json()).catch(() => [])
             ]);
 
             // Posició pròpia
             document.getElementById('mevaPosicio').textContent = posData.posicio ? `#${posData.posicio}` : '#-';
 
             // Podium (top 3)
-            const avatars = ['👑','🥈','🥉'];
             [1,2,3].forEach(pos => {
                 const p = ranking.find(r => parseInt(r.posicio) === pos);
                 if (!p) return;
@@ -131,7 +185,7 @@
                 document.getElementById(`pod${pos}-rang`).textContent   = p.rang;
             });
 
-            // Llista completa
+            // Llista completa XP
             const list = document.getElementById('classificacioList');
             list.innerHTML = '';
             ranking.forEach(p => {
@@ -150,6 +204,28 @@
                 `;
                 list.appendChild(div);
             });
+
+            // Rànquing Temps de Reacció
+            const listReaccio = document.getElementById('rankingTempsReaccio');
+            if (!Array.isArray(rankingReaccio) || rankingReaccio.length === 0) {
+                listReaccio.innerHTML = '<div style="text-align:center; opacity:0.5; padding:20px;">Encara no hi ha puntuacions</div>';
+            } else {
+                listReaccio.innerHTML = '';
+                rankingReaccio.forEach(p => {
+                    const div = document.createElement('div');
+                    div.className = 'classificacio-item';
+                    div.innerHTML = `
+                        <span class="classificacio-pos">#${p.posicio}</span>
+                        <div class="classificacio-avatar">${p.avatar || '🙂'}</div>
+                        <div class="classificacio-info">
+                            <strong>${p.nombre}</strong>
+                            <span>${p.rang}</span>
+                        </div>
+                        <span class="classificacio-xp">⚡ ${Math.round(p.best_avg)} ms</span>
+                    `;
+                    listReaccio.appendChild(div);
+                });
+            }
         });
     </script>
 <script src="chatbot.js"></script>
