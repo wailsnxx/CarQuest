@@ -174,16 +174,18 @@ app.post('/api/user/xp', verificarToken, async (req, res) => {
             [req.user.id]
         );
         const { racha: rachaActual, ultima_activitat } = userRes.rows[0];
-        const ultimaStr = ultima_activitat ? ultima_activitat.toISOString().slice(0, 10) : null;
+        // pg v8 devuelve DATE como string "YYYY-MM-DD"
+        const ultimaStr = ultima_activitat ? String(ultima_activitat).slice(0, 10) : null;
 
         let novaRacha;
         if (ultimaStr === avui) {
-            // Ya ha jugado hoy, la racha no cambia
+            // Ya jugó hoy → racha sin cambio
             novaRacha = rachaActual;
         } else {
             const ahir = new Date(avui + 'T00:00:00Z');
             ahir.setUTCDate(ahir.getUTCDate() - 1);
             const ahirStr = ahir.toISOString().slice(0, 10);
+            // Si jugó ayer → +1; si lleva más días → reinicia a 1
             novaRacha = ultimaStr === ahirStr ? rachaActual + 1 : 1;
         }
 
@@ -284,7 +286,7 @@ app.get('/api/user/streak', verificarToken, async (req, res) => {
         const ahir = new Date(avui + 'T00:00:00Z');
         ahir.setUTCDate(ahir.getUTCDate() - 1);
         const ahirStr = ahir.toISOString().slice(0, 10);
-        const ultimaStr = ultima_activitat ? ultima_activitat.toISOString().slice(0, 10) : null;
+        const ultimaStr = ultima_activitat ? String(ultima_activitat).slice(0, 10) : null;
 
         const rachaActiva = (ultimaStr === avui || ultimaStr === ahirStr) ? racha : 0;
         res.json({ racha: rachaActiva });

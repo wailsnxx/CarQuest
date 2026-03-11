@@ -151,18 +151,34 @@
     </div>
 
     <!-- MODAL TEST -->
-    <div id="modalTest" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:1000; align-items:center; justify-content:center;">
-        <div style="background:#1a2335; border-radius:16px; padding:28px; max-width:580px; width:92%; max-height:90vh; overflow-y:auto;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
-                <span id="testTipus" style="font-size:13px; opacity:0.6; font-weight:600;"></span>
-                <span id="testProgres" style="font-size:13px; color:var(--color-primario); font-weight:700;"></span>
+    <div id="modalTest" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:1000; align-items:center; justify-content:center; padding:16px;">
+        <div style="background:#1a2335; border-radius:16px; max-width:620px; width:100%; max-height:92vh; display:flex; flex-direction:column; border:1px solid rgba(255,255,255,0.08); box-shadow:0 24px 64px rgba(0,0,0,0.7);">
+
+            <!-- Cabecera -->
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 20px; border-bottom:1px solid rgba(255,255,255,0.07); flex-shrink:0;">
+                <span id="testTipus" style="font-size:12px; opacity:0.5; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:#fff;"></span>
+                <span id="testProgres" style="font-size:13px; color:#FF6B35; font-weight:700;"></span>
             </div>
-            <img id="testImatge" src="" alt="" style="display:none; width:100%; max-height:220px; object-fit:contain; border-radius:10px; margin-bottom:14px; background:#0f1c2e;">
-            <p id="testPregunta" style="font-size:16px; font-weight:700; margin-bottom:20px; line-height:1.5;"></p>
-            <div id="testOpcions" style="display:flex; flex-direction:column; gap:10px;"></div>
-            <div id="testFeedback" style="display:none; margin-top:14px; padding:12px 16px; border-radius:10px; font-weight:600;"></div>
-            <div id="testExplicacio" style="display:none; margin-top:10px; padding:14px 16px; border-radius:10px; background:#1e2d1a; border-left:4px solid #f59e0b; font-size:13px; line-height:1.6; color:#e8d5a3;"></div>
-            <button id="testSeguent" style="display:none; margin-top:16px; width:100%;" class="repte-btn repte-btn-play" onclick="siguiente()">Siguiente →</button>
+
+            <!-- Contenido (scroll) -->
+            <div style="flex:1; overflow-y:auto; padding:20px 20px 12px; scrollbar-width:thin; scrollbar-color:rgba(255,255,255,0.1) transparent;">
+                <img id="testImatge" src="" alt="" style="display:none; width:100%; max-height:200px; object-fit:contain; border-radius:10px; margin-bottom:14px; background:#0f1c2e;">
+                <p id="testPregunta" style="font-size:16px; font-weight:700; margin:0 0 18px; line-height:1.55; color:#fff;"></p>
+                <div id="testOpcions" style="display:flex; flex-direction:column; gap:9px;"></div>
+                <div id="testFeedback" style="display:none; margin-top:14px; padding:11px 15px; border-radius:10px; font-weight:600; font-size:14px;"></div>
+                <div id="testExplicacio" style="display:none; margin-top:8px; padding:13px 15px; border-radius:10px; background:rgba(245,158,11,0.07); border-left:3px solid #f59e0b; font-size:13px; line-height:1.6; color:#e8d5a3;"></div>
+            </div>
+
+            <!-- Navegador de preguntas -->
+            <div style="padding:10px 16px 8px; border-top:1px solid rgba(255,255,255,0.06); background:rgba(0,0,0,0.25); flex-shrink:0;">
+                <div id="testNavegador" style="display:flex; gap:5px; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin; scrollbar-color:rgba(255,255,255,0.1) transparent;"></div>
+            </div>
+
+            <!-- Botones de navegación -->
+            <div style="display:flex; gap:10px; padding:12px 20px 16px; flex-shrink:0;">
+                <button id="testAnterior" onclick="navegarAnterior()" style="flex:1; padding:11px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.05); color:rgba(255,255,255,0.65); font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.15s;">← Anterior</button>
+                <button id="testSeguent" onclick="navegarSiguiente()" style="flex:2; padding:11px 10px; border-radius:10px; border:none; background:linear-gradient(135deg,#FF6B35,#ff8c5a); color:#fff; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; transition:all 0.15s; box-shadow:0 2px 12px rgba(255,107,53,0.35);">Siguiente →</button>
+            </div>
         </div>
     </div>
 
@@ -188,6 +204,12 @@
         return `cq_test_results_${u ? u.id : 'anon'}`;
     }
 
+    function errKey() {
+        const u = obtUsuari();
+        return `cq_errors_${u ? u.id : 'anon'}`;
+    }
+
+    // ── Carga lista de tests numerados ──────────────────────────
     async function cargarTestsNumerados() {
         const lista = await fetch('/api/tests/list').then(r => r.json()).catch(() => []);
         const results = JSON.parse(localStorage.getItem(testResultsKey()) || '{}');
@@ -230,112 +252,198 @@
         document.getElementById('vistaCards').style.display = 'grid';
     }
 
+    // ── Iniciar tests ────────────────────────────────────────────
     async function iniciarTestNumerado(num) {
         const preguntes = await fetch(`/api/tests/${num}`).then(r => r.json()).catch(() => []);
         if (!preguntes.length) { alert('Error cargando el test'); return; }
-        estat = { tipus: 'normal', preguntes, xpMaxim: 50, killer: false, examen: false, index: 0, encerts: 0, errors: 0, testNum: num };
+        estat = { tipus: 'normal', preguntes, xpMaxim: 50, killer: false, examen: false, index: 0, testNum: num, respostes: new Array(preguntes.length).fill(null) };
         document.getElementById('testTipus').textContent = `Test ${num}`;
-        mostrarPregunta();
+        mostrarPregunta(0);
         document.getElementById('modalTest').style.display = 'flex';
     }
 
-    function errKey() {
-        const u = obtUsuari();
-        return `cq_errors_${u ? u.id : 'anon'}`;
-    }
-
     async function iniciarTestErrores() {
-        const preguntes = JSON.parse(localStorage.getItem(errKey()) || '[]')
-            .sort(() => Math.random() - 0.5);
-
-        if (!preguntes.length) {
-            alert('Todavía no tienes preguntas falladas. ¡Haz un test primero!');
-            return;
-        }
-
-        estat = { tipus: 'errors', preguntes, xpMaxim: 60, killer: false, examen: false, index: 0, encerts: 0, errors: 0 };
+        const preguntes = JSON.parse(localStorage.getItem(errKey()) || '[]').sort(() => Math.random() - 0.5);
+        if (!preguntes.length) { alert('Todavía no tienes preguntas falladas. ¡Haz un test primero!'); return; }
+        estat = { tipus: 'errors', preguntes, xpMaxim: 60, killer: false, examen: false, index: 0, respostes: new Array(preguntes.length).fill(null) };
         document.getElementById('testTipus').textContent = 'Test de Errores';
-        mostrarPregunta();
+        mostrarPregunta(0);
         document.getElementById('modalTest').style.display = 'flex';
     }
 
     async function iniciarTest(tipus, numPreguntes, xpMaxim, killer, examen) {
-        const preguntes = await fetch(`/api/preguntes?n=${numPreguntes}`)
-            .then(r => r.json()).catch(() => []);
-
+        const preguntes = await fetch(`/api/preguntes?n=${numPreguntes}`).then(r => r.json()).catch(() => []);
         if (!preguntes.length) { alert('Error cargando preguntas'); return; }
-
-        estat = { tipus, preguntes, xpMaxim, killer, examen, index: 0, encerts: 0, errors: 0 };
-        document.getElementById('testTipus').textContent = {
-            normal: 'Test Normal', killer: 'Test Killer', examen: 'Examen Oficial'
-        }[tipus] || 'Test';
-
-        mostrarPregunta();
+        estat = { tipus, preguntes, xpMaxim, killer, examen, index: 0, respostes: new Array(preguntes.length).fill(null) };
+        document.getElementById('testTipus').textContent = { normal: 'Test Normal', killer: 'Test Killer', examen: 'Examen Oficial' }[tipus] || 'Test';
+        mostrarPregunta(0);
         document.getElementById('modalTest').style.display = 'flex';
     }
 
-    function mostrarPregunta() {
-        const { preguntes, index, examen } = estat;
+    // ── Mostrar pregunta ─────────────────────────────────────────
+    function mostrarPregunta(index) {
+        estat.index = index;
+        const { preguntes, examen, respostes } = estat;
         const q = preguntes[index];
+        const resposta = respostes[index];
 
         document.getElementById('testProgres').textContent = `${index + 1} / ${preguntes.length}`;
         document.getElementById('testPregunta').textContent = q.pregunta;
         document.getElementById('testFeedback').style.display = 'none';
         document.getElementById('testExplicacio').style.display = 'none';
-        document.getElementById('testSeguent').style.display = 'none';
 
         const imgEl = document.getElementById('testImatge');
-        if (q.img) {
-            imgEl.src = `/imgs/${q.img}`;
-            imgEl.style.display = 'block';
-            imgEl.onerror = () => { imgEl.style.display = 'none'; };
-        } else {
-            imgEl.style.display = 'none';
-            imgEl.src = '';
-        }
+        if (q.img) { imgEl.src = `/imgs/${q.img}`; imgEl.style.display = 'block'; imgEl.onerror = () => { imgEl.style.display = 'none'; }; }
+        else { imgEl.style.display = 'none'; imgEl.src = ''; }
 
+        // Opciones
         const opcions = document.getElementById('testOpcions');
         opcions.innerHTML = '';
         q.opcions.forEach((op, i) => {
             const btn = document.createElement('button');
-            btn.style.cssText = 'background:#0f1c2e; border:1px solid #2a3a52; color:#fff; text-align:left; padding:12px 16px; border-radius:10px; cursor:pointer; font-size:14px; transition:background 0.15s; width:100%;';
+            let bg = '#0f1c2e';
+            if (resposta !== null) {
+                if (!examen) {
+                    if (i === q.correcta) bg = '#1a4a2e';
+                    else if (i === resposta.selected && !resposta.correcte) bg = '#4a1a1e';
+                } else if (i === resposta.selected) {
+                    bg = '#1e3a5f'; // seleccionada en examen: azul neutro
+                }
+            }
+            const bloqueado = resposta !== null && !examen;
+            btn.style.cssText = `background:${bg}; border:1px solid ${(examen && resposta !== null && i === resposta.selected) ? '#3b82f6' : '#2a3a52'}; color:#fff; text-align:left; padding:12px 16px; border-radius:10px; font-size:14px; transition:background 0.15s; width:100%; font-family:inherit; cursor:${bloqueado ? 'default' : 'pointer'};`;
             btn.textContent = `${['A','B','C'][i]}. ${op}`;
-            btn.onclick = () => respuesta(i, btn, q);
+            if (!bloqueado) {
+                btn.onmouseover = () => { if (!(examen && resposta !== null && i === resposta?.selected)) btn.style.background = '#162035'; };
+                btn.onmouseout  = () => { if (!(examen && resposta !== null && i === resposta?.selected)) btn.style.background = '#0f1c2e'; };
+                btn.onclick = () => respuesta(i, btn, q);
+            }
             opcions.appendChild(btn);
+        });
+
+        // Feedback si ya contestada (no examen)
+        if (resposta !== null && !examen) {
+            const fb = document.getElementById('testFeedback');
+            if (resposta.correcte) {
+                fb.textContent = '✅ ¡Correcto!';
+                fb.style.cssText = 'display:block; margin-top:14px; padding:11px 15px; border-radius:10px; font-weight:600; font-size:14px; background:#1a4a2e; color:#86efac;';
+            } else {
+                fb.textContent = '❌ Incorrecto';
+                fb.style.cssText = 'display:block; margin-top:14px; padding:11px 15px; border-radius:10px; font-weight:600; font-size:14px; background:#4a1a1e; color:#fca5a5;';
+                const ex = document.getElementById('testExplicacio');
+                ex.innerHTML = `<strong>💡 Explicación:</strong> ${q.explicacio || 'La respuesta correcta es la opción marcada en verde.'}`;
+                ex.style.display = 'block';
+            }
+        }
+
+        actualizarNavegador();
+        actualizarBotonesNav();
+    }
+
+    // ── Navegador de círculos ────────────────────────────────────
+    function actualizarNavegador() {
+        const { preguntes, index, respostes, examen } = estat;
+        const nav = document.getElementById('testNavegador');
+        nav.innerHTML = '';
+        preguntes.forEach((_, i) => {
+            const r = respostes[i];
+            const esCurrent = i === index;
+            let bg, border, color;
+            if (esCurrent) {
+                bg = '#FF6B35'; border = '#FF6B35'; color = '#fff';
+            } else if (r === null) {
+                bg = '#0f1c2e'; border = '#2a3a52'; color = 'rgba(255,255,255,0.35)';
+            } else if (examen) {
+                bg = '#2a3a52'; border = '#3b4f6b'; color = 'rgba(255,255,255,0.7)';
+            } else if (r.correcte) {
+                bg = '#166534'; border = '#22c55e'; color = '#fff';
+            } else {
+                bg = '#7f1d1d'; border = '#ef4444'; color = '#fff';
+            }
+            const circle = document.createElement('button');
+            circle.textContent = i + 1;
+            circle.style.cssText = `min-width:30px; height:30px; border-radius:50%; background:${bg}; border:2px solid ${border}; color:${color}; font-size:11px; font-weight:700; cursor:pointer; flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; font-family:inherit; padding:0; transition:transform 0.1s;`;
+            circle.onclick = () => mostrarPregunta(i);
+            if (esCurrent) {
+                setTimeout(() => circle.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }), 30);
+            }
+            nav.appendChild(circle);
         });
     }
 
+    function actualizarBotonesNav() {
+        const { index, preguntes, respostes } = estat;
+        const btnAnt = document.getElementById('testAnterior');
+        const btnSig = document.getElementById('testSeguent');
+
+        btnAnt.disabled = index === 0;
+        btnAnt.style.opacity = index === 0 ? '0.3' : '1';
+        btnAnt.style.cursor  = index === 0 ? 'not-allowed' : 'pointer';
+
+        const todasRespondidas = respostes.every(r => r !== null);
+        const esUltima = index === preguntes.length - 1;
+        if (todasRespondidas || esUltima) {
+            btnSig.textContent = '✓ Finalizar';
+            btnSig.onclick = acabarTest;
+        } else {
+            btnSig.textContent = 'Siguiente →';
+            btnSig.onclick = navegarSiguiente;
+        }
+    }
+
+    function navegarAnterior() {
+        if (estat.index > 0) mostrarPregunta(estat.index - 1);
+    }
+
+    function navegarSiguiente() {
+        if (estat.index < estat.preguntes.length - 1) mostrarPregunta(estat.index + 1);
+    }
+
+    // ── Responder ────────────────────────────────────────────────
     function respuesta(idx, btn, q) {
-        const { killer, examen } = estat;
+        const { killer, examen, index } = estat;
         const correcte = idx === q.correcta;
 
+        // Guardar respuesta
+        estat.respostes[index] = { selected: idx, correcte };
+
+        // Colorear botones
         document.querySelectorAll('#testOpcions button').forEach((b, i) => {
-            b.onclick = null;
-            if (i === q.correcta) b.style.background = '#1a4a2e';
-            else if (i === idx && !correcte) b.style.background = '#4a1a1e';
+            if (!examen) {
+                // Tests normales: bloquear y colorear resultado
+                b.onclick = null; b.onmouseover = null; b.onmouseout = null;
+                b.style.cursor = 'default';
+                if (i === q.correcta) b.style.background = '#1a4a2e';
+                else if (i === idx && !correcte) b.style.background = '#4a1a1e';
+            } else {
+                // Examen: marcar selección pero mantener botones activos para cambiar
+                b.style.background = i === idx ? '#1e3a5f' : '#0f1c2e';
+                b.style.borderColor = i === idx ? '#3b82f6' : '#2a3a52';
+                b.onmouseover = () => { if (i !== idx) b.style.background = '#162035'; };
+                b.onmouseout  = () => { if (i !== idx) b.style.background = '#0f1c2e'; };
+                b.onclick = () => respuesta(i, b, q);
+            }
         });
 
+        // Gestión de errores guardados
         const key = errKey();
         if (correcte) {
-            estat.encerts++;
             if (estat.tipus === 'errors') {
                 const stored = JSON.parse(localStorage.getItem(key) || '[]');
                 localStorage.setItem(key, JSON.stringify(stored.filter(e => e.pregunta !== q.pregunta)));
             }
             if (!examen) {
                 const fb = document.getElementById('testFeedback');
-                fb.textContent = '✅ ¡Correcto!'; fb.style.background = '#1a4a2e'; fb.style.display = 'block';
+                fb.textContent = '✅ ¡Correcto!';
+                fb.style.cssText = 'display:block; margin-top:14px; padding:11px 15px; border-radius:10px; font-weight:600; font-size:14px; background:#1a4a2e; color:#86efac;';
             }
         } else {
-            estat.errors++;
             const stored = JSON.parse(localStorage.getItem(key) || '[]');
-            if (!stored.find(e => e.pregunta === q.pregunta)) {
-                stored.push(q);
-                localStorage.setItem(key, JSON.stringify(stored));
-            }
+            if (!stored.find(e => e.pregunta === q.pregunta)) { stored.push(q); localStorage.setItem(key, JSON.stringify(stored)); }
             if (!examen) {
                 const fb = document.getElementById('testFeedback');
-                fb.textContent = '❌ Incorrecto'; fb.style.background = '#4a1a1e'; fb.style.display = 'block';
+                fb.textContent = '❌ Incorrecto';
+                fb.style.cssText = 'display:block; margin-top:14px; padding:11px 15px; border-radius:10px; font-weight:600; font-size:14px; background:#4a1a1e; color:#fca5a5;';
                 const ex = document.getElementById('testExplicacio');
                 ex.innerHTML = `<strong>💡 Explicación:</strong> ${q.explicacio || 'La respuesta correcta es la opción marcada en verde.'}`;
                 ex.style.display = 'block';
@@ -343,24 +451,25 @@
             if (killer) { setTimeout(acabarTest, 900); return; }
         }
 
-        document.getElementById('testSeguent').style.display = 'block';
+        actualizarNavegador();
+        actualizarBotonesNav();
     }
 
-    function siguiente() {
-        estat.index++;
-        if (estat.index >= estat.preguntes.length) acabarTest();
-        else mostrarPregunta();
-    }
-
+    // ── Finalizar test ───────────────────────────────────────────
     async function acabarTest() {
         document.getElementById('modalTest').style.display = 'none';
-        const { encerts, preguntes, xpMaxim, killer } = estat;
-        const total = preguntes.length;
-        const pct = Math.round((encerts / total) * 100);
-        const aprovat = killer ? estat.errors === 0 : pct >= 70;
+
+        // Calcular resultados desde el array de respuestas
+        const encerts = estat.respostes.filter(r => r && r.correcte).length;
+        const errors  = estat.respostes.filter(r => r && !r.correcte).length;
+        const total   = estat.preguntes.length;
+        const { xpMaxim, killer } = estat;
+        const pct     = Math.round((encerts / total) * 100);
+        const aprovat = killer ? errors === 0 : pct >= 70;
         const xpGuanyat = aprovat ? xpMaxim : Math.round(xpMaxim * 0.15);
 
         const token = localStorage.getItem('cq_token');
+        let rachaActualitzada = null;
         await fetch('/api/user/xp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
@@ -368,9 +477,10 @@
         }).then(r => r.json()).then(d => {
             if (d.xp !== undefined) {
                 const u = JSON.parse(localStorage.getItem('cq_usuario') || '{}');
-                u.xp = d.xp; u.nivel = d.nivel; u.rang = d.rang;
+                u.xp = d.xp; u.nivel = d.nivel; u.rang = d.rang; u.racha = d.racha;
                 localStorage.setItem('cq_usuario', JSON.stringify(u));
                 actualitzarUIUsuari(u);
+                rachaActualitzada = d.racha;
             }
         }).catch(() => {});
 
@@ -380,12 +490,10 @@
         if (aprovat && apEl)  apEl.textContent  = parseInt(apEl.textContent  || 0) + 1;
         if (!aprovat && susEl) susEl.textContent = parseInt(susEl.textContent || 0) + 1;
         if (totEl) { totEl.textContent = parseInt(totEl.textContent || 0) + 1; }
-        const ap2 = parseInt(document.querySelector('.js-aprovats')?.textContent || 0);
+        const ap2  = parseInt(document.querySelector('.js-aprovats')?.textContent || 0);
         const tot2 = parseInt(document.querySelector('.js-total')?.textContent || 0);
         const exitEl = document.querySelector('.js-exit');
         if (exitEl && tot2 > 0) exitEl.textContent = `${Math.round((ap2/tot2)*100)}%`;
-
-        const { errors } = estat;
 
         if (estat.testNum) {
             const rKey = testResultsKey();
@@ -403,7 +511,10 @@
         } else {
             errEl.innerHTML = `<span style="color:#22c55e;">✅ ¡Sin errores! Test perfecto</span>`;
         }
-        document.getElementById('resultatXP').textContent    = `+${xpGuanyat} XP ganados`;
+        const xpLine = rachaActualitzada !== null
+            ? `+${xpGuanyat} XP &nbsp;·&nbsp; 🔥 ${rachaActualitzada} día${rachaActualitzada !== 1 ? 's' : ''} de racha`
+            : `+${xpGuanyat} XP ganados`;
+        document.getElementById('resultatXP').innerHTML = xpLine;
         document.getElementById('modalResultat').style.display = 'flex';
     }
 
