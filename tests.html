@@ -157,7 +157,10 @@
             <!-- Cabecera -->
             <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 20px; border-bottom:1px solid rgba(255,255,255,0.07); flex-shrink:0;">
                 <span id="testTipus" style="font-size:12px; opacity:0.5; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:#fff;"></span>
-                <span id="testProgres" style="font-size:13px; color:#FF6B35; font-weight:700;"></span>
+                <div style="display:flex; align-items:center; gap:14px;">
+                    <span id="testProgres" style="font-size:13px; color:#FF6B35; font-weight:700;"></span>
+                    <button onclick="document.getElementById('modalTest').style.display='none'" style="background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); color:rgba(255,255,255,0.6); width:28px; height:28px; border-radius:50%; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; line-height:1; padding:0; font-family:inherit;" title="Cerrar">✕</button>
+                </div>
             </div>
 
             <!-- Contenido (scroll) -->
@@ -511,8 +514,9 @@
         } else {
             errEl.innerHTML = `<span style="color:#22c55e;">✅ ¡Sin errores! Test perfecto</span>`;
         }
+        const fireIcon = rachaActualitzada >= 30 ? '🔥🔥🔥' : rachaActualitzada >= 15 ? '🔥🔥' : '🔥';
         const xpLine = rachaActualitzada !== null
-            ? `+${xpGuanyat} XP &nbsp;·&nbsp; 🔥 ${rachaActualitzada} día${rachaActualitzada !== 1 ? 's' : ''} de racha`
+            ? `+${xpGuanyat} XP &nbsp;·&nbsp; ${fireIcon} ${rachaActualitzada} día${rachaActualitzada !== 1 ? 's' : ''} de racha`
             : `+${xpGuanyat} XP ganados`;
         document.getElementById('resultatXP').innerHTML = xpLine;
         document.getElementById('modalResultat').style.display = 'flex';

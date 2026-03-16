@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>CarQuest — Elige Responsable</title>
+    <link rel="stylesheet" href="estilos.css">
+    <style>
+        .back-link { display:inline-flex; align-items:center; gap:6px; color:var(--color-primario); text-decoration:none; font-size:14px; font-weight:600; margin-bottom:20px; transition:opacity .2s; }
+        .back-link:hover { opacity:.7; }
+        .screen { display:flex; flex-direction:column; align-items:center; gap:18px; }
+        .hidden { display:none !important; }
+
+        /* Cabecera */
+        .game-topbar { display:flex; align-items:center; justify-content:space-between; width:100%; flex-wrap:wrap; gap:10px; }
+        .badge { padding:5px 14px; border-radius:20px; font-size:13px; font-weight:700; }
+        .badge-round { background:rgba(255,107,53,.15); border:1px solid rgba(255,107,53,.3); color:#FF6B35; }
+        .badge-xp { background:rgba(6,167,125,.12); border:1px solid rgba(6,167,125,.3); color:#06A77D; }
+
+        /* Puntos de progreso */
+        .rounds-dots { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+        .rdot { width:14px; height:14px; border-radius:50%; background:rgba(255,255,255,.12); border:2px solid rgba(255,255,255,.2); transition:all .3s ease; }
+        .rdot.active { background:#FF6B35; border-color:#FF6B35; transform:scale(1.3); box-shadow:0 0 8px rgba(255,107,53,.6); }
+        .rdot.ok     { background:#06A77D; border-color:#06A77D; }
+        .rdot.fail   { background:#E63946; border-color:#E63946; }
+
+        /* Tarjeta de situación */
+        .scenario-card {
+            width:100%; background:linear-gradient(160deg,#1c1c2e,#12121e);
+            border:2px solid #2a2a45; border-radius:20px; padding:24px 22px;
+            box-shadow:0 10px 40px rgba(0,0,0,.6); position:relative; overflow:hidden;
+        }
+        .scenario-card::before {
+            content:''; position:absolute; inset:0;
+            background:radial-gradient(ellipse at 30% 20%, rgba(255,107,53,.05), transparent 60%);
+            pointer-events:none;
+        }
+        .scenario-icon { font-size:52px; line-height:1; text-align:center; margin-bottom:14px; }
+        .scenario-context {
+            font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.8px;
+            color:#FF6B35; margin-bottom:8px; opacity:.85;
+        }
+        .scenario-text {
+            font-size:15px; font-weight:700; color:#fff; line-height:1.6; margin:0;
+        }
+
+        /* Opciones */
+        .options-list { width:100%; display:flex; flex-direction:column; gap:10px; }
+        .opt-btn {
+            width:100%; background:rgba(255,255,255,.04); border:1.5px solid rgba(255,255,255,.1);
+            color:#fff; text-align:left; padding:14px 18px; border-radius:14px;
+            font-size:14px; font-family:inherit; cursor:pointer;
+            transition:background .15s, border-color .15s, transform .1s;
+            line-height:1.5; display:flex; align-items:flex-start; gap:12px;
+        }
+        .opt-letter {
+            min-width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.1);
+            display:flex; align-items:center; justify-content:center;
+            font-size:12px; font-weight:800; flex-shrink:0; margin-top:1px;
+        }
+        .opt-btn:hover:not(:disabled) { background:rgba(255,107,53,.1); border-color:rgba(255,107,53,.35); transform:translateX(3px); }
+        .opt-btn.correct { background:rgba(6,167,125,.16); border-color:#06A77D; }
+        .opt-btn.correct .opt-letter { background:#06A77D; color:#fff; }
+        .opt-btn.wrong   { background:rgba(230,57,70,.16); border-color:#E63946; }
+        .opt-btn.wrong .opt-letter   { background:#E63946; color:#fff; }
+        .opt-btn:disabled { cursor:default; transform:none; }
+
+        /* Feedback */
+        .feedback-box { width:100%; border-radius:14px; padding:14px 18px; font-size:13px; line-height:1.6; display:none; }
+        .feedback-box.ok   { background:rgba(6,167,125,.1); border:1px solid rgba(6,167,125,.3); color:#6ee7b7; display:block; }
+        .feedback-box.fail { background:rgba(230,57,70,.1); border:1px solid rgba(230,57,70,.25); color:#fca5a5; display:block; }
+        .feedback-title { font-weight:800; font-size:15px; margin-bottom:6px; }
+        .feedback-explica { color:rgba(255,255,255,.65); font-size:12.5px; }
+
+        /* Botón siguiente */
+        .btn-next { padding:13px 32px; background:linear-gradient(135deg,#FF6B35,#ff8c5a); color:#fff; font-size:15px; font-weight:800; border:none; border-radius:12px; cursor:pointer; box-shadow:0 4px 20px rgba(255,107,53,.4); transition:transform .15s, box-shadow .15s; width:100%; max-width:380px; display:none; font-family:inherit; }
+        .btn-next:hover  { transform:translateY(-2px); box-shadow:0 8px 28px rgba(255,107,53,.5); }
+        .btn-next:active { transform:scale(.97); }
+
+        /* Pantalla de inicio */
+        .idle-title { font-size:26px; font-weight:900; color:#fff; text-align:center; }
+        .idle-desc  { font-size:14px; color:rgba(255,255,255,.6); text-align:center; max-width:400px; line-height:1.7; }
+        .rules-list { background:rgba(0,78,137,.12); border:1px solid rgba(0,78,137,.25); border-radius:12px; padding:16px 18px; width:100%; }
+        .rules-list li { font-size:13px; color:rgba(255,255,255,.7); padding:4px 0; list-style:none; padding-left:24px; position:relative; line-height:1.5; }
+        .rules-list li::before { content:attr(data-icon); position:absolute; left:0; }
+
+        /* Pantalla final */
+        .final-title { font-size:24px; font-weight:900; color:#fff; text-align:center; }
+        .final-sub   { font-size:14px; color:rgba(255,255,255,.55); text-align:center; }
+        .result-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; }
+        .ritem { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:16px; text-align:center; }
+        .ritem-label { font-size:11px; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
+        .ritem-val { font-size:26px; font-weight:900; color:#fff; }
+        .ritem-val.orange { color:#FF6B35; }
+        .ritem-val.green  { color:#06A77D; }
+        .ritem-val.red    { color:#E63946; }
+        .rating-card { width:100%; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); border-radius:14px; padding:18px 20px; }
+        .rating-label { font-size:12px; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
+        .rating-name  { font-size:20px; font-weight:800; color:#fff; margin-bottom:10px; }
+        .rating-bar-bg   { background:rgba(255,255,255,.08); border-radius:100px; height:10px; overflow:hidden; }
+        .rating-bar-fill { height:100%; border-radius:100px; transition:width 1.2s ease; }
+        .xp-card { width:100%; background:linear-gradient(135deg,rgba(255,107,53,.12),rgba(255,107,53,.04)); border:1px solid rgba(255,107,53,.3); border-radius:14px; padding:18px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+        .xp-card-label   { font-size:13px; color:rgba(255,255,255,.6); font-weight:600; }
+        .xp-card-amounts { display:flex; gap:16px; }
+        .xp-item   { font-size:18px; font-weight:900; color:#FF6B35; }
+        .coin-item { font-size:18px; font-weight:900; color:#F77F00; }
+
+        /* Ranking */
+        .ranking-section { width:100%; }
+        .ranking-title { font-size:13px; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px; }
+        .ranking-row { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); border-radius:10px; padding:10px 14px; margin-bottom:6px; font-size:13px; }
+        .ranking-row.me { background:rgba(255,107,53,.1); border-color:rgba(255,107,53,.25); }
+        .ranking-pos { font-weight:900; color:rgba(255,255,255,.35); width:20px; text-align:center; flex-shrink:0; }
+        .ranking-pos.gold { color:#FFD700; } .ranking-pos.silver { color:#C0C0C0; } .ranking-pos.bronze { color:#CD7F32; }
+        .ranking-avatar { width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,.08); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+        .ranking-name  { flex:1; font-weight:600; color:rgba(255,255,255,.85); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .ranking-score { font-weight:800; color:#06A77D; flex-shrink:0; }
+        .ranking-loading { text-align:center; color:rgba(255,255,255,.3); font-size:13px; padding:16px; }
+
+        /* Botones principales */
+        .btn-main { padding:15px 36px; background:linear-gradient(135deg,#FF6B35,#ff8c5a); color:#fff; font-size:15px; font-weight:800; border:none; border-radius:12px; cursor:pointer; box-shadow:0 4px 20px rgba(255,107,53,.4); transition:transform .15s, box-shadow .15s; width:100%; max-width:360px; text-transform:uppercase; letter-spacing:.5px; font-family:inherit; }
+        .btn-main:hover  { transform:translateY(-2px); box-shadow:0 8px 28px rgba(255,107,53,.5); }
+        .btn-main:active { transform:scale(.97); }
+        .btn-secondary { padding:12px 28px; background:rgba(255,255,255,.08); color:rgba(255,255,255,.8); font-size:14px; font-weight:700; border:1px solid rgba(255,255,255,.15); border-radius:12px; cursor:pointer; transition:background .2s; width:100%; max-width:360px; font-family:inherit; }
+        .btn-secondary:hover { background:rgba(255,255,255,.13); }
+
+        /* Animaciones */
+        @keyframes slide-in { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+        .slide-in { animation:slide-in .28s ease; }
+        @keyframes pop-in { from { transform:scale(1.6); opacity:0; } to { transform:scale(1); opacity:1; } }
+        .countdown-num   { font-size:88px; font-weight:900; color:#FF6B35; text-shadow:0 0 40px rgba(255,107,53,.6); animation:pop-in .35s cubic-bezier(.34,1.56,.64,1); line-height:1; }
+        .countdown-label { font-size:14px; color:rgba(255,255,255,.5); font-weight:600; text-transform:uppercase; letter-spacing:2px; }
+    </style>
+</head>
+<body class="dashboard-body">
+<div class="dashboard-wrap">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-box"></div>
+            <div><h1>CarQuest</h1><p>Aprende a conducir jugando</p></div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="sidebar-section-label">Principal</div>
+            <a href="inici.html" class="sidebar-link"><span class="sidebar-link-icon">🏠</span> Inicio</a>
+            <a href="perfil.html" class="sidebar-link"><span class="sidebar-link-icon">👤</span> Perfil</a>
+            <div class="sidebar-section-label">Aprender</div>
+            <a href="teoria.html" class="sidebar-link"><span class="sidebar-link-icon">📖</span> Teoría</a>
+            <a href="jocs.html" class="sidebar-link activo"><span class="sidebar-link-icon">🎯</span> Juegos</a>
+            <a href="tests.html" class="sidebar-link"><span class="sidebar-link-icon">📝</span> Tests</a>
+            <a href="diaris.html" class="sidebar-link"><span class="sidebar-link-icon">📅</span> Diarios</a>
+            <div class="sidebar-section-label">Comunidad</div>
+            <a href="ranquing.html" class="sidebar-link"><span class="sidebar-link-icon">🏆</span> Ranking</a>
+            <a href="botiga.html" class="sidebar-link"><span class="sidebar-link-icon">🛒</span> Tienda</a>
+        </nav>
+        <div class="sidebar-bottom">
+            <div class="sidebar-user">
+                <div class="sidebar-user-avatar js-avatar">🙂</div>
+                <div class="sidebar-user-info">
+                    <strong class="js-sidebar-nom">...</strong>
+                    <span class="js-sidebar-info">...</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main -->
+    <main class="main-content">
+        <div class="mobile-header">
+            <button class="mobile-menu-btn" id="menuBtn">☰</button>
+            <span style="font-weight:700;color:#fff;">CarQuest</span>
+        </div>
+
+        <div class="content-sheet">
+            <div class="page-header">
+                <div class="page-title">🥺 Elige Responsable</div>
+                <a href="#" onclick="tancarSessio()" class="btn-logout-header">Cerrar sesión</a>
+            </div>
+
+            <a href="jocs.html" class="back-link">← Volver a Juegos</a>
+
+            <!-- ======================== PANTALLA 1: INICIO ======================== -->
+            <div id="screenIdle" class="screen">
+                <div style="font-size:72px;line-height:1;">🚗</div>
+                <div class="idle-title">Elige Responsable</div>
+                <div class="idle-desc">
+                    La carretera pone a prueba tus decisiones. Ante cada situación real de conducción, elige la opción más responsable y segura.
+                </div>
+                <ul class="rules-list">
+                    <li data-icon="🛣️">10 situaciones reales de conducción</li>
+                    <li data-icon="🧠">Elige la decisión más segura y responsable</li>
+                    <li data-icon="💡">Si fallas, aprenderás por qué era incorrecta</li>
+                    <li data-icon="⭐">Máximo <strong>+60 XP</strong> y <strong>+12 monedas</strong> con 5/5</li>
+                    <li data-icon="⚠️">No hay una segunda oportunidad: ¡piénsalo bien!</li>
+                </ul>
+                <button class="btn-main" id="btnStart">¡Empezar!</button>
+            </div>
+
+            <!-- ======================== PANTALLA 2: JUEGO ======================== -->
+            <div id="screenGame" class="screen hidden">
+
+                <div class="game-topbar">
+                    <span class="badge badge-round" id="situLabel">Situación 1 / 10</span>
+                    <span class="badge badge-xp">⭐ +60 XP · 🪙 +12</span>
+                </div>
+
+                <div class="rounds-dots" id="roundsDots">
+                    <div class="rdot" id="dot0"></div><div class="rdot" id="dot1"></div>
+                    <div class="rdot" id="dot2"></div><div class="rdot" id="dot3"></div>
+                    <div class="rdot" id="dot4"></div>
+                </div>
+
+                <div class="scenario-card slide-in" id="scenarioCard">
+                    <div class="scenario-icon" id="scenarioIcon"></div>
+                    <div class="scenario-context" id="scenarioContext"></div>
+                    <p class="scenario-text" id="scenarioText"></p>
+                </div>
+
+                <div class="options-list" id="optionsList"></div>
+
+                <div class="feedback-box" id="feedbackBox">
+                    <div class="feedback-title" id="feedbackTitle"></div>
+                    <div class="feedback-explica" id="feedbackExplica"></div>
+                </div>
+
+                <button class="btn-next" id="btnNext">Siguiente situación →</button>
+            </div>
+
+            <!-- ======================== PANTALLA 3: RESULTADOS ======================== -->
+            <div id="screenGameover" class="screen hidden">
+
+                <div style="font-size:72px;line-height:1;" id="finalEmoji">🏆</div>
+                <div class="final-title" id="finalTitle">¡Completado!</div>
+                <div class="final-sub" id="finalSub">Aquí tienes tus resultados:</div>
+
+                <div class="result-grid">
+                    <div class="ritem"><div class="ritem-label">Decisiones OK</div><div class="ritem-val green" id="resCorrect">—</div></div>
+                    <div class="ritem"><div class="ritem-label">Errores</div><div class="ritem-val red" id="resWrong">—</div></div>
+                    <div class="ritem"><div class="ritem-label">Precisión</div><div class="ritem-val orange" id="resPct">—</div></div>
+                    <div class="ritem"><div class="ritem-label">Puntuación</div><div class="ritem-val" id="resScore">—</div></div>
+                </div>
+
+                <div class="rating-card">
+                    <div class="rating-label">Perfil de conductor</div>
+                    <div class="rating-name" id="ratingName">—</div>
+                    <div class="rating-bar-bg"><div class="rating-bar-fill" id="ratingBar" style="width:0%"></div></div>
+                </div>
+
+                <div class="xp-card">
+                    <div class="xp-card-label">Recompensa ganada</div>
+                    <div class="xp-card-amounts">
+                        <span class="xp-item" id="xpEarned">⭐ +0 XP</span>
+                        <span class="coin-item" id="coinsEarned">🪙 +0</span>
+                    </div>
+                </div>
+
+                <div class="ranking-section">
+                    <div class="ranking-title">🏆 Ranking Global</div>
+                    <div id="rankingList"><div class="ranking-loading">Cargando...</div></div>
+                </div>
+
+                <button class="btn-main" id="btnReplay">Jugar de nuevo</button>
+                <button class="btn-secondary" onclick="location.href='jocs.html'">Otros juegos</button>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<script src="app.js"></script>
+<script src="dashboard.js"></script>
+<script>
+// ============================================================
+//  Situaciones de conducción responsable
+// ============================================================
+const TODAS_SITUACIONES = [
+    {
+        icon: '📱',
+        context: 'Circulando por ciudad',
+        texto: 'Vas conduciendo por ciudad a 50 km/h y recibes una llamada importante de trabajo en el móvil. ¿Qué haces?',
+        opcions: [
+            'Contestas rápidamente con el móvil en la mano, es solo un momento',
+            'Buscas un lugar seguro para parar, aparcas y contestas la llamada',
+            'Pones el móvil en altavoz y lo dejas en el asiento para hablar sin sujetarlo'
+        ],
+        correcta: 1,
+        explicacio: 'Usar el móvil al volante, aunque sea en altavoz sin sujetarlo, distrae la atención. La única opción segura y legal es aparcar y contestar. Hacerlo en marcha implica multa y pérdida de puntos.'
+    },
+    {
+        icon: '🍺',
+        context: 'Noche de fin de semana',
+        texto: 'Has cenado con amigos y tomado 2 cervezas en 2 horas. Te sientes bien y el trayecto a casa es de 20 minutos. ¿Qué haces?',
+        opcions: [
+            'Conduces despacio y con precaución, te sientes perfectamente',
+            'Esperas 1 hora más, bebes agua y ya puedes conducir sin problema',
+            'No conduces: llamas a un taxi o pides que te lleven'
+        ],
+        correcta: 2,
+        explicacio: '2 cervezas pueden superar la tasa legal (0,5 g/l). El alcohol altera la percepción aunque no lo notes. La única opción 100% segura es no conducir. Esperar tampoco garantiza estar por debajo del límite.'
+    },
+    {
+        icon: '😴',
+        context: 'Viaje nocturno por autopista',
+        texto: 'Llevas 3 horas conduciendo de noche y te bostezas repetidamente. Aún te quedan 80 km. ¿Qué haces?',
+        opcions: [
+            'Abres la ventana y subes el volumen de la música para mantenerte despierto',
+            'Paras en el próximo área de descanso, echas una siesta de 20 minutos y tomas un café',
+            'Aceleras para llegar antes y poder descansar cuanto antes en casa'
+        ],
+        correcta: 1,
+        explicacio: 'La somnolencia al volante es tan peligrosa como el alcohol. Abrir la ventana o subir la música son soluciones ineficaces. Una siesta breve de 15-20 min y un café son la única solución efectiva probada.'
+    },
+    {
+        icon: '🌧️',
+        context: 'Autovía con lluvia intensa',
+        texto: 'Estás en autovía y empieza una lluvia muy fuerte que reduce la visibilidad. El límite es 120 km/h. ¿A qué velocidad cirulas?',
+        opcions: [
+            'A 120 km/h, es el límite legal y tienes buenas luces',
+            'A 80-90 km/h con luces de cruce encendidas y mayor distancia de seguridad',
+            'A 60 km/h con las luces de emergencia puestas para avisar a los demás'
+        ],
+        correcta: 1,
+        explicacio: 'La velocidad debe adaptarse a las condiciones. Con lluvia intensa hay que reducir y aumentar la distancia de seguridad. Las luces de emergencia están prohibidas en marcha salvo parada de emergencia, y pueden confundir a otros conductores.'
+    },
+    {
+        icon: '🚦',
+        context: 'Intersección en ciudad',
+        texto: 'Te acercas a un semáforo en verde a 50 km/h. A 30 metros, el semáforo se pone en ámbar. ¿Qué haces?',
+        opcions: [
+            'Aceleras para cruzar antes de que se ponga rojo',
+            'Frenas con suavidad y paras antes de la línea de stop si puedes hacerlo con seguridad',
+            'Mantienes la velocidad y valoras si llegas antes del rojo'
+        ],
+        correcta: 1,
+        explicacio: 'El ámbar significa que debes parar si puedes hacerlo con seguridad. Acelerar para cruzar en ámbar es una infracción y muy peligroso. Solo se puede continuar si la frenada brusca representaría un peligro mayor.'
+    },
+    {
+        icon: '🚸',
+        context: 'Zona residencial',
+        texto: 'Circulando por una calle residencial ves un balón que sale rodando a la calzada desde entre dos coches aparcados. ¿Qué haces?',
+        opcions: [
+            'Tocas el claxon para avisar y sigues con precaución reduciendo algo la velocidad',
+            'Frenar inmediatamente y estar preparado para que un niño salga corriendo tras el balón',
+            'Esquivas el balón y continúas, los niños saben que no deben salir a la calle'
+        ],
+        correcta: 1,
+        explicacio: 'Donde hay un balón, hay un niño. La distancia de reacción de un niño es mínima. Debes frenar de inmediato y no continuar hasta comprobar que no hay ningún menor en la calzada.'
+    },
+    {
+        icon: '🚛',
+        context: 'Carretera convencional',
+        texto: 'Llevas varios minutos detrás de un camión lento. Hay línea continua pero ves tramo recto y crees que podrías adelantar. ¿Qué haces?',
+        opcions: [
+            'Adelantas rápido aprovechando que no viene nadie',
+            'Esperas a que la línea sea discontinua o haya un carril de adelantamiento',
+            'Te acercas mucho al camión para presionarle y que acelere'
+        ],
+        correcta: 1,
+        explicacio: 'La línea continua prohíbe adelantar sin excepciones. No puedes valorar correctamente si hay tiempo suficiente. Adelantar en continua es una infracción grave y una de las principales causas de accidentes mortales en carretera.'
+    },
+    {
+        icon: '😡',
+        context: 'En autopista',
+        texto: 'Un conductor te hace una maniobra peligrosa y agresiva. Estás molesto. ¿Cuál es tu reacción?',
+        opcions: [
+            'Le persigues para adelantarle y frenarte delante como advertencia',
+            'Tocas el claxon, le muestras tu enfado y le sigues de cerca',
+            'Respiras, mantienes la distancia y no reaccionas ante su agresividad'
+        ],
+        correcta: 2,
+        explicacio: 'La conducción agresiva reactiva genera situaciones muy peligrosas. Perseguir o intimidar a otro conductor puede derivar en un accidente grave o en un conflicto físico. La respuesta segura es ignorar la provocación y mantener la calma.'
+    },
+    {
+        icon: '⛽',
+        context: 'En viaje largo',
+        texto: 'La luz de reserva de combustible se enciende en plena autopista. Hay una gasolinera a 40 km. ¿Qué haces?',
+        opcions: [
+            'Aceleras para llegar más rápido antes de quedarte sin gasolina',
+            'Conduces a velocidad moderada (90-100 km/h) para ahorrar combustible y llegas a la gasolinera',
+            'Pones las luces de emergencia y continúas a 60 km/h por el arcén por seguridad'
+        ],
+        correcta: 1,
+        explicacio: 'Con la reserva encendida aún queda margen (generalmente 50-80 km). Circular a velocidad moderada reduce el consumo. Circular por el arcén sin una emergencia real está prohibido y es peligroso.'
+    },
+    {
+        icon: '❄️',
+        context: 'Mañana de invierno',
+        texto: 'Al salir de casa notas que el parabrisas tiene hielo. Tienes prisa. ¿Qué haces?',
+        opcions: [
+            'Arrancas y conduces despacio esperando que el calefactor descongele mientras circulas',
+            'Haces un pequeño agujero en el hielo a la altura de tu visión y sales con cuidado',
+            'Descongelad completamente el parabrisas y todas las lunas antes de arrancar'
+        ],
+        correcta: 2,
+        explicacio: 'Conducir con visibilidad reducida por hielo es una infracción grave y extremadamente peligroso. Debes despejar completamente todos los cristales y luces antes de salir. El tiempo que tardes puede salvarte la vida.'
+    },
+    {
+        icon: '🚑',
+        context: 'En vía de dos carriles',
+        texto: 'Escuchas una sirena de ambulancia por detrás. Vas por el carril derecho y hay tráfico lento. ¿Qué haces?',
+        opcions: [
+            'Aceleras para adelantar a los coches de delante y dejar paso',
+            'Te pones lo más a la derecha posible o en el arcén si hay, y reduces la velocidad para dejarle pasar',
+            'Mantienes tu posición, la ambulancia ya buscará el hueco por donde pasar'
+        ],
+        correcta: 1,
+        explicacio: 'Los vehículos de emergencia tienen prioridad absoluta. Debes ceder el paso de inmediato apartándote a la derecha y reduciendo velocidad. Obstruir el paso a una ambulancia puede costarle la vida a alguien.'
+    },
+    {
+        icon: '👴',
+        context: 'Carretera secundaria',
+        texto: 'Ves a un conductor mayor circulando muy lento y dando bandazos por la carretera. ¿Qué haces?',
+        opcions: [
+            'Le adelantas en cuanto puedes y sigues tu camino, no es tu problema',
+            'Te pones muy cerca para presionarle y que se aparte o acelere',
+            'Mantienes distancia de seguridad, avisas a la DGT si la situación parece peligrosa y adelantas cuando es seguro'
+        ],
+        correcta: 2,
+        explicacio: 'Un conductor con comportamiento errático puede indicar una emergencia médica o incapacidad. Lo correcto es mantener distancia, y si la situación es peligrosa, llamar al 112 o la DGT. Presionarle empeora la situación.'
+    },
+    {
+        icon: '🌫️',
+        context: 'Autovía con niebla densa',
+        texto: 'Entras en un tramo de niebla densa con visibilidad inferior a 50 metros. ¿Cómo actúas?',
+        opcions: [
+            'Enciendes las luces de emergencia y mantienes la velocidad para no generar atascos',
+            'Reduces velocidad, aumentas la distancia de seguridad y enciendes antinieblas traseras',
+            'Aceleras para salir cuanto antes del tramo de niebla'
+        ],
+        correcta: 1,
+        explicacio: 'Con visibilidad inferior a 50 m debes reducir drásticamente la velocidad y usar antinieblas traseras. Las luces de emergencia en marcha confunden a los demás. Acelerar para salir de la niebla es extremadamente peligroso.'
+    },
+    {
+        icon: '🚲',
+        context: 'Carretera convencional',
+        texto: 'Vas a adelantar a un ciclista en una carretera de un carril por sentido. ¿Qué distancia lateral mínima debes respetar?',
+        opcions: [
+            '50 cm es suficiente si vas despacio',
+            '1 metro como mínimo, aunque tengas que invadir el carril contrario si está libre',
+            'No hay distancia mínima regulada, basta con no tocarle'
+        ],
+        correcta: 1,
+        explicacio: 'La ley exige una distancia lateral mínima de 1,5 metros al adelantar a ciclistas. Para garantizarla es obligatorio invadir el carril contrario si está libre y la visibilidad lo permite.'
+    },
+    {
+        icon: '🅿️',
+        context: 'Aparcamiento en ciudad',
+        texto: 'Al aparcar rozas ligeramente el coche de al lado y le haces una pequeña marca. No hay nadie alrededor. ¿Qué haces?',
+        opcions: [
+            'Te vas, ha sido muy leve y apenas se nota',
+            'Dejas una nota con tus datos de contacto en el parabrisas y, si el daño es notable, llamas al seguro',
+            'Esperas 5 minutos y si no viene nadie te marchas'
+        ],
+        correcta: 1,
+        explicacio: 'Irse tras causar daños a otro vehículo es un delito de fuga. Estás obligado a dejar tus datos o avisar a las autoridades. No hacerlo puede implicar cargos penales además de la sanción de tráfico.'
+    },
+    {
+        icon: '💊',
+        context: 'Antes de salir de casa',
+        texto: 'Tu médico te ha recetado un antihistamínico que puede causar somnolencia. Tienes que conducir 2 horas. ¿Qué haces?',
+        opcions: [
+            'Lo tomas y conduces con más cuidado, siendo consciente del efecto',
+            'Consultas con el médico o farmacéutico si es compatible con la conducción y, si no lo es, buscas alternativa de transporte',
+            'No lo tomas hasta llegar, así no tendrás somnolencia al volante'
+        ],
+        correcta: 1,
+        explicacio: 'Muchos medicamentos afectan la conducción. Debes consultar siempre al médico o farmacéutico. Conducir bajo efectos de fármacos que afectan las facultades es sancionable aunque estén recetados.'
+    },
+    {
+        icon: '🚧',
+        context: 'Obras en autopista',
+        texto: 'En una zona de obras el límite es 60 km/h pero el tráfico fluye a 100 km/h. ¿Qué velocidad usas?',
+        opcions: [
+            '100 km/h como los demás, si paras causarás un accidente',
+            '60 km/h respetando la señal, independientemente de lo que hagan los demás',
+            '80 km/h como término medio entre la señal y el flujo de tráfico'
+        ],
+        correcta: 1,
+        explicacio: 'La señal de límite en obras es de obligado cumplimiento sin excepción. Las obras presentan peligros imprevisibles: operarios, maquinaria, pavimento deteriorado. Que los demás la incumplan no te exime de la multa ni del peligro.'
+    },
+    {
+        icon: '🌊',
+        context: 'Carretera inundada',
+        texto: 'Llegas a un tramo de carretera con agua acumulada de unos 20 cm. Ves que algunos coches pasan despacio. ¿Qué haces?',
+        opcions: [
+            'Cruzas despacio siguiendo a los demás coches',
+            'Evalúas la profundidad: si supera los bajos del coche o no ves el fondo, buscas otra ruta',
+            'Aceleras para cruzar rápido antes de que suba más el agua'
+        ],
+        correcta: 1,
+        explicacio: '20 cm de agua pueden arrastrar un vehículo. Que otros pasen no garantiza que sea seguro. Si no puedes evaluar la profundidad con seguridad, busca otra ruta. Los motores se dañan con la entrada de agua y el coche puede quedar atrapado.'
+    },
+    {
+        icon: '🐕',
+        context: 'Carretera secundaria de noche',
+        texto: 'Un animal aparece de repente en la calzada. ¿Cuál es la maniobra más segura?',
+        opcions: [
+            'Girar bruscamente para esquivarlo a toda costa',
+            'Frenar con firmeza en línea recta sin girar bruscamente el volante',
+            'Acelerar y pasar por encima, es preferible al accidente'
+        ],
+        correcta: 1,
+        explicacio: 'Girar bruscamente puede provocar un vuelco o salida de calzada, mucho más peligroso que el impacto con el animal. La maniobra correcta es frenar todo lo posible manteniendo la trayectoria recta.'
+    },
+    {
+        icon: '🔦',
+        context: 'Carretera de noche',
+        texto: 'Circulas de noche con luces largas y ves venir un coche. ¿Cuándo debes cambiar a cortas?',
+        opcions: [
+            'Cuando el otro coche te dé destellos de aviso',
+            'Al menos a 150 metros del vehículo que viene de frente',
+            'Solo en el momento en que te deslumbra su luz'
+        ],
+        correcta: 1,
+        explicacio: 'Debes poner las luces cortas cuando el vehículo contrario esté a menos de 150 metros. No esperes a que te avisen o a quedarte cegado: el deslumbramiento puede provocar un accidente grave.'
+    },
+    {
+        icon: '👶',
+        context: 'Viaje familiar',
+        texto: 'Tu hijo de 3 años llora y quiere salir de la silla. Lleváis 2 horas en carretera. ¿Qué haces?',
+        opcions: [
+            'Le sacas un momento de la silla para calmarlo mientras tu pareja le atiende en el asiento trasero',
+            'Paras en el próximo área de descanso para atenderle con el coche parado',
+            'Le das algo para entretenerle sin parar, el trayecto es largo y tenéis prisa'
+        ],
+        correcta: 1,
+        explicacio: 'Los niños deben viajar siempre en su sistema de retención homologado, incluso en trayectos cortos. Sacar a un niño de la silla en marcha es ilegal y extremadamente peligroso. Parar es siempre la única opción válida.'
+    },
+    {
+        icon: '⚡',
+        context: 'Vehículo eléctrico',
+        texto: 'Tu coche eléctrico indica que le quedan 30 km de autonomía y el cargador más cercano está a 25 km. ¿Qué haces?',
+        opcions: [
+            'Aceleras para llegar más rápido antes de quedarte sin batería',
+            'Reduces la velocidad, desactivas sistemas no esenciales y conduces eficientemente para llegar al cargador',
+            'Paras en el arcén a esperar ayuda inmediatamente'
+        ],
+        correcta: 1,
+        explicacio: 'Reducir velocidad y consumo puede añadir kilómetros de autonomía suficientes para llegar. Acelerar aumenta el consumo drásticamente. Parar en el arcén sin necesidad es peligroso y puede acarrear multa.'
+    },
+    {
+        icon: '🛣️',
+        context: 'Incorporación a autovía',
+        texto: 'Al incorporarte a la autovía por el carril de aceleración, el tráfico es denso y nadie te cede el paso. ¿Qué haces?',
+        opcions: [
+            'Te incorporas de golpe obligando a frenar al de detrás, tienes prioridad en el carril de aceleración',
+            'Adaptas tu velocidad al tráfico de la autovía y buscas un hueco para incorporarte con seguridad',
+            'Paras al final del carril de aceleración y esperas a que haya un hueco grande'
+        ],
+        correcta: 1,
+        explicacio: 'El carril de aceleración no da prioridad: debes ceder el paso a quienes ya circulan por la autovía. Debes alcanzar la velocidad del tráfico y buscar un hueco. Parar en el carril de aceleración es muy peligroso.'
+    },
+    {
+        icon: '🚗💨',
+        context: 'Autopista en verano',
+        texto: 'Llevas 4 horas conduciendo sin parar en pleno agosto. Te sientes bien pero llevas muchas horas. ¿Qué haces?',
+        opcins: [],
+        opcions: [
+            'Continúas, te sientes perfectamente y quieres llegar antes',
+            'Paras cada 2 horas como máximo para descansar al menos 15 minutos',
+            'Tomas un café y sigues, con cafeína es suficiente'
+        ],
+        correcta: 1,
+        explicacio: 'La fatiga al volante se acumula aunque no la notes. La DGT y la OMS recomiendan parar cada 2 horas mínimo. La cafeína ayuda pero no sustituye el descanso real. La microsueño puede ocurrir sin previo aviso.'
+    },
+    {
+        icon: '🅱️',
+        context: 'Aparcamiento en zona azul',
+        texto: 'Aparcas en zona azul pero no llevas monedas para el parquímetro. Tienes mucha prisa. ¿Qué haces?',
+        opcions: [
+            'Aparcas igualmente, es poco tiempo y probablemente no pase el controlador',
+            'Buscas una app de pago móvil o una zona de aparcamiento libre o de pago con tarjeta',
+            'Aparcas en doble fila un momento, es más visible para el controlador'
+        ],
+        correcta: 1,
+        explicacio: 'Aparcar sin ticket en zona azul o en doble fila son infracciones sancionables. Hoy existen múltiples aplicaciones móviles de pago que permiten pagar en zona regulada sin monedas. Buscar una alternativa legal es siempre la opción correcta.'
+    },
+    {
+        icon: '🌪️',
+        context: 'Día de viento fuerte',
+        texto: 'Hay aviso de viento fuerte (rachas de 80 km/h). Debes hacer un trayecto en carretera. ¿Cómo actúas?',
+        opcions: [
+            'Conduces normalmente, el coche aguanta bien el viento',
+            'Reduces la velocidad, agarras el volante con firmeza, aumentas la distancia y extremas la precaución en puentes y zonas abiertas',
+            'Aceleras para pasar los tramos expuestos más rápido y con menos tiempo de exposición al viento'
+        ],
+        correcta: 1,
+        explicacio: 'El viento fuerte puede desestabilizar el vehículo, especialmente en puentes, túneles y zonas abiertas. Debes reducir velocidad, mantener el volante firme con las dos manos y aumentar la distancia de seguridad.'
+    },
+    {
+        icon: '🏍️',
+        context: 'Adelantando en carretera',
+        texto: 'Vas a adelantar a una moto. ¿Qué debes tener en cuenta?',
+        opcions: [
+            'Las motos son pequeñas, puedes adelantarlas con menos margen que a un coche',
+            'Debes respetar la misma distancia lateral mínima que con cualquier vehículo y estar atento a sus maniobras',
+            'Puedes adelantarlas por la derecha si van muy pegadas al centro'
+        ],
+        correcta: 1,
+        explicacio: 'Las motos tienen derecho a ocupar todo el carril. Al adelantarlas debes respetar la distancia lateral suficiente (mínimo 1,5 m para vehículos vulnerables) y estar atento a que pueden cambiar de posición por baches o viento.'
+    },
+    {
+        icon: '🚌',
+        context: 'Parada de autobús escolar',
+        texto: 'Un autobús escolar está parado con las luces de emergencia encendidas y los niños están bajando. ¿Qué haces?',
+        opcions: [
+            'Reduces la velocidad y pasas con cuidado si no hay niños en tu carril',
+            'Paras completamente hasta que el autobús reanude la marcha y los niños estén en la acera',
+            'Tocas el claxon para avisar a los niños y pasas despacio'
+        ],
+        correcta: 1,
+        explicacio: 'Ante un autobús escolar con luces de emergencia debes detener el vehículo. Los niños son impredecibles y pueden cruzar en cualquier momento. La prioridad es siempre su seguridad sobre el tiempo de viaje.'
+    },
+    {
+        icon: '🔋',
+        context: 'Vehículo averiado en autopista',
+        texto: 'Tu coche se avería en el carril derecho de la autopista. ¿Qué es lo primero que haces?',
+        opcions: [
+            'Bajas del coche a mirar qué ha pasado y avisas por teléfono',
+            'Enciendes las luces de emergencia, tratas de llegar al arcén, pones el triángulo y, si es autopista, permaneces tras la barrera de seguridad',
+            'Dejas el coche y cruzas a pie a la mediana a llamar por teléfono'
+        ],
+        correcta: 1,
+        explicacio: 'En autopista: luces de emergencia, arcén, chaleco reflectante antes de salir, triángulos a 50 m mínimo y esperar FUERA de la calzada, detrás de la barrera de protección. Nunca cruces los carriles a pie.'
+    },
+    {
+        icon: '🌅',
+        context: 'Conducción al amanecer',
+        texto: 'El sol bajo en el horizonte te deslumbra directamente y no ves bien la calzada. ¿Qué haces?',
+        opcions: [
+            'Aceleras para salir cuanto antes de la zona de deslumbramiento',
+            'Reduces la velocidad, usas el parasol, gafas de sol y aumentas mucho la distancia de seguridad',
+            'Cierras un ojo para reducir el efecto del deslumbramiento y continúas'
+        ],
+        correcta: 1,
+        explicacio: 'El deslumbramiento solar es una causa frecuente de accidentes. Si no ves con claridad, debes reducir la velocidad drásticamente, usar el parasol y gafas de sol, y aumentar la distancia para poder frenar ante lo inesperado.'
+    },
+    {
+        icon: '🚦🟡',
+        context: 'Intersección con semáforo averiado',
+        texto: 'Te aproximas a una intersección y el semáforo está apagado. ¿Cómo procedes?',
+        opcions: [
+            'Continúas con prioridad porque ibas por el carril principal',
+            'Tratas el cruce como si hubiera señal de STOP: paras, cedes el paso y cruzas con precaución',
+            'Aceleras para cruzar rápido antes de que venga alguien'
+        ],
+        correcta: 1,
+        explicacio: 'Un semáforo apagado equivale a una intersección sin señalización. Se aplican las normas de prioridad generales (derecha) y debes cruzar con máxima precaución, deteniéndote si es necesario.'
+    },
+    {
+        icon: '👓',
+        context: 'Antes de salir',
+        texto: 'Llevas gafas graduadas y hoy las has olvidado en casa. Tu casa está a 5 minutos. ¿Qué haces?',
+        opcions: [
+            'Conduces con cuidado, 5 minutos no es nada y conoces bien el camino',
+            'Vuelves a casa a buscarlas o buscas otro medio de transporte',
+            'Conduces solo por calles secundarias donde no hay tanta velocidad'
+        ],
+        correcta: 1,
+        explicacio: 'Conducir sin la corrección visual prescrita es una infracción grave y muy peligroso. Sin las gafas tu capacidad de reacción y percepción de distancias está comprometida. No hay trayecto "corto" seguro sin la corrección necesaria.'
+    },
+    {
+        icon: '🚶',
+        context: 'Paso de peatones',
+        texto: 'Un peatón está esperando en el bordillo de un paso de cebra. ¿Tienes que parar?',
+        opcions: [
+            'No, solo debes parar si ya está cruzando',
+            'Sí, debes ceder el paso al peatón que espera para cruzar en un paso señalizado',
+            'Solo si hay señal de STOP antes del paso de cebra'
+        ],
+        correcta: 1,
+        explicacio: 'Desde 2021, la normativa española obliga a ceder el paso al peatón que espera en el bordillo con intención de cruzar en un paso señalizado, no solo cuando ya está en la calzada. Incumplirlo es una infracción grave.'
+    },
+    {
+        icon: '🏔️',
+        context: 'Puerto de montaña',
+        texto: 'Desciendes un puerto de montaña con pendiente pronunciada. ¿Cómo controlas la velocidad?',
+        opcions: [
+            'Usas el freno de pie continuamente para no acelerar en la bajada',
+            'Metes una marcha corta para usar el freno motor y usas el freno de pie solo puntualmente',
+            'Bajas en punto muerto para ahorrar combustible y frenas cuando sea necesario'
+        ],
+        correcta: 1,
+        explicacio: 'El freno motor (marcha corta) es la forma correcta de controlar la velocidad en descensos. Frenar continuamente sobrecalienta los frenos hasta perder eficacia (fading). Bajar en punto muerto es ilegal y muy peligroso.'
+    },
+    {
+        icon: '🚑💨',
+        context: 'En ciudad, carril único',
+        texto: 'Vas por una calle de un carril y escuchas una sirena de policía detrás. No hay arcén ni sitio para aparcar. ¿Qué haces?',
+        opcions: [
+            'Aceleras para llegar a una calle más ancha y apartarte allí',
+            'Reduces velocidad al máximo y te pegas todo lo posible a la derecha para dejar espacio',
+            'Mantienes tu velocidad, la policía ya buscará cómo pasar'
+        ],
+        correcta: 1,
+        explicacio: 'Debes facilitar el paso a vehículos de emergencia siempre, incluso si no hay espacio físico para apartarte completamente. Reduce velocidad, acércate a la derecha y si puedes para un momento para que pase.'
+    },
+    {
+        icon: '🧊',
+        context: 'Mañana de invierno en carretera',
+        texto: 'El termómetro marca 1 °C y la calzada parece seca pero brilla ligeramente. ¿Qué sospechas y cómo actúas?',
+        opcions: [
+            'La carretera está mojada de lluvia nocturna, conduces con normalidad',
+            'Puede haber hielo negro: reduces velocidad, evitas frenadas bruscas y aumentas la distancia de seguridad',
+            'A 1 °C no puede haber hielo, el hielo solo se forma a temperaturas negativas'
+        ],
+        correcta: 1,
+        explicacio: 'El hielo negro se forma entre 0 y 4 °C y es invisible. El brillo de la calzada es un indicador. Es una de las situaciones más peligrosas porque el conductor no lo detecta hasta que pierde el control.'
+    },
+    {
+        icon: '🎵',
+        context: 'Conduciendo solo',
+        texto: 'Llevas auriculares con música mientras conduces por ciudad. ¿Es correcto?',
+        opcions: [
+            'Sí, si el volumen no es muy alto y puedes oír bocinas y sirenas',
+            'No, el uso de auriculares al volante está prohibido y es sancionable',
+            'Solo si es un auricular mono en un oído, el otro queda libre'
+        ],
+        correcta: 1,
+        explicacio: 'El uso de auriculares, cascos o dispositivos que impidan oír señales acústicas está prohibido mientras se conduce. Incluso un solo auricular está sancionado. La audición es fundamental para detectar sirenas, bocinas y otros avisos.'
+    },
+    {
+        icon: '🚗💥',
+        context: 'Accidente de tráfico',
+        texto: 'Eres testigo de un accidente grave. Los conductores implicados están dentro de los vehículos. ¿Qué haces?',
+        opcions: [
+            'Paras, sacas a los ocupantes de los vehículos para alejarlos del peligro de incendio',
+            'Señalizas el accidente, llamas al 112 y esperas instrucciones sin mover a los heridos salvo riesgo inminente de incendio o explosión',
+            'Continúas y llamas al 112 desde el coche para no interrumpir el tráfico'
+        ],
+        correcta: 1,
+        explicacio: 'Mover a un accidentado sin formación puede agravar lesiones cervicales o internas. Lo correcto es señalizar, llamar al 112, proporcionar los datos que pidan y esperar a los servicios de emergencia. Solo mueves si hay fuego o explosión inminente.'
+    },
+    {
+        icon: '📷',
+        context: 'Radar de tramo',
+        texto: 'En un tramo controlado por radar de velocidad media, ¿qué velocidad debes mantener?',
+        opcions: [
+            'La máxima permitida entre los dos radares, el radar solo mide la velocidad puntual al pasar',
+            'La velocidad permitida en todo el tramo, ya que el radar calcula la media entre entrada y salida',
+            'Puedes ir más rápido y luego parar un momento entre medias para bajar la media'
+        ],
+        correcta: 1,
+        explicacio: 'El radar de tramo calcula la velocidad media entre dos puntos. Superar el límite en cualquier parte del tramo puede resultar en una velocidad media que supere el límite. Parar para alterar la media puede ser considerado fraude.'
+    },
+    {
+        icon: '🛤️',
+        context: 'Paso a nivel',
+        texto: 'Llegas a un paso a nivel. Las barreras están subidas y no hay tren a la vista. ¿Qué haces?',
+        opcions: [
+            'Cruzas sin reducir velocidad, las barreras abiertas indican que es seguro',
+            'Reduces velocidad, miras en ambos sentidos y cruzas con precaución, sin parar sobre las vías',
+            'Paras completamente y esperas 30 segundos para asegurarte antes de cruzar'
+        ],
+        correcta: 1,
+        explicacio: 'Aunque las barreras estén abiertas, debes reducir velocidad y asegurarte de que no viene ningún tren. Los trenes pueden tardar en frenar varios kilómetros. Nunca pares sobre las vías.'
+    },
+    {
+        icon: '🌃',
+        context: 'Ciudad de noche',
+        texto: 'Circular de noche por zona urbana iluminada. ¿Qué luces debes usar?',
+        opcions: [
+            'Luces de cruce (cortas), aunque la calle esté bien iluminada',
+            'Sin luces, la iluminación de la calle es suficiente y no deslumbras a nadie',
+            'Luces de posición solo, para no deslumbrar a peatones y otros conductores'
+        ],
+        correcta: 0,
+        explicacio: 'En zona urbana de noche es obligatorio usar luces de cruce (cortas) aunque la vía esté iluminada. Las luces permiten que los demás te vean, no solo que tú veas. Circular sin luces es una infracción grave.'
+    },
+    {
+        icon: '🔄',
+        context: 'Rotonda',
+        texto: 'Estás circulando por el interior de una rotonda. Un vehículo quiere incorporarse. ¿Quién tiene prioridad?',
+        opcions: [
+            'El que se incorpora, porque viene por la derecha',
+            'Tú, porque ya estás dentro de la rotonda',
+            'El que lleva más tiempo esperando para entrar'
+        ],
+        correcta: 1,
+        explicacio: 'En una rotonda, los vehículos que ya circulan por el interior tienen prioridad sobre los que quieren incorporarse. El que entra debe ceder el paso. La señal de ceda el paso en la entrada lo confirma.'
+    },
+    {
+        icon: '🪫',
+        context: 'Mando a distancia del coche',
+        texto: 'Al cerrar el coche con el mando, las luces no parpadean como de costumbre. ¿Qué sospechas?',
+        opcions: [
+            'La batería del mando está baja, no hay que preocuparse',
+            'Puede que alguien haya bloqueado la señal del mando y el coche no esté cerrado: verificas manualmente que las puertas están cerradas',
+            'El coche tiene un fallo electrónico, llamas al taller'
+        ],
+        correcta: 1,
+        explicacio: 'Los inhibidores de señal son usados por ladrones para impedir el cierre del coche. Si las luces no confirman el cierre, comprueba siempre manualmente cada puerta antes de alejarte con objetos de valor dentro.'
+    },
+    {
+        icon: '🚙💦',
+        context: 'Lavado de coche',
+        texto: 'Tras pasar por un charco grande, notas que los frenos no responden igual. ¿Qué haces?',
+        opcions: [
+            'Paras inmediatamente en el arcén, los frenos están averiados',
+            'Frenas suavemente varias veces para secar los discos y recuperar la eficacia de frenada',
+            'Aumentas la distancia de seguridad y esperas a que se sequen solos'
+        ],
+        correcta: 1,
+        explicacio: 'Cuando los frenos se mojan pierden eficacia temporalmente. Frenando suavemente varias veces se genera calor que seca los discos y restaura la frenada. Esperar a que se sequen solos puede ser peligroso si necesitas frenar de urgencia.'
+    },
+    {
+        icon: '🏁',
+        context: 'Carretera recta y despejada',
+        texto: 'Estás en una recta larga sin tráfico y el límite es 90 km/h. Vas a 110 km/h. ¿Es correcto?',
+        opcions: [
+            'Sí, si no hay tráfico y la vía está libre, la velocidad no es peligrosa',
+            'No, debes respetar el límite independientemente de las condiciones del tráfico',
+            'Es aceptable superar ligeramente el límite en condiciones óptimas'
+        ],
+        correcta: 1,
+        explicacio: 'Los límites de velocidad son de obligado cumplimiento siempre, independientemente del tráfico. Están calculados para el peor escenario posible (animales, baches, niños). Superarlos es una infracción aunque la vía esté despejada.'
+    },
+    {
+        icon: '🛻',
+        context: 'Remolque y caravana',
+        texto: 'Enganchas una caravana al coche por primera vez. ¿Necesitas hacer algo especial antes de salir?',
+        opcions: [
+            'No, el coche ya compensa automáticamente el peso extra',
+            'Debes ajustar los retrovisores, revisar las conexiones eléctricas, comprobar el peso máximo autorizado y adaptar la velocidad máxima permitida con remolque',
+            'Solo necesitas reducir la presión de los neumáticos traseros para mayor estabilidad'
+        ],
+        correcta: 1,
+        explicacio: 'Con caravana o remolque hay límites de velocidad específicos (90 km/h en autovía), el comportamiento del coche cambia radicalmente, debes ajustar retrovisores y verificar que el peso no supera el máximo autorizado por el fabricante.'
+    },
+    {
+        icon: '🚿',
+        context: 'Autopista con granizo',
+        texto: 'Estás en autopista y empieza a caer granizo muy fuerte. Apenas ves nada. ¿Qué haces?',
+        opcions: [
+            'Reduces velocidad y enciendes antinieblas para que te vean mejor',
+            'Sales de la calzada en el próximo área o carril de emergencia, paras completamente y esperas a que pase',
+            'Activas las luces de emergencia y continúas muy despacio'
+        ],
+        correcta: 1,
+        explicacio: 'Con granizo intenso y visibilidad casi nula, la opción más segura es salir de la calzada. Las luces de emergencia en marcha pueden confundir a otros. Continuar aunque sea despacio con visibilidad cero es extremadamente peligroso.'
+    },
+    {
+        icon: '🗺️',
+        context: 'Con GPS en ciudad',
+        texto: 'El GPS te indica que gires a la izquierda, pero hay una señal que prohíbe el giro. ¿Qué haces?',
+        opcions: [
+            'Giras igualmente, el GPS tiene datos actualizados y la señal puede estar antigua',
+            'Respetas la señal vertical y buscas otra ruta: la señalización física prevalece siempre sobre el GPS',
+            'Giras rápido, seguramente la prohibición es en el otro sentido'
+        ],
+        correcta: 1,
+        explicacio: 'La señalización vertical tiene prioridad absoluta sobre cualquier indicación del GPS. Los mapas pueden estar desactualizados. Una señal de prohibición de giro es de obligado cumplimiento siempre.'
+    },
+    {
+        icon: '🧃',
+        context: 'Conduciendo',
+        texto: 'Sientes hambre y decides comer un bocadillo mientras conduces por autopista. ¿Es correcto?',
+        opcions: [
+            'Sí, si vas en línea recta y sin tráfico es perfectamente seguro',
+            'No, comer al volante es una distracción que reduce la capacidad de reacción y es sancionable',
+            'Solo si lo haces con una mano en el volante'
+        ],
+        correcta: 1,
+        explicacio: 'Comer, beber o cualquier actividad que distrae la atención o quita las manos del volante es sancionable. La distracción al volante es la primera causa de accidentes. Para en el área de servicio más próxima.'
+    },
+    {
+        icon: '🌉',
+        context: 'Puente en día de viento',
+        texto: 'Cruzas un puente alto con fuertes ráfagas de viento lateral. ¿Cómo actúas?',
+        opcions: [
+            'Mantienes velocidad para cruzarlo cuanto antes',
+            'Reduces velocidad, agarras el volante con firmeza con las dos manos y estás preparado para correcciones bruscas',
+            'Te pegas al vehículo de delante para que le dé el viento a él primero'
+        ],
+        correcta: 1,
+        explicacio: 'Los puentes son zonas especialmente expuestas al viento. Una ráfaga fuerte puede hacer que el vehículo invada el carril contrario. Debes reducir velocidad, manos firmes en el volante y mantener distancia con los demás vehículos.'
+    }
+];
+
+// ============================================================
+//  Estado
+// ============================================================
+const TOTAL = 5;
+let situaciones = [];
+let ronda       = 0;
+let aciertos    = 0;
+let resultados  = [];
+
+const screenIdle     = document.getElementById('screenIdle');
+const screenGame     = document.getElementById('screenGame');
+const screenGameover = document.getElementById('screenGameover');
+
+function showScreen(name) {
+    screenIdle.classList.add('hidden');
+    screenGame.classList.add('hidden');
+    screenGameover.classList.add('hidden');
+    document.getElementById('screen' + name).classList.remove('hidden');
+}
+
+document.getElementById('btnStart').addEventListener('click', startGame);
+document.getElementById('btnReplay').addEventListener('click', startGame);
+document.getElementById('btnNext').addEventListener('click', () => {
+    ronda++;
+    if (ronda < TOTAL) mostrarSituacion();
+    else mostrarResultats();
+});
+
+// ============================================================
+//  Iniciar
+// ============================================================
+function startGame() {
+    aciertos   = 0;
+    ronda      = 0;
+    resultados = [];
+    situaciones = [...TODAS_SITUACIONES].sort(() => Math.random() - 0.5).slice(0, TOTAL);
+    showScreen('Game');
+    startCountdown();
+}
+
+function startCountdown() {
+    const card    = document.getElementById('scenarioCard');
+    const optList = document.getElementById('optionsList');
+    const fb      = document.getElementById('feedbackBox');
+    const btnNext = document.getElementById('btnNext');
+
+    document.getElementById('scenarioIcon').textContent = '';
+    document.getElementById('scenarioContext').textContent = '';
+    document.getElementById('scenarioText').innerHTML =
+        `<div style="text-align:center"><span class="countdown-num" id="cdNum">3</span><br><span class="countdown-label">¡Prepárate!</span></div>`;
+    optList.innerHTML = '';
+    fb.className = 'feedback-box';
+    btnNext.style.display = 'none';
+
+    let count = 3;
+    const iv = setInterval(() => {
+        count--;
+        if (count <= 0) { clearInterval(iv); mostrarSituacion(); }
+        else {
+            const el = document.getElementById('cdNum');
+            if (el) { el.style.animation = 'none'; el.textContent = count; void el.offsetWidth; el.style.animation = ''; }
+        }
+    }, 900);
+}
+
+// ============================================================
+//  Mostrar situación
+// ============================================================
+function mostrarSituacion() {
+    const s = situaciones[ronda];
+
+    document.getElementById('situLabel').textContent = `Situación ${ronda + 1} / ${TOTAL}`;
+    updateDots();
+
+    const card = document.getElementById('scenarioCard');
+    card.classList.remove('slide-in');
+    void card.offsetWidth;
+    card.classList.add('slide-in');
+
+    document.getElementById('scenarioIcon').textContent = s.icon;
+    document.getElementById('scenarioContext').textContent = s.context;
+    document.getElementById('scenarioText').textContent = s.texto;
+
+    document.getElementById('feedbackBox').className = 'feedback-box';
+    document.getElementById('btnNext').style.display = 'none';
+
+    const list   = document.getElementById('optionsList');
+    const letras = ['A', 'B', 'C'];
+    list.innerHTML = '';
+    s.opcions.forEach((op, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn slide-in';
+        btn.style.animationDelay = (i * 0.07) + 's';
+        btn.innerHTML = `<span class="opt-letter">${letras[i]}</span><span>${op}</span>`;
+        btn.onclick = () => responder(i, s);
+        list.appendChild(btn);
+    });
+}
+
+// ============================================================
+//  Responder
+// ============================================================
+function responder(idx, s) {
+    const correcte = idx === s.correcta;
+    aciertos += correcte ? 1 : 0;
+    resultados.push({ correcte });
+
+    document.querySelectorAll('.opt-btn').forEach((b, i) => {
+        b.disabled = true;
+        if (i === s.correcta) b.classList.add('correct');
+        else if (i === idx && !correcte) b.classList.add('wrong');
+    });
+
+    const fb    = document.getElementById('feedbackBox');
+    const title = document.getElementById('feedbackTitle');
+    const expEl = document.getElementById('feedbackExplica');
+
+    if (correcte) {
+        fb.className = 'feedback-box ok';
+        title.textContent = '✅ ¡Decisión responsable!';
+        expEl.textContent = s.explicacio;
+    } else {
+        fb.className = 'feedback-box fail';
+        title.textContent = '❌ No era la opción más segura';
+        expEl.textContent = s.explicacio;
+    }
+
+    const btnNext = document.getElementById('btnNext');
+    btnNext.textContent = ronda < TOTAL - 1 ? 'Siguiente situación →' : 'Ver resultados';
+    btnNext.style.display = 'block';
+
+    updateDots();
+}
+
+// ============================================================
+//  Puntos de progreso
+// ============================================================
+function updateDots() {
+    for (let i = 0; i < TOTAL; i++) {
+        const dot = document.getElementById('dot' + i);
+        dot.className = 'rdot';
+        if (i < ronda)       dot.classList.add(resultados[i].correcte ? 'ok' : 'fail');
+        else if (i === ronda) dot.classList.add('active');
+    }
+}
+
+// ============================================================
+//  Resultados
+// ============================================================
+async function mostrarResultats() {
+    const errores = TOTAL - aciertos;
+    const pct     = Math.round((aciertos / TOTAL) * 100);
+    const xp      = Math.round(60 * (aciertos / TOTAL));
+    const coins   = Math.round(12 * (aciertos / TOTAL));
+
+    const { name, pct: barPct, color, emoji } = getRating(aciertos);
+
+    document.getElementById('resCorrect').textContent = `${aciertos} / ${TOTAL}`;
+    document.getElementById('resWrong').textContent   = errores;
+    document.getElementById('resPct').textContent     = pct + '%';
+    document.getElementById('resScore').textContent   = aciertos + ' pts';
+    document.getElementById('ratingName').textContent = emoji + ' ' + name;
+    document.getElementById('xpEarned').textContent   = '⭐ +' + xp + ' XP';
+    document.getElementById('coinsEarned').textContent = '🪙 +' + coins;
+    document.getElementById('finalEmoji').textContent  = emoji;
+    document.getElementById('finalTitle').textContent  =
+        aciertos === 5 ? '¡Conductor ejemplar! 5/5 🎉' :
+        aciertos >= 4  ? '¡Buenas decisiones!' :
+        aciertos >= 2  ? '¡Puedes mejorar!' : '¡Repasa las normas!';
+
+    const bar = document.getElementById('ratingBar');
+    bar.style.width = '0%'; bar.style.background = color;
+    setTimeout(() => { bar.style.width = barPct + '%'; }, 200);
+
+    showScreen('Gameover');
+
+    const token = localStorage.getItem('cq_token');
+    if (token && xp > 0) {
+        try {
+            const d = await fetch('/api/user/xp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ xp_ganado: xp, tipus: 'joc', nom: 'Elige Responsable', puntuacio: aciertos })
+            }).then(r => r.json());
+            if (d.xp !== undefined) {
+                const u = JSON.parse(localStorage.getItem('cq_usuario') || '{}');
+                u.xp = d.xp; u.nivel = d.nivel; u.rang = d.rang;
+                localStorage.setItem('cq_usuario', JSON.stringify(u));
+                if (typeof actualitzarUIUsuari === 'function') actualitzarUIUsuari(u);
+            }
+        } catch (_) {}
+        try {
+            await fetch('/api/elige-responsable/score', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ aciertos })
+            });
+        } catch (_) {}
+    }
+
+    cargarRanking();
+}
+
+// ============================================================
+//  Rating
+// ============================================================
+function getRating(n) {
+    if (n === 10) return { name: 'Conductor Ejemplar',     pct: 100, color: 'linear-gradient(90deg,#FF6B35,#FFD700)', emoji: '👑' };
+    if (n >= 9)   return { name: 'Muy Responsable',        pct: 92,  color: '#06A77D',  emoji: '🏆' };
+    if (n >= 7)   return { name: 'Conductor Responsable',  pct: 74,  color: '#00b894',  emoji: '✅' };
+    if (n >= 5)   return { name: 'Necesitas Practicar',    pct: 50,  color: '#0984e3',  emoji: '📚' };
+    if (n >= 3)   return { name: 'Riesgo en Carretera',    pct: 30,  color: '#F77F00',  emoji: '⚠️' };
+    return               { name: 'Conductor Peligroso',    pct: 12,  color: '#E63946',  emoji: '🚨' };
+}
+
+// ============================================================
+//  Ranking
+// ============================================================
+async function cargarRanking() {
+    const list = document.getElementById('rankingList');
+    try {
+        const token = localStorage.getItem('cq_token');
+        let myName  = null;
+        if (token) {
+            const me = await fetch('/api/user/me', { headers: { 'Authorization': `Bearer ${token}` } })
+                .then(r => r.ok ? r.json() : null).catch(() => null);
+            if (me) myName = me.nombre;
+        }
+        const rows = await fetch('/api/elige-responsable/ranking').then(r => r.json());
+        if (!rows.length) {
+            list.innerHTML = '<div class="ranking-loading">¡Sé el primero en el ranking!</div>';
+            return;
+        }
+        const posClasses = ['gold', 'silver', 'bronze'];
+        list.innerHTML = rows.map(r => {
+            const posClass = r.posicio <= 3 ? posClasses[r.posicio - 1] : '';
+            const medal    = r.posicio === 1 ? '🥇' : r.posicio === 2 ? '🥈' : r.posicio === 3 ? '🥉' : r.posicio;
+            const isMe     = myName && r.nombre === myName;
+            return `<div class="ranking-row${isMe ? ' me' : ''}">
+                <div class="ranking-pos ${posClass}">${medal}</div>
+                <div class="ranking-avatar">${r.avatar || '🙂'}</div>
+                <div class="ranking-name">${r.nombre}</div>
+                <div class="ranking-score">${r.best_score} / 10</div>
+            </div>`;
+        }).join('');
+    } catch (_) {
+        list.innerHTML = '<div class="ranking-loading">No se pudo cargar el ranking.</div>';
+    }
+}
+
+// ============================================================
+//  Init
+// ============================================================
+document.addEventListener('DOMContentLoaded', async () => {
+    if (!requireAuth()) return;
+    initSidebar();
+    await carregarUsuari();
+});
+</script>
+<script src="chatbot.js"></script>
+</body>
+</html>

@@ -382,6 +382,106 @@ app.get('/api/temps-reaccio/ranking', async (_req, res) => {
 });
 
 // ============================================================
+// RUTAS DE SENYAL CHALLENGE
+// ============================================================
+
+// GET /api/senyal-challenge/preguntes — 10 preguntas de identificación de señales con imagen
+app.get('/api/senyal-challenge/preguntes', (req, res) => {
+    const senyals = PREGUNTES_DGT.filter(q => {
+        if (!q.img) return false;
+        const t = (q.pregunta || '').toLowerCase();
+        return t.includes('señal') || t.includes('indica esta') || t.includes('significa esta') ||
+               t.includes('semáforo') || t.includes('marca vial') || t.includes('cartel') ||
+               t.includes('panel') || t.includes('flecha');
+    });
+    const shuffled = [...senyals].sort(() => Math.random() - 0.5).slice(0, 10);
+    res.json(shuffled);
+});
+
+// POST /api/senyal-challenge/score — guarda mejor puntuación (aciertos sobre 10)
+app.post('/api/senyal-challenge/score', verificarToken, async (req, res) => {
+    const { aciertos } = req.body;
+    if (aciertos === undefined) return res.status(400).json({ error: 'Score inválido' });
+    try {
+        const existing = await pool.query(
+            "SELECT puntuacio FROM progres WHERE user_id = $1 AND tipus = 'senyal-challenge' ORDER BY puntuacio DESC LIMIT 1",
+            [req.user.id]
+        );
+        if (existing.rows.length === 0 || aciertos > existing.rows[0].puntuacio) {
+            await pool.query(
+                "INSERT INTO progres (user_id, tipus, nom, puntuacio, completat) VALUES ($1, 'senyal-challenge', 'Senyal Challenge', $2, true)",
+                [req.user.id, aciertos]
+            );
+        }
+        res.json({ ok: true });
+    } catch (err) {
+        console.error('Error guardando score senyal:', err);
+        res.status(500).json({ error: 'Error interno' });
+    }
+});
+
+// GET /api/senyal-challenge/ranking — top 10 por más aciertos
+app.get('/api/senyal-challenge/ranking', async (_req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT u.nombre, u.avatar,
+                   MAX(p.puntuacio) AS best_score,
+                   RANK() OVER (ORDER BY MAX(p.puntuacio) DESC) AS posicio
+            FROM progres p
+            JOIN users u ON u.id = p.user_id
+            WHERE p.tipus = 'senyal-challenge' AND p.completat = true
+            GROUP BY u.id, u.nombre, u.avatar
+            ORDER BY best_score DESC
+            LIMIT 10
+        `);
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: 'Error interno' });
+    }
+});
+
+// ============================================================
+// RUTAS DE ELIGE RESPONSABLE
+// ============================================================
+
+app.post('/api/elige-responsable/score', verificarToken, async (req, res) => {
+    const { aciertos } = req.body;
+    if (aciertos === undefined) return res.status(400).json({ error: 'Score inválido' });
+    try {
+        const existing = await pool.query(
+            "SELECT puntuacio FROM progres WHERE user_id = $1 AND tipus = 'elige-responsable' ORDER BY puntuacio DESC LIMIT 1",
+            [req.user.id]
+        );
+        if (existing.rows.length === 0 || aciertos > existing.rows[0].puntuacio) {
+            await pool.query(
+                "INSERT INTO progres (user_id, tipus, nom, puntuacio, completat) VALUES ($1, 'elige-responsable', 'Elige Responsable', $2, true)",
+                [req.user.id, aciertos]
+            );
+        }
+        res.json({ ok: true });
+    } catch (err) {
+        res.status(500).json({ error: 'Error interno' });
+    }
+});
+
+app.get('/api/elige-responsable/ranking', async (_req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT u.nombre, u.avatar,
+                   MAX(p.puntuacio) AS best_score,
+                   RANK() OVER (ORDER BY MAX(p.puntuacio) DESC) AS posicio
+            FROM progres p JOIN users u ON u.id = p.user_id
+            WHERE p.tipus = 'elige-responsable' AND p.completat = true
+            GROUP BY u.id, u.nombre, u.avatar
+            ORDER BY best_score DESC LIMIT 10
+        `);
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: 'Error interno' });
+    }
+});
+
+// ============================================================
 // Iniciar servidor
 // ============================================================
 app.listen(PORT, () => {
