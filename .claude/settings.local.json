@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//dev/**)",
+      "Bash(\"c:/Users/User/Desktop/CarQuest/CarQuest/eleccion_responsable.html\")"
+    ]
+  }
+}

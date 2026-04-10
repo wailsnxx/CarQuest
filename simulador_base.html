@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>CarQuest — Simulador de Examen</title>
+    <link rel="stylesheet" href="estilos.css">
+    <style>
+        /* ===== SIMULADOR DE EXAMEN DE CONDUCCIÓN ===== */
+        * { box-sizing: border-box; }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--color-primario);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: opacity .2s;
+        }
+        .back-link:hover { opacity: .7; }
+
+        .screen { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+        .hidden { display: none !important; }
+
+        /* ---- Dashboard HUD ---- */
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            border: 1px solid rgba(255,107,53,.25);
+            border-radius: 14px;
+            padding: 14px 20px;
+            gap: 12px;
+        }
+        .hud-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        .hud-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #8b949e;
+        }
+        .hud-value {
+            font-size: 22px;
+            font-weight: 900;
+            color: #fff;
+            transition: color .3s;
+        }
+        .hud-value.danger { color: #f85149; }
+        .hud-value.warning { color: #e3b341; }
+        .hud-value.ok { color: #3fb950; }
+
+        /* ---- Barra de vida ---- */
+        .life-bar-wrap {
+            width: 100%;
+            background: #21262d;
+            border-radius: 8px;
+            height: 10px;
+            overflow: hidden;
+            border: 1px solid #30363d;
+        }
+        .life-bar {
+            height: 100%;
+            border-radius: 8px;
+            transition: width .5s ease, background .5s;
+            background: linear-gradient(90deg, #3fb950, #56d364);
+        }
+        .life-bar.warning { background: linear-gradient(90deg, #e3b341, #f0c35a); }
+        .life-bar.danger { background: linear-gradient(90deg, #f85149, #ff6b6b); }
+
+        /* ---- Progreso rondas ---- */
+        .progress-dots {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #30363d;
+            border: 1px solid #484f58;
+            transition: background .3s, border .3s;
+        }
+        .dot.done { background: #3fb950; border-color: #3fb950; }
+        .dot.current { background: #FF6B35; border-color: #FF6B35; box-shadow: 0 0 8px rgba(255,107,53,.6); }
+        .dot.fail { background: #f85149; border-color: #f85149; }
+
+        /* ---- Tarjeta de escenario ---- */
+        .scenario-card {
+            width: 100%;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 24px 22px;
+            position: relative;
+            overflow: hidden;
+        }
+        .scenario-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #FF6B35, #ff9a6c);
+            border-radius: 16px 16px 0 0;
+        }
+        .scenario-icon {
+            font-size: 52px;
+            text-align: center;
+            margin-bottom: 12px;
+            animation: bounce 1s ease;
+        }
+        @keyframes bounce {
+            0% { transform: scale(.6); opacity: 0; }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .scenario-type {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #FF6B35;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+        .scenario-text {
+            font-size: 17px;
+            font-weight: 700;
+            color: #f0f6fc;
+            text-align: center;
+            line-height: 1.45;
+            margin-bottom: 8px;
+        }
+        .scenario-hint {
+            font-size: 13px;
+            color: #8b949e;
+            text-align: center;
+        }
+
+        /* ---- Opciones ---- */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+        }
+        .opt-btn {
+            background: #161b22;
+            border: 1.5px solid #30363d;
+            border-radius: 12px;
+            color: #e6edf3;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 14px 12px;
+            cursor: pointer;
+            transition: all .2s;
+            text-align: center;
+            line-height: 1.3;
+        }
+        .opt-btn:hover:not(:disabled) {
+            border-color: #FF6B35;
+            background: rgba(255,107,53,.08);
+            color: #FF6B35;
+            transform: translateY(-1px);
+        }
+        .opt-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+        .opt-btn.correct {
+            border-color: #3fb950;
+            background: rgba(63,185,80,.12);
+            color: #3fb950;
+        }
+        .opt-btn.wrong {
+            border-color: #f85149;
+            background: rgba(248,81,73,.12);
+            color: #f85149;
+            animation: shake .4s ease;
+        }
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+
+        /* ---- Feedback flotante ---- */
+        .feedback-popup {
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            transform: translateX(-50%) scale(.8);
+            background: #161b22;
+            border-radius: 16px;
+            padding: 20px 28px;
+            text-align: center;
+            z-index: 100;
+            min-width: 260px;
+            opacity: 0;
+            transition: all .3s;
+            pointer-events: none;
+            border: 2px solid #30363d;
+            box-shadow: 0 8px 40px rgba(0,0,0,.6);
+        }
+        .feedback-popup.show {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+        .feedback-popup.correct-fb { border-color: #3fb950; }
+        .feedback-popup.wrong-fb { border-color: #f85149; }
+        .feedback-popup .fb-icon { font-size: 36px; margin-bottom: 6px; }
+        .feedback-popup .fb-title { font-size: 16px; font-weight: 800; color: #f0f6fc; margin-bottom: 4px; }
+        .feedback-popup .fb-desc { font-size: 13px; color: #8b949e; }
+        .feedback-popup .fb-penalty { font-size: 18px; font-weight: 900; color: #f85149; margin-top: 6px; }
+
+        /* ---- Puntos flotantes ---- */
+        .float-points {
+            position: fixed;
+            font-size: 22px;
+            font-weight: 900;
+            color: #f85149;
+            pointer-events: none;
+            z-index: 200;
+            animation: floatUp .9s ease forwards;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-60px) scale(1.3); }
+        }
+
+        /* ---- Pantalla inicio ---- */
+        .idle-card {
+            width: 100%;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 32px 24px;
+            text-align: center;
+        }
+        .idle-icon { font-size: 64px; margin-bottom: 12px; }
+        .idle-title {
+            font-size: 26px;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .idle-desc {
+            font-size: 14px;
+            color: #8b949e;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .rules-list {
+            background: #0d1117;
+            border-radius: 10px;
+            padding: 14px 16px;
+            text-align: left;
+            margin-bottom: 22px;
+            border: 1px solid #21262d;
+        }
+        .rules-list li {
+            font-size: 13px;
+            color: #8b949e;
+            margin-bottom: 6px;
+            list-style: none;
+            display: flex;
+            gap: 8px;
+        }
+        .rules-list li:last-child { margin-bottom: 0; }
+        .rules-list li span:first-child { color: #f85149; min-width: 22px; }
+
+        /* ---- Pantalla final ---- */
+        .end-card {
+            width: 100%;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            border-radius: 16px;
+            padding: 32px 24px;
+            text-align: center;
+        }
+        .end-icon { font-size: 72px; margin-bottom: 12px; }
+        .end-title { font-size: 28px; font-weight: 900; margin-bottom: 8px; }
+        .end-title.passed { color: #3fb950; }
+        .end-title.failed { color: #f85149; }
+        .end-score { font-size: 16px; color: #8b949e; margin-bottom: 6px; }
+        .end-points { font-size: 48px; font-weight: 900; color: #fff; margin-bottom: 20px; }
+        .end-stats {
+            background: #0d1117;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 22px;
+            border: 1px solid #21262d;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .stat-item { text-align: center; }
+        .stat-val { font-size: 22px; font-weight: 900; color: #fff; }
+        .stat-lbl { font-size: 11px; color: #8b949e; text-transform: uppercase; letter-spacing: .8px; }
+
+        /* ---- Botones principales ---- */
+        .btn-primary {
+            background: linear-gradient(135deg, #FF6B35, #ff9a6c);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 800;
+            padding: 14px 28px;
+            cursor: pointer;
+            width: 100%;
+            transition: transform .2s, box-shadow .2s;
+            box-shadow: 0 4px 20px rgba(255,107,53,.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 28px rgba(255,107,53,.45);
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 1.5px solid #30363d;
+            border-radius: 12px;
+            color: #8b949e;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 11px 22px;
+            cursor: pointer;
+            width: 100%;
+            transition: all .2s;
+        }
+        .btn-secondary:hover { border-color: #8b949e; color: #e6edf3; }
+
+        /* ---- Next button ---- */
+        .next-wrap { width: 100%; }
+        .btn-next {
+            background: #21262d;
+            border: 1.5px solid #30363d;
+            border-radius: 12px;
+            color: #e6edf3;
+            font-size: 15px;
+            font-weight: 700;
+            padding: 13px 22px;
+            cursor: pointer;
+            width: 100%;
+            transition: all .2s;
+        }
+        .btn-next:hover { border-color: #FF6B35; color: #FF6B35; }
+
+        @media(max-width: 420px) {
+            .options-grid { grid-template-columns: 1fr; }
+            .hud { flex-wrap: wrap; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+<main class="container" style="max-width:520px;padding:24px 16px;">
+
+    <a href="jocs.html" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M5 12l7 7M5 12l7-7"/></svg>
+        Volver a Juegos
+    </a>
+
+    <!-- ======== PANTALLA INICIO ======== -->
+    <div id="screen-start" class="screen">
+        <div class="idle-card">
+            <div class="idle-icon">🚗</div>
+            <div class="idle-title">Simulador de Examen</div>
+            <div class="idle-desc">Demuestra que eres un conductor ejemplar.<br>Supera 8 situaciones de tráfico sin quedarte sin puntos.</div>
+            <ul class="rules-list">
+                <li><span>-1</span><span>No mirar espejo</span></li>
+                <li><span>-2</span><span>No señalizar / Exceso de velocidad</span></li>
+                <li><span>-3</span><span>No ceder el paso</span></li>
+                <li><span>✅</span><span>Respuesta correcta → sin penalización</span></li>
+            </ul>
+            <button class="btn-primary" onclick="startGame()">Comenzar Examen</button>
+        </div>
+    </div>
+
+    <!-- ======== PANTALLA JUEGO ======== -->
+    <div id="screen-game" class="screen hidden">
+
+        <!-- HUD -->
+        <div class="hud">
+            <div class="hud-item">
+                <span class="hud-label">Puntos</span>
+                <span class="hud-value ok" id="hud-points">10</span>
+            </div>
+            <div class="hud-item" style="flex:1;padding:0 12px;">
+                <div class="life-bar-wrap">
+                    <div class="life-bar" id="life-bar" style="width:100%"></div>
+                </div>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Situación</span>
+                <span class="hud-value" id="hud-round" style="color:#FF6B35">1/8</span>
+            </div>
+        </div>
+
+        <!-- Dots -->
+        <div class="progress-dots" id="progress-dots"></div>
+
+        <!-- Escenario -->
+        <div class="scenario-card">
+            <div class="scenario-icon" id="sc-icon">🚦</div>
+            <div class="scenario-type" id="sc-type">SITUACIÓN</div>
+            <div class="scenario-text" id="sc-text">Cargando...</div>
+        </div>
+
+        <!-- Opciones -->
+        <div class="options-grid" id="options-grid"></div>
+
+        <!-- Siguiente -->
+        <div class="next-wrap hidden" id="next-wrap">
+            <button class="btn-next" onclick="nextScenario()">Siguiente situación →</button>
+        </div>
+
+    </div>
+
+    <!-- ======== PANTALLA FINAL ======== -->
+    <div id="screen-end" class="screen hidden">
+        <div class="end-card">
+            <div class="end-icon" id="end-icon">🏆</div>
+            <div class="end-title" id="end-title">Aprobado</div>
+            <div class="end-score">Puntuación final</div>
+            <div class="end-points" id="end-points">10</div>
+            <div class="end-stats">
+                <div class="stat-item">
+                    <div class="stat-val" id="stat-correct">0</div>
+                    <div class="stat-lbl">Correctas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-val" id="stat-wrong">0</div>
+                    <div class="stat-lbl">Errores</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-val" id="stat-lost">0</div>
+                    <div class="stat-lbl">Puntos perdidos</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-val" id="stat-pct">0%</div>
+                    <div class="stat-lbl">Aciertos</div>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="restartGame()" style="margin-bottom:10px">Repetir Examen</button>
+            <button class="btn-secondary" onclick="goHome()">Volver al inicio</button>
+        </div>
+    </div>
+
+</main>
+
+<!-- Feedback popup -->
+<div class="feedback-popup" id="feedback-popup">
+    <div class="fb-icon" id="fb-icon">✅</div>
+    <div class="fb-title" id="fb-title">¡Correcto!</div>
+    <div class="fb-desc" id="fb-desc"></div>
+    <div class="fb-penalty hidden" id="fb-penalty"></div>
+</div>
+
+<script>
+// ===================================================
+//  DATOS — Escenarios
+// ===================================================
+const SCENARIOS = [
+    {
+        id: 'semaforo_ambar',
+        icon: '🚦',
+        type: 'Semáforos',
+        text: 'El semáforo cambia a ámbar cuando estás a 15 metros. ¿Qué haces?',
+        hint: 'El ámbar significa precaución, no acelerar.',
+        options: [
+            { label: '🛑 Frenar con calma', correct: true, feedback: '¡Perfecto! El ámbar indica que debes prepararte para parar.' },
+            { label: '💨 Acelerar para pasar', correct: false, penalty: 2, rule: 'Exceso de velocidad', feedback: 'Acelerar en ámbar es peligroso y puede considerarse infracción.' },
+            { label: '🔔 Tocar el claxon', correct: false, penalty: 1, rule: 'No mirar espejo', feedback: 'El claxon no es la solución. Debes frenar con calma.' },
+            { label: '🤷 Seguir igual', correct: false, penalty: 2, rule: 'Exceso de velocidad', feedback: 'Mantener velocidad en ámbar es arriesgado y sancionable.' }
+        ]
+    },
+    {
+        id: 'peaton_cebra',
+        icon: '🚶',
+        type: 'Peatones',
+        text: 'Un peatón se acerca al paso de cebra. Tú tienes prioridad de semáforo.',
+        hint: 'El peatón siempre tiene preferencia en el paso de cebra.',
+        options: [
+            { label: '🛑 Ceder el paso', correct: true, feedback: '¡Excelente! El peatón tiene siempre preferencia en el paso de cebra.' },
+            { label: '🚗 Seguir conduciendo', correct: false, penalty: 3, rule: 'No ceder el paso', feedback: 'El peatón tiene preferencia absoluta en el paso de cebra.' },
+            { label: '⚡ Acelerar para pasar', correct: false, penalty: 3, rule: 'No ceder el paso', feedback: 'Muy peligroso. El peatón tiene preferencia.' },
+            { label: '🔔 Pitar para avisar', correct: false, penalty: 1, rule: 'No mirar espejo', feedback: 'No se pita para avisar al peatón. Se cede el paso.' }
+        ]
+    },
+    {
+        id: 'rotonda',
+        icon: '🔄',
+        type: 'Rotonda',
+        text: 'Vas a entrar en una rotonda. Hay un coche circulando dentro. ¿Qué haces?',
+        hint: 'Dentro de la rotonda siempre tiene prioridad el vehículo que ya circula.',
+        options: [
+            { label: '⏸ Esperar y ceder paso', correct: true, feedback: '¡Correcto! El vehículo dentro de la rotonda tiene prioridad.' },
+            { label: '➡️ Entrar directamente', correct: false, penalty: 3, rule: 'No ceder el paso', feedback: 'El vehículo que ya está dentro de la rotonda tiene prioridad.' },
+            { label: '💨 Entrar rápido antes', correct: false, penalty: 2, rule: 'Exceso de velocidad', feedback: 'Acelerar para entrar antes es muy peligroso.' },
+            { label: '🔄 Dar la vuelta', correct: false, penalty: 1, rule: 'No mirar espejo', feedback: 'No tiene sentido dar la vuelta. Simplemente debes esperar.' }
+        ]
+    },
+    {
+        id: 'cambio_carril',
+        icon: '↔️',
+        type: 'Cambio de Carril',
+        text: 'Necesitas cambiar de carril a la izquierda en una autopista.',
+        hint: 'Un cambio de carril seguro requiere espejo + señal + punto ciego.',
+        options: [
+            { label: '🪞 Espejo + señal + maniobra', correct: true, feedback: '¡Perfecto! Espejo, señalizar y comprobar punto ciego es la secuencia correcta.' },
+            { label: '🔀 Cambiar sin señalizar', correct: false, penalty: 2, rule: 'No señalizar', feedback: 'Siempre debes señalizar antes de cambiar de carril.' },
+            { label: '🚀 Acelerar y cambiar', correct: false, penalty: 2, rule: 'Exceso de velocidad', feedback: 'Acelerar sin preparación es muy peligroso.' },
+            { label: '👀 Solo mirar por el espejo', correct: false, penalty: 2, rule: 'No señalizar', feedback: 'Mirar el espejo no es suficiente, debes señalizar también.' }
+        ]
+    },
+    {
+        id: 'aparcamiento',
+        icon: '🅿️',
+        type: 'Aparcamiento',
+        text: 'Vas a aparcar en paralelo. ¿Cuál es la secuencia correcta?',
+        hint: 'Aparcar correctamente implica señalizar y comprobar espejos.',
+        options: [
+            { label: '🪞 Señalizar + espejo + maniobra', correct: true, feedback: '¡Muy bien! Señalizar y mirar espejos antes de aparcar es fundamental.' },
+            { label: '🅿️ Parar directamente', correct: false, penalty: 2, rule: 'No señalizar', feedback: 'Debes señalizar antes de parar para avisar a los demás.' },
+            { label: '🚗 Frenar de golpe', correct: false, penalty: 1, rule: 'No mirar espejo', feedback: 'Frenar bruscamente sin avisar es peligroso.' },
+            { label: '🔔 Pitar y parar', correct: false, penalty: 1, rule: 'No mirar espejo', feedback: 'No se pita para aparcar. Señaliza y mira los espejos.' }
+        ]
+    },
+    {
+        id: 'incorporacion',
+        icon: '🛣️',
+        type: 'Incorporación',
+        text: 'Te incorporas a una vía rápida desde un carril de aceleración.',
+        hint: 'Los vehículos en la vía principal tienen prioridad.',
+        options: [
+            { label: '⚡ Acelerar + espejo + señal', correct: true, feedback: '¡Correcto! Debes alcanzar la velocidad de la vía y señalizar para incorporarte.' },
+            { label: '🐢 Entrar despacio', correct: false, penalty: 2, rule: 'Exceso de velocidad', feedback: 'Incorporarse lento en una vía rápida es peligroso. Debes igualar velocidad.' },
+            { label: '✋ Esperar a que esté libre', correct: false, penalty: 1, rule: 'No mirar espejo', feedback: 'El carril de aceleración es para coger velocidad, no para esperar parado.' },
+            { label: '📲 Señalizar sin mirar', correct: false, penalty: 2, rule: 'No señalizar', feedback: 'Solo señalizar no basta, debes mirar los espejos y el punto ciego.' }
+        ]
+    },
+    {
+        id: 'lluvia',
+        icon: '🌧️',
+        type: 'Condiciones Adversas',
+        text: 'Empieza a llover con fuerza. ¿Cuál es tu primera reacción?',
+        hint: 'La lluvia reduce la visibilidad y alarga la distancia de frenado.',
+        options: [
+            { label: '💡 Reducir velocidad + luces', correct: true, feedback: '¡Perfecto! Reducir velocidad y encender luces es la respuesta correcta.' },
+            { label: '🚀 Mantener velocidad', correct: false, penalty: 2, rule: 'Exceso de velocidad', feedback: 'La lluvia aumenta la distancia de frenado. Debes reducir velocidad.' },
+            { label: '🛑 Parar en el arcén', correct: false, penalty: 1, rule: 'No mirar espejo', feedback: 'No es necesario parar salvo que sea muy intenso. Reduce velocidad.' },
+            { label: '👀 Solo mirar más', correct: false, penalty: 1, rule: 'No mirar espejo', feedback: 'Mirar más no es suficiente. Reduce velocidad y enciende las luces.' }
+        ]
+    },
+    {
+        id: 'paso_nivel',
+        icon: '🚂',
+        type: 'Paso a Nivel',
+        text: 'Te acercas a un paso a nivel con barreras subiendo. ¿Qué haces?',
+        hint: 'Aunque suban las barreras, hay que asegurarse de que no viene ningún tren.',
+        options: [
+            { label: '👀 Mirar + avanzar despacio', correct: true, feedback: '¡Bien! Aunque suban las barreras, debes asegurarte visualmente antes de cruzar.' },
+            { label: '💨 Pasar rápido', correct: false, penalty: 3, rule: 'No ceder el paso', feedback: 'Nunca debes acelerar en un paso a nivel. Es extremadamente peligroso.' },
+            { label: '🛑 Esperar 5 minutos', correct: false, penalty: 1, rule: 'No mirar espejo', feedback: 'No hay que esperar tanto, pero sí asegurarte de que es seguro cruzar.' },
+            { label: '🚀 Cruzar cuando suban', correct: false, penalty: 2, rule: 'Exceso de velocidad', feedback: 'Debes comprobar visualmente antes de cruzar, no solo esperar que suban.' }
+        ]
+    }
+];
+
+// ===================================================
+//  ESTADO
+// ===================================================
+const MAX_POINTS = 10;
+const TOTAL = SCENARIOS.length;
+let state = {};
+
+function initState() {
+    state = {
+        points: MAX_POINTS,
+        round: 0,
+        correct: 0,
+        wrong: 0,
+        pointsLost: 0,
+        order: shuffle([...Array(TOTAL).keys()]),
+        answered: false,
+        finished: false
+    };
+}
+
+function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+// ===================================================
+//  FLUJO
+// ===================================================
+function startGame() {
+    initState();
+    showScreen('game');
+    buildDots();
+    loadScenario();
+}
+
+function restartGame() {
+    startGame();
+}
+
+function goHome() {
+    showScreen('start');
+}
+
+function showScreen(name) {
+    document.getElementById('screen-start').classList.add('hidden');
+    document.getElementById('screen-game').classList.add('hidden');
+    document.getElementById('screen-end').classList.add('hidden');
+    document.getElementById('screen-' + name).classList.remove('hidden');
+}
+
+// ===================================================
+//  DOTS
+// ===================================================
+function buildDots() {
+    const el = document.getElementById('progress-dots');
+    el.innerHTML = '';
+    for (let i = 0; i < TOTAL; i++) {
+        const d = document.createElement('div');
+        d.className = 'dot';
+        d.id = 'dot-' + i;
+        el.appendChild(d);
+    }
+    updateDots();
+}
+
+function updateDots() {
+    for (let i = 0; i < TOTAL; i++) {
+        const d = document.getElementById('dot-' + i);
+        d.className = 'dot';
+        if (i < state.round) d.classList.add('done');
+        else if (i === state.round) d.classList.add('current');
+    }
+}
+
+function markDot(ok) {
+    const d = document.getElementById('dot-' + state.round);
+    d.className = 'dot ' + (ok ? 'done' : 'fail');
+}
+
+// ===================================================
+//  ESCENARIO
+// ===================================================
+function loadScenario() {
+    const sc = SCENARIOS[state.order[state.round]];
+    state.answered = false;
+
+    document.getElementById('hud-round').textContent = (state.round + 1) + '/' + TOTAL;
+    document.getElementById('sc-icon').textContent = sc.icon;
+    document.getElementById('sc-type').textContent = sc.type;
+    document.getElementById('sc-text').textContent = sc.text;
+    document.getElementById('next-wrap').classList.add('hidden');
+
+    updateHUD();
+    buildOptions(sc);
+}
+
+function buildOptions(sc) {
+    const grid = document.getElementById('options-grid');
+    grid.innerHTML = '';
+    const opts = shuffle([...sc.options]);
+    opts.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.textContent = opt.label;
+        btn.onclick = () => handleAnswer(opt, btn);
+        grid.appendChild(btn);
+    });
+}
+
+// ===================================================
+//  RESPUESTA
+// ===================================================
+function handleAnswer(opt, btn) {
+    if (state.answered) return;
+    state.answered = true;
+
+    disableOptions();
+
+    if (opt.correct) {
+        btn.classList.add('correct');
+        state.correct++;
+        markDot(true);
+        showFeedback(true, '¡Correcto!', opt.feedback, 0);
+        playSound('correct');
+    } else {
+        btn.classList.add('wrong');
+        state.wrong++;
+        state.pointsLost += opt.penalty;
+        state.points = Math.max(0, state.points - opt.penalty);
+        markDot(false);
+        showFeedback(false, opt.rule, opt.feedback, opt.penalty);
+        floatPoints(-opt.penalty, btn);
+        playSound('wrong');
+        updateHUD();
+    }
+
+    setTimeout(() => {
+        hideFeedback();
+        document.getElementById('next-wrap').classList.remove('hidden');
+
+        if (state.points <= 0) {
+            setTimeout(endGame, 600);
+        }
+    }, 1800);
+}
+
+function disableOptions() {
+    document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+}
+
+// ===================================================
+//  SIGUIENTE
+// ===================================================
+function nextScenario() {
+    state.round++;
+    if (state.round >= TOTAL) {
+        endGame();
+    } else {
+        updateDots();
+        loadScenario();
+    }
+}
+
+// ===================================================
+//  HUD
+// ===================================================
+function updateHUD() {
+    const el = document.getElementById('hud-points');
+    const bar = document.getElementById('life-bar');
+    const pct = (state.points / MAX_POINTS) * 100;
+
+    el.textContent = state.points;
+    el.className = 'hud-value';
+    bar.className = 'life-bar';
+    bar.style.width = pct + '%';
+
+    if (pct <= 30) {
+        el.classList.add('danger');
+        bar.classList.add('danger');
+    } else if (pct <= 60) {
+        el.classList.add('warning');
+        bar.classList.add('warning');
+    } else {
+        el.classList.add('ok');
+    }
+}
+
+// ===================================================
+//  FEEDBACK POPUP
+// ===================================================
+function showFeedback(ok, title, desc, penalty) {
+    const pop = document.getElementById('feedback-popup');
+    document.getElementById('fb-icon').textContent = ok ? '✅' : '❌';
+    document.getElementById('fb-title').textContent = title;
+    document.getElementById('fb-desc').textContent = desc;
+    const penEl = document.getElementById('fb-penalty');
+    if (!ok && penalty) {
+        penEl.textContent = '-' + penalty + ' puntos';
+        penEl.classList.remove('hidden');
+    } else {
+        penEl.classList.add('hidden');
+    }
+    pop.className = 'feedback-popup show ' + (ok ? 'correct-fb' : 'wrong-fb');
+}
+
+function hideFeedback() {
+    document.getElementById('feedback-popup').className = 'feedback-popup';
+}
+
+// ===================================================
+//  PUNTOS FLOTANTES
+// ===================================================
+function floatPoints(amount, refBtn) {
+    const el = document.createElement('div');
+    el.className = 'float-points';
+    el.textContent = amount;
+    const rect = document.getElementById('hud-points').getBoundingClientRect();
+    el.style.left = rect.left + 'px';
+    el.style.top = (rect.top + window.scrollY) + 'px';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 950);
+}
+
+// ===================================================
+//  SONIDO (Web Audio API)
+// ===================================================
+let audioCtx = null;
+function getCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtx;
+}
+
+function playSound(type) {
+    try {
+        const ctx = getCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+        if (type === 'correct') {
+            osc.frequency.setValueAtTime(523, ctx.currentTime);
+            osc.frequency.setValueAtTime(659, ctx.currentTime + 0.1);
+            osc.frequency.setValueAtTime(784, ctx.currentTime + 0.2);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.5);
+        } else {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(200, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.3);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.35);
+        }
+    } catch(e) {}
+}
+
+// ===================================================
+//  FIN DEL JUEGO
+// ===================================================
+function endGame() {
+    const passed = state.points > 0;
+    document.getElementById('end-icon').textContent = passed ? '🏆' : '💥';
+    const title = document.getElementById('end-title');
+    title.textContent = passed ? '¡Aprobado!' : 'Suspendido';
+    title.className = 'end-title ' + (passed ? 'passed' : 'failed');
+    document.getElementById('end-points').textContent = state.points;
+    document.getElementById('stat-correct').textContent = state.correct;
+    document.getElementById('stat-wrong').textContent = state.wrong;
+    document.getElementById('stat-lost').textContent = state.pointsLost;
+    const total = state.correct + state.wrong;
+    document.getElementById('stat-pct').textContent = total > 0 ? Math.round(state.correct / total * 100) + '%' : '0%';
+    showScreen('end');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>CarQuest — Simulador Examinador</title>
+    <link rel="stylesheet" href="estilos.css">
+    <style>
+        * { box-sizing: border-box; }
+
+        .back-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            color: var(--color-primario); text-decoration: none;
+            font-size: 14px; font-weight: 600; margin-bottom: 20px;
+            transition: opacity .2s;
+        }
+        .back-link:hover { opacity: .7; }
+        .hidden { display: none !important; }
+        .screen { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+
+        /* ── HUD ── */
+        .hud {
+            width: 100%;
+            background: linear-gradient(135deg, #0d1117, #161b22);
+            border: 1px solid rgba(255,107,53,.25);
+            border-radius: 14px;
+            padding: 12px 18px;
+            display: flex; justify-content: space-between; align-items: center; gap: 10px;
+        }
+        .hud-col { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+        .hud-lbl { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #8b949e; }
+        .hud-val { font-size: 20px; font-weight: 900; color: #fff; transition: color .3s; }
+        .hud-val.ok { color: #3fb950; }
+        .hud-val.warn { color: #e3b341; }
+        .hud-val.danger { color: #f85149; }
+        .hud-mode {
+            font-size: 11px; font-weight: 700; padding: 4px 10px;
+            border-radius: 20px; letter-spacing: .8px; text-transform: uppercase;
+        }
+        .hud-mode.training { background: rgba(63,185,80,.15); border: 1px solid rgba(63,185,80,.3); color: #3fb950; }
+        .hud-mode.exam     { background: rgba(248,81,73,.15);  border: 1px solid rgba(248,81,73,.3);  color: #f85149; }
+
+        /* ── Life bar ── */
+        .life-wrap { flex: 1; }
+        .life-track { background: #21262d; border-radius: 8px; height: 8px; overflow: hidden; border: 1px solid #30363d; }
+        .life-fill  { height: 100%; border-radius: 8px; transition: width .5s, background .5s;
+                      background: linear-gradient(90deg, #3fb950, #56d364); }
+        .life-fill.warn   { background: linear-gradient(90deg, #e3b341, #f0c35a); }
+        .life-fill.danger { background: linear-gradient(90deg, #f85149, #ff6b6b); }
+
+        /* ── Progress dots ── */
+        .dots { display: flex; gap: 7px; }
+        .dot { width: 9px; height: 9px; border-radius: 50%; background: #30363d; border: 1px solid #484f58; transition: all .3s; }
+        .dot.done    { background: #3fb950; border-color: #3fb950; }
+        .dot.current { background: #FF6B35; border-color: #FF6B35; box-shadow: 0 0 7px rgba(255,107,53,.6); }
+        .dot.fail    { background: #f85149; border-color: #f85149; }
+
+        /* ── Examiner bubble ── */
+        .examiner-row {
+            width: 100%; display: flex; align-items: flex-start; gap: 12px;
+        }
+        .examiner-avatar {
+            width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0;
+            background: linear-gradient(135deg, #FF6B35, #ff9a6c);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; border: 2px solid rgba(255,107,53,.4);
+        }
+        .bubble-wrap { flex: 1; }
+        .bubble-name { font-size: 11px; font-weight: 700; color: #FF6B35; letter-spacing: .8px; text-transform: uppercase; margin-bottom: 5px; }
+        .bubble {
+            background: #161b22; border: 1px solid #30363d; border-radius: 0 12px 12px 12px;
+            padding: 12px 14px; position: relative;
+        }
+        .bubble::before {
+            content: ''; position: absolute; left: -8px; top: 0;
+            border: 8px solid transparent; border-right-color: #30363d;
+            border-top: 0; margin-top: 0;
+        }
+        .bubble-type { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #8b949e; margin-bottom: 4px; }
+        .bubble-type.unexpected { color: #f85149; }
+        .bubble-type.instruction { color: #58a6ff; }
+        .bubble-text { font-size: 15px; font-weight: 700; color: #f0f6fc; line-height: 1.4; }
+
+        /* ── Scenario context ── */
+        .context-card {
+            width: 100%; background: #0d1117; border: 1px solid #21262d;
+            border-radius: 12px; padding: 12px 14px;
+            display: flex; gap: 10px; align-items: center;
+        }
+        .ctx-icon { font-size: 28px; }
+        .ctx-text { font-size: 13px; color: #8b949e; line-height: 1.4; }
+        .ctx-text strong { color: #e6edf3; }
+
+        /* ── Options ── */
+        .opts-grid { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+        .opt {
+            background: #161b22; border: 1.5px solid #30363d; border-radius: 12px;
+            color: #e6edf3; font-size: 13px; font-weight: 600; padding: 13px 10px;
+            cursor: pointer; transition: all .2s; text-align: center; line-height: 1.3;
+        }
+        .opt:hover:not(:disabled) { border-color: #FF6B35; background: rgba(255,107,53,.08); color: #FF6B35; transform: translateY(-1px); }
+        .opt:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+        .opt.correct { border-color: #3fb950; background: rgba(63,185,80,.1); color: #3fb950; }
+        .opt.wrong   { border-color: #f85149; background: rgba(248,81,73,.1); color: #f85149; animation: shake .4s ease; }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-5px)} 40%{transform:translateX(5px)} 60%{transform:translateX(-3px)} 80%{transform:translateX(3px)} }
+
+        /* ── Error log ── */
+        .error-log {
+            width: 100%; background: #0d1117; border: 1px solid #21262d;
+            border-radius: 12px; overflow: hidden;
+        }
+        .error-log-header {
+            padding: 8px 14px; background: #161b22; border-bottom: 1px solid #21262d;
+            font-size: 11px; font-weight: 700; color: #8b949e; letter-spacing: .8px; text-transform: uppercase;
+            display: flex; justify-content: space-between;
+        }
+        .error-list { max-height: 110px; overflow-y: auto; }
+        .error-item {
+            display: flex; align-items: center; gap: 8px; padding: 7px 14px;
+            border-bottom: 1px solid #21262d; animation: slideIn .3s ease;
+        }
+        @keyframes slideIn { from { opacity:0; transform:translateX(-10px); } to { opacity:1; transform:none; } }
+        .error-item:last-child { border-bottom: none; }
+        .err-icon { font-size: 14px; }
+        .err-text { flex: 1; font-size: 12px; color: #8b949e; }
+        .err-pts  { font-size: 12px; font-weight: 800; color: #f85149; }
+        .no-errors { padding: 10px 14px; font-size: 12px; color: #3fb950; }
+
+        /* ── Feedback training ── */
+        .feedback-banner {
+            width: 100%; border-radius: 12px; padding: 12px 14px;
+            display: flex; gap: 10px; align-items: flex-start;
+            animation: fadeIn .3s ease;
+        }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+        .feedback-banner.correct-fb { background: rgba(63,185,80,.1); border: 1px solid rgba(63,185,80,.3); }
+        .feedback-banner.wrong-fb   { background: rgba(248,81,73,.1);  border: 1px solid rgba(248,81,73,.3); }
+        .fb-ico { font-size: 20px; }
+        .fb-body { flex: 1; }
+        .fb-title { font-size: 13px; font-weight: 800; color: #f0f6fc; margin-bottom: 2px; }
+        .fb-desc  { font-size: 12px; color: #8b949e; line-height: 1.4; }
+
+        /* ── Float points ── */
+        .float-pts {
+            position: fixed; font-size: 20px; font-weight: 900; color: #f85149;
+            pointer-events: none; z-index: 200; animation: floatUp .9s ease forwards;
+        }
+        @keyframes floatUp { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-55px) scale(1.2)} }
+
+        /* ── Next btn ── */
+        .btn-next {
+            width: 100%; background: #21262d; border: 1.5px solid #30363d;
+            border-radius: 12px; color: #e6edf3; font-size: 15px; font-weight: 700;
+            padding: 13px; cursor: pointer; transition: all .2s;
+        }
+        .btn-next:hover { border-color: #FF6B35; color: #FF6B35; }
+
+        /* ── Start screen ── */
+        .start-card {
+            width: 100%; background: linear-gradient(135deg, #0d1117, #161b22);
+            border: 1px solid #30363d; border-radius: 16px; padding: 28px 22px; text-align: center;
+        }
+        .start-icon { font-size: 60px; margin-bottom: 10px; }
+        .start-title { font-size: 24px; font-weight: 900; color: #fff; margin-bottom: 6px; }
+        .start-desc  { font-size: 13px; color: #8b949e; margin-bottom: 20px; line-height: 1.6; }
+        .mode-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+        .mode-card {
+            background: #0d1117; border: 2px solid #30363d; border-radius: 12px;
+            padding: 14px 10px; cursor: pointer; transition: all .2s; text-align: center;
+        }
+        .mode-card:hover { border-color: #FF6B35; }
+        .mode-card.selected { border-color: #FF6B35; background: rgba(255,107,53,.08); }
+        .mode-card-icon { font-size: 28px; margin-bottom: 6px; }
+        .mode-card-title { font-size: 13px; font-weight: 800; color: #f0f6fc; margin-bottom: 3px; }
+        .mode-card-desc  { font-size: 11px; color: #8b949e; line-height: 1.4; }
+        .penalties-grid { background: #0d1117; border: 1px solid #21262d; border-radius: 10px; padding: 12px 14px; margin-bottom: 18px; }
+        .pen-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid #21262d; }
+        .pen-row:last-child { border-bottom: none; }
+        .pen-name { font-size: 12px; color: #8b949e; }
+        .pen-val  { font-size: 12px; font-weight: 800; color: #f85149; }
+
+        /* ── Primary btn ── */
+        .btn-primary {
+            width: 100%; background: linear-gradient(135deg, #FF6B35, #ff9a6c);
+            border: none; border-radius: 12px; color: #fff; font-size: 16px;
+            font-weight: 800; padding: 14px; cursor: pointer; transition: transform .2s, box-shadow .2s;
+            box-shadow: 0 4px 20px rgba(255,107,53,.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(255,107,53,.45); }
+        .btn-secondary {
+            width: 100%; background: transparent; border: 1.5px solid #30363d;
+            border-radius: 12px; color: #8b949e; font-size: 14px; font-weight: 700;
+            padding: 11px; cursor: pointer; transition: all .2s; margin-top: 8px;
+        }
+        .btn-secondary:hover { border-color: #8b949e; color: #e6edf3; }
+
+        /* ── End screen ── */
+        .end-card {
+            width: 100%; background: linear-gradient(135deg, #0d1117, #161b22);
+            border: 1px solid #30363d; border-radius: 16px; padding: 28px 22px; text-align: center;
+        }
+        .end-icon  { font-size: 68px; margin-bottom: 10px; }
+        .end-title { font-size: 28px; font-weight: 900; margin-bottom: 6px; }
+        .end-title.passed { color: #3fb950; }
+        .end-title.failed { color: #f85149; }
+        .end-pts-lbl { font-size: 13px; color: #8b949e; }
+        .end-pts     { font-size: 52px; font-weight: 900; color: #fff; margin-bottom: 16px; }
+        .stats-grid  { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+        .stat { background: #0d1117; border: 1px solid #21262d; border-radius: 10px; padding: 10px 6px; }
+        .stat-val { font-size: 20px; font-weight: 900; color: #fff; }
+        .stat-lbl { font-size: 10px; color: #8b949e; text-transform: uppercase; letter-spacing: .7px; }
+        .end-errors { background: #0d1117; border: 1px solid #21262d; border-radius: 10px; padding: 12px 14px; margin-bottom: 18px; text-align: left; }
+        .end-errors-title { font-size: 11px; font-weight: 700; color: #8b949e; letter-spacing: .8px; text-transform: uppercase; margin-bottom: 8px; }
+        .end-err-item { font-size: 12px; color: #8b949e; padding: 3px 0; border-bottom: 1px solid #21262d; }
+        .end-err-item:last-child { border-bottom: none; }
+        .end-clean { font-size: 13px; color: #3fb950; }
+
+        @media(max-width:420px) {
+            .opts-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .mode-selector { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<main class="container" style="max-width:520px;padding:24px 16px;">
+
+    <a href="jocs.html" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M5 12l7 7M5 12l7-7"/></svg>
+        Volver a Juegos
+    </a>
+
+    <!-- ════════════════ INICIO ════════════════ -->
+    <div id="screen-start" class="screen">
+        <div class="start-card">
+            <div class="start-icon">🧑‍💼</div>
+            <div class="start-title">Simulador Examinador</div>
+            <div class="start-desc">El examinador te guiará por situaciones reales. Responde correctamente a sus instrucciones e imprevistos.</div>
+
+            <div class="mode-selector">
+                <div class="mode-card selected" id="mode-training" onclick="selectMode('training')">
+                    <div class="mode-card-icon">🎓</div>
+                    <div class="mode-card-title">Entrenamiento</div>
+                    <div class="mode-card-desc">Feedback inmediato tras cada respuesta</div>
+                </div>
+                <div class="mode-card" id="mode-exam" onclick="selectMode('exam')">
+                    <div class="mode-card-icon">📋</div>
+                    <div class="mode-card-title">Examen Real</div>
+                    <div class="mode-card-desc">Sin ayuda. Solo el resultado al final</div>
+                </div>
+            </div>
+
+            <div class="penalties-grid">
+                <div class="pen-row"><span class="pen-name">No mirar espejos</span><span class="pen-val">-1 pt</span></div>
+                <div class="pen-row"><span class="pen-name">No señalizar</span><span class="pen-val">-2 pts</span></div>
+                <div class="pen-row"><span class="pen-name">No ceder el paso</span><span class="pen-val">-3 pts</span></div>
+                <div class="pen-row"><span class="pen-name">Exceso de velocidad</span><span class="pen-val">-2 pts</span></div>
+                <div class="pen-row"><span class="pen-name">Maniobra peligrosa</span><span class="pen-val">-3 pts</span></div>
+            </div>
+
+            <button class="btn-primary" onclick="startGame()">Comenzar Examen</button>
+        </div>
+    </div>
+
+    <!-- ════════════════ JUEGO ════════════════ -->
+    <div id="screen-game" class="screen hidden">
+
+        <div class="hud">
+            <div class="hud-col">
+                <span class="hud-lbl">Puntos</span>
+                <span class="hud-val ok" id="hud-pts">10</span>
+            </div>
+            <div class="hud-col life-wrap">
+                <div class="life-track"><div class="life-fill" id="life-fill" style="width:100%"></div></div>
+            </div>
+            <div class="hud-col">
+                <span class="hud-lbl">Situación</span>
+                <span class="hud-val" id="hud-round" style="color:#FF6B35">1/9</span>
+            </div>
+            <div class="hud-mode training" id="hud-mode">ENTRENO</div>
+        </div>
+
+        <div class="dots" id="dots"></div>
+
+        <!-- Examinador -->
+        <div class="examiner-row">
+            <div class="examiner-avatar">🧑‍💼</div>
+            <div class="bubble-wrap">
+                <div class="bubble-name">Examinador</div>
+                <div class="bubble">
+                    <div class="bubble-type" id="bubble-type">INSTRUCCIÓN</div>
+                    <div class="bubble-text" id="bubble-text">…</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contexto -->
+        <div class="context-card">
+            <div class="ctx-icon" id="ctx-icon">🚗</div>
+            <div class="ctx-text" id="ctx-text">Cargando situación...</div>
+        </div>
+
+        <!-- Opciones -->
+        <div class="opts-grid" id="opts-grid"></div>
+
+        <!-- Feedback (solo entrenamiento) -->
+        <div id="feedback-area"></div>
+
+        <!-- Registro de errores -->
+        <div class="error-log">
+            <div class="error-log-header">
+                <span>Registro de fallos</span>
+                <span id="err-count" style="color:#f85149">0 errores</span>
+            </div>
+            <div class="error-list" id="error-list">
+                <div class="no-errors" id="no-errors-msg">✅ Sin errores por ahora</div>
+            </div>
+        </div>
+
+        <div class="hidden" id="next-wrap">
+            <button class="btn-next" onclick="nextEvent()">Siguiente →</button>
+        </div>
+    </div>
+
+    <!-- ════════════════ FIN ════════════════ -->
+    <div id="screen-end" class="screen hidden">
+        <div class="end-card">
+            <div class="end-icon" id="end-icon">🏆</div>
+            <div class="end-title" id="end-title">Aprobado</div>
+            <div class="end-pts-lbl">Puntos finales</div>
+            <div class="end-pts" id="end-pts">10</div>
+            <div class="stats-grid">
+                <div class="stat"><div class="stat-val" id="s-correct">0</div><div class="stat-lbl">Correctas</div></div>
+                <div class="stat"><div class="stat-val" id="s-wrong">0</div><div class="stat-lbl">Errores</div></div>
+                <div class="stat"><div class="stat-val" id="s-lost">0</div><div class="stat-lbl">Pts perdidos</div></div>
+                <div class="stat"><div class="stat-val" id="s-pct">0%</div><div class="stat-lbl">Aciertos</div></div>
+            </div>
+            <div class="end-errors" id="end-errors-box"></div>
+            <button class="btn-primary" onclick="restartGame()">Repetir</button>
+            <button class="btn-secondary" onclick="goHome()">Volver al inicio</button>
+        </div>
+    </div>
+
+</main>
+
+<script>
+// ═══════════════════════════════════════════════
+//  BANCO DE EVENTOS
+// ═══════════════════════════════════════════════
+const EVENTS = [
+    {
+        id: 'giro_derecha',
+        kind: 'instruction',
+        kindLabel: 'INSTRUCCIÓN',
+        examiner: 'En la próxima calle, gire a la derecha.',
+        icon: '↪️',
+        ctx: '<strong>Calle con intersección</strong> a la derecha. Actualmente circulando a velocidad adecuada.',
+        options: [
+            { label: '🪞 Espejo + intermitente + girar', correct: true, feedback: '¡Perfecto! Siempre espejo e intermitente antes de girar.' },
+            { label: '↪️ Girar sin señalizar', correct: false, penalty: 2, rule: 'No señalizar', feedback: 'Antes de girar siempre debes activar el intermitente.' },
+            { label: '🚀 Acelerar para girar', correct: false, penalty: 2, rule: 'Exceso de velocidad', feedback: 'No se acelera antes de un giro. Reduce velocidad.' },
+            { label: '🛑 Frenar bruscamente', correct: false, penalty: 3, rule: 'Maniobra peligrosa', feedback: 'Un frenazo brusco sin causa es una maniobra peligrosa.' }
+        ]
+    },
+    {
+        id: 'peaton_repentino',
+        kind: 'unexpected',
+        kindLabel: '⚠️ IMPREVISTO',
+        examiner: '¡Atención! Un peatón acaba de cruzar delante del coche.',
+        icon: '🚶',
+        ctx: '<strong>Zona urbana.</strong> Un peatón sale de entre dos coches aparcados y cruza sin mirar.',
+        options: [
+            { label: '🛑 Frenar con calma', correct: true, feedback: '¡Correcto! Frenar suave y ceder el paso al peatón.' },
+            { label: '💨 Acelerar y pasar', correct: false, penalty: 3, rule: 'No ceder el paso', feedback: 'Nunca se acelera hacia un peatón. Es una infracción grave.' },
+            { label: '🔔 Pitar y seguir', correct: false, penalty: 3, rule: 'Maniobra peligrosa', feedback: 'Pitar no te da prioridad sobre el peatón.' },
+            { label: '🔀 Esquivar bruscamente', correct: false, penalty: 3, rule: 'Maniobra peligrosa', feedback: 'Esquivar bruscamente pone en peligro a otros conductores.' }
+        ]
+    },
+    {
+        id: 'rotonda',
+        kind: 'instruction',
+        kindLabel: 'INSTRUCCIÓN',
+        examiner: 'Tome la segunda salida en la rotonda.',
+        icon: '🔄',
+        ctx: '<strong>Rotonda con 3 salidas.</strong> Hay un vehículo circulando dentro.',
+        options: [
+            { label: '⏸ Ceder + entrar + 2ª salida', correct: true, feedback: '¡Muy bien! Ceder al tráfico interior y tomar la salida indicada.' },
+            { label: '➡️ Entrar sin mirar', correct: false, penalty: 3, rule: 'No ceder el paso', feedback: 'El tráfico dentro de la rotonda tiene prioridad.' },
+            { label: '🪟 Entrar por la derecha rápido', correct: false, penalty: 2, rule: 'Exceso de velocidad', feedback: 'No se acelera para entrar antes en la rotonda.' },
+            { label: '🛑 Parar dentro', correct: false, penalty: 3, rule: 'Maniobra peligrosa', feedback: 'No se para dentro de una rotonda sin causa.' }
+        ]
+    },
+    {
+        id: 'cambio_carril',
+        kind: 'instruction',
+        kindLabel: 'INSTRUCCIÓN',
+        examiner: 'Cámbiese al carril de la izquierda para adelantar.',
+        icon: '↔️',
+        ctx: '<strong>Autovía.</strong> El carril izquierdo está libre. Velocidad actual correcta.',
+        options: [
+            { label: '🪞 Espejo + señal + cambio', correct: true, feedback: '¡Perfecto! La secuencia correcta: espejo, punto ciego, señalizar, maniobrar.' },
+            { label: '🔀 Cambiar sin señalizar', correct: false, penalty: 2, rule: 'No señalizar', feedback: 'Siempre debes señalizar antes de cambiar de carril.' },
+            { label: '🚀 Acelerar y cambiar', correct: false, penalty: 2, rule: 'Exceso de velocidad', feedback: 'No se acelera bruscamente para cambiar de carril.' },
+            { label: '👀 Solo mirar y cambiar', correct: false, penalty: 2, rule: 'No señalizar', feedback: 'Mirar sin señalizar no es suficiente.' }
+        ]
+    },
+    {
+        id: 'coche_frena',
+        kind: 'unexpected',
+        kindLabel: '⚠️ IMPREVISTO',
+        examiner: '¡El coche de delante ha frenado de golpe!',
+        icon: '🚨',
+        ctx: '<strong>Calle urbana.</strong> El vehículo delantero frena inesperadamente sin causa aparente.',
+        options: [
+            { label: '🛑 Frenar manteniendo distancia', correct: true, feedback: '¡Bien! Mantener distancia de seguridad permite frenar a tiempo.' },
+            { label: '🔀 Cambiar carril sin mirar', correct: false, penalty: 3, rule: 'Maniobra peligrosa', feedback: 'Cambiar sin comprobar el carril adyacente es muy peligroso.' },
+            { label: '🔔 Pitar y frenar', correct: false, penalty: 1, rule: 'No mirar espejos', feedback: 'No se pita en este caso. Frena y mantén distancia.' },
+            { label: '💨 Esquivar acelerando', correct: false, penalty: 3, rule: 'Maniobra peligrosa', feedback: 'Acelerar para esquivar es una maniobra peligrosa.' }
+        ]
+    },
+    {
+        id: 'semaforo_ambar',
+        kind: 'unexpected',
+        kindLabel: '⚠️ IMPREVISTO',
+        examiner: 'El semáforo acaba de cambiar a ámbar cuando estás a 10 metros.',
+        icon: '🚦',
+        ctx: '<strong>Intersección urbana.</strong> Semáforo en ámbar. Distancia al stop: 10 metros.',
+        options: [
+            { label: '🛑 Frenar con calma', correct: true, feedback: '¡Correcto! A esa distancia puedes frenar de forma segura.' },
+            { label: '💨 Acelerar para pasar', correct: false, penalty: 2, rule: 'Exceso de velocidad', feedback: 'Acelerar en ámbar es peligroso y sancionable.' },
+            { label: '🤷 Seguir a misma velocidad', correct: false, penalty: 2, rule: 'Exceso de velocidad', feedback: 'El ámbar indica prepararse para parar, no ignorarlo.' },
+            { label: '🔀 Cambiar carril', correct: false, penalty: 3, rule: 'Maniobra peligrosa', feedback: 'Cambiar de carril ante un semáforo es una maniobra peligrosa.' }
+        ]
+    },
+    {
+        id: 'incorporacion',
+        kind: 'instruction',
+        kindLabel: 'INSTRUCCIÓN',
+        examiner: 'Incorpórese a la autovía por el carril de aceleración.',
+        icon: '🛣️',
+        ctx: '<strong>Carril de aceleración.</strong> La autovía tiene tráfico moderado a 100 km/h.',
+        options: [
+            { label: '⚡ Acelerar + espejo + señal', correct: true, feedback: '¡Perfecto! Iguala la velocidad, señaliza y busca hueco.' },
+            { label: '🐢 Incorporarse despacio', correct: false, penalty: 2, rule: 'Exceso de velocidad', feedback: 'Incorporarse lento en una autovía es peligroso. Iguala la velocidad.' },
+            { label: '✋ Parar en el carril', correct: false, penalty: 3, rule: 'Maniobra peligrosa', feedback: 'Parar en el carril de incorporación es extremadamente peligroso.' },
+            { label: '🔀 Entrar sin señalizar', correct: false, penalty: 2, rule: 'No señalizar', feedback: 'Siempre señaliza antes de incorporarte a la vía principal.' }
+        ]
+    },
+    {
+        id: 'aparcamiento',
+        kind: 'instruction',
+        kindLabel: 'INSTRUCCIÓN',
+        examiner: 'Aparque el vehículo en el lado derecho de la calle.',
+        icon: '🅿️',
+        ctx: '<strong>Calle con aparcamiento en batería.</strong> Hay hueco disponible a la derecha.',
+        options: [
+            { label: '🪞 Señal + espejo + aparcar', correct: true, feedback: '¡Muy bien! Señalizar, mirar espejos y maniobrar con calma.' },
+            { label: '🛑 Frenar y aparcar directo', correct: false, penalty: 2, rule: 'No señalizar', feedback: 'Debes señalizar antes de parar para aparcar.' },
+            { label: '💨 Parar rápido', correct: false, penalty: 1, rule: 'No mirar espejos', feedback: 'Frenar rápido sin comprobar espejos puede provocar un choque.' },
+            { label: '↩️ Dar marcha atrás sin mirar', correct: false, penalty: 3, rule: 'Maniobra peligrosa', feedback: 'Siempre comprueba el espacio antes de dar marcha atrás.' }
+        ]
+    },
+    {
+        id: 'obras',
+        kind: 'unexpected',
+        kindLabel: '⚠️ IMPREVISTO',
+        examiner: 'Hay obras en la calzada y un operario indica reducir velocidad.',
+        icon: '🚧',
+        ctx: '<strong>Obras en la carretera.</strong> Señalista con paleta roja indica stop temporal.',
+        options: [
+            { label: '🛑 Parar y esperar', correct: true, feedback: '¡Correcto! El señalista tiene autoridad sobre el tráfico en obras.' },
+            { label: '💨 Pasar rápido', correct: false, penalty: 3, rule: 'No ceder el paso', feedback: 'Ignorar al señalista es una infracción muy grave.' },
+            { label: '🔔 Pitar para que se aparte', correct: false, penalty: 3, rule: 'Maniobra peligrosa', feedback: 'El señalista tiene prioridad. Debes obedecer su indicación.' },
+            { label: '🔀 Rodear por la acera', correct: false, penalty: 3, rule: 'Maniobra peligrosa', feedback: 'Circular por la acera está prohibido y es extremadamente peligroso.' }
+        ]
+    }
+];
+
+const TOTAL = EVENTS.length;
+const MAX_PTS = 10;
+
+// ═══════════════════════════════════════════════
+//  ESTADO
+// ═══════════════════════════════════════════════
+let G = {};
+let selectedMode = 'training';
+
+function selectMode(m) {
+    selectedMode = m;
+    document.getElementById('mode-training').classList.toggle('selected', m === 'training');
+    document.getElementById('mode-exam').classList.toggle('selected', m === 'exam');
+}
+
+function initState() {
+    G = {
+        mode: selectedMode,
+        points: MAX_PTS,
+        round: 0,
+        correct: 0,
+        wrong: 0,
+        lost: 0,
+        answered: false,
+        order: shuffle([...Array(TOTAL).keys()]),
+        errorLog: []
+    };
+}
+
+function shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+// ═══════════════════════════════════════════════
+//  NAVEGACIÓN
+// ═══════════════════════════════════════════════
+function startGame() {
+    initState();
+    showScreen('game');
+    buildDots();
+    updateHUD();
+    loadEvent();
+}
+function restartGame() { startGame(); }
+function goHome()      { showScreen('start'); }
+
+function showScreen(name) {
+    ['start','game','end'].forEach(s =>
+        document.getElementById('screen-' + s).classList.toggle('hidden', s !== name)
+    );
+}
+
+// ═══════════════════════════════════════════════
+//  DOTS
+// ═══════════════════════════════════════════════
+function buildDots() {
+    const el = document.getElementById('dots');
+    el.innerHTML = '';
+    for (let i = 0; i < TOTAL; i++) {
+        const d = document.createElement('div');
+        d.className = 'dot' + (i === 0 ? ' current' : '');
+        d.id = 'dot' + i;
+        el.appendChild(d);
+    }
+}
+
+function updateDots(result) {
+    for (let i = 0; i < TOTAL; i++) {
+        const d = document.getElementById('dot' + i);
+        if (i < G.round) d.className = 'dot ' + (d.dataset.result || 'done');
+        else if (i === G.round) d.className = 'dot current';
+        else d.className = 'dot';
+    }
+    if (result !== undefined) {
+        const d = document.getElementById('dot' + G.round);
+        d.dataset.result = result ? 'done' : 'fail';
+    }
+}
+
+// ═══════════════════════════════════════════════
+//  HUD
+// ═══════════════════════════════════════════════
+function updateHUD() {
+    const pct = (G.points / MAX_PTS) * 100;
+    const ptsEl  = document.getElementById('hud-pts');
+    const fill   = document.getElementById('life-fill');
+    const modeEl = document.getElementById('hud-mode');
+
+    ptsEl.textContent  = G.points;
+    fill.style.width   = pct + '%';
+    fill.className     = 'life-fill' + (pct <= 30 ? ' danger' : pct <= 60 ? ' warn' : '');
+    ptsEl.className    = 'hud-val' + (pct <= 30 ? ' danger' : pct <= 60 ? ' warn' : ' ok');
+
+    modeEl.textContent = G.mode === 'training' ? 'ENTRENO' : 'EXAMEN';
+    modeEl.className   = 'hud-mode ' + G.mode;
+
+    document.getElementById('hud-round').textContent = (G.round + 1) + '/' + TOTAL;
+}
+
+// ═══════════════════════════════════════════════
+//  EVENTO
+// ═══════════════════════════════════════════════
+function loadEvent() {
+    const ev = EVENTS[G.order[G.round]];
+    G.answered = false;
+
+    document.getElementById('bubble-type').textContent  = ev.kindLabel;
+    document.getElementById('bubble-type').className    = 'bubble-type ' + (ev.kind === 'unexpected' ? 'unexpected' : 'instruction');
+    document.getElementById('bubble-text').textContent  = ev.examiner;
+    document.getElementById('ctx-icon').textContent     = ev.icon;
+    document.getElementById('ctx-text').innerHTML       = ev.ctx;
+    document.getElementById('feedback-area').innerHTML  = '';
+    document.getElementById('next-wrap').classList.add('hidden');
+    document.getElementById('hud-round').textContent    = (G.round + 1) + '/' + TOTAL;
+
+    buildOpts(ev);
+    updateDots();
+}
+
+function buildOpts(ev) {
+    const grid = document.getElementById('opts-grid');
+    grid.innerHTML = '';
+    shuffle([...ev.options]).forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className   = 'opt';
+        btn.textContent = opt.label;
+        btn.onclick     = () => pick(opt, btn);
+        grid.appendChild(btn);
+    });
+}
+
+// ═══════════════════════════════════════════════
+//  RESPUESTA
+// ═══════════════════════════════════════════════
+function pick(opt, btn) {
+    if (G.answered) return;
+    G.answered = true;
+    disableOpts();
+
+    if (opt.correct) {
+        btn.classList.add('correct');
+        G.correct++;
+        updateDots(true);
+        if (G.mode === 'training') showFeedback(true, '¡Correcto!', opt.feedback);
+        playSound('ok');
+    } else {
+        btn.classList.add('wrong');
+        G.wrong++;
+        G.lost += opt.penalty;
+        G.points = Math.max(0, G.points - opt.penalty);
+        G.errorLog.push({ rule: opt.rule, penalty: opt.penalty, round: G.round + 1 });
+        updateDots(false);
+        addErrorLog(opt.rule, opt.penalty);
+        floatPts(-opt.penalty);
+        updateHUD();
+        if (G.mode === 'training') showFeedback(false, opt.rule, opt.feedback, opt.penalty);
+        playSound('bad');
+    }
+
+    setTimeout(() => {
+        document.getElementById('next-wrap').classList.remove('hidden');
+        if (G.points <= 0) setTimeout(endGame, 600);
+    }, G.mode === 'training' ? 400 : 200);
+}
+
+function disableOpts() {
+    document.querySelectorAll('.opt').forEach(b => b.disabled = true);
+}
+
+function nextEvent() {
+    G.round++;
+    if (G.round >= TOTAL) { endGame(); return; }
+    updateHUD();
+    loadEvent();
+}
+
+// ═══════════════════════════════════════════════
+//  FEEDBACK (entrenamiento)
+// ═══════════════════════════════════════════════
+function showFeedback(ok, title, desc, penalty) {
+    const area = document.getElementById('feedback-area');
+    area.innerHTML = `
+        <div class="feedback-banner ${ok ? 'correct-fb' : 'wrong-fb'}">
+            <div class="fb-ico">${ok ? '✅' : '❌'}</div>
+            <div class="fb-body">
+                <div class="fb-title">${ok ? '¡Correcto!' : title}</div>
+                <div class="fb-desc">${desc}${!ok && penalty ? ` <strong style="color:#f85149">(-${penalty} pts)</strong>` : ''}</div>
+            </div>
+        </div>`;
+}
+
+// ═══════════════════════════════════════════════
+//  REGISTRO ERRORES
+// ═══════════════════════════════════════════════
+function addErrorLog(rule, penalty) {
+    const list = document.getElementById('error-list');
+    const noMsg = document.getElementById('no-errors-msg');
+    if (noMsg) noMsg.remove();
+
+    const item = document.createElement('div');
+    item.className = 'error-item';
+    item.innerHTML = `<span class="err-icon">❌</span><span class="err-text">Sit. ${G.round + 1}: ${rule}</span><span class="err-pts">-${penalty}</span>`;
+    list.appendChild(item);
+    list.scrollTop = list.scrollHeight;
+
+    const errCount = document.getElementById('err-count');
+    errCount.textContent = G.errorLog.length + 1 + ' error' + (G.errorLog.length >= 1 ? 'es' : '');
+}
+
+// ═══════════════════════════════════════════════
+//  PUNTOS FLOTANTES
+// ═══════════════════════════════════════════════
+function floatPts(amount) {
+    const el = document.createElement('div');
+    el.className = 'float-pts';
+    el.textContent = amount;
+    const ref = document.getElementById('hud-pts').getBoundingClientRect();
+    el.style.left = ref.left + 'px';
+    el.style.top  = (ref.top + window.scrollY) + 'px';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 950);
+}
+
+// ═══════════════════════════════════════════════
+//  SONIDO
+// ═══════════════════════════════════════════════
+let actx = null;
+function getCtx() { return actx || (actx = new (window.AudioContext || window.webkitAudioContext)()); }
+function playSound(type) {
+    try {
+        const ctx = getCtx(), osc = ctx.createOscillator(), g = ctx.createGain();
+        osc.connect(g); g.connect(ctx.destination); g.gain.setValueAtTime(.13, ctx.currentTime);
+        if (type === 'ok') {
+            osc.frequency.setValueAtTime(523, ctx.currentTime);
+            osc.frequency.setValueAtTime(659, ctx.currentTime + .1);
+            osc.frequency.setValueAtTime(784, ctx.currentTime + .2);
+            g.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + .5);
+            osc.start(ctx.currentTime); osc.stop(ctx.currentTime + .5);
+        } else {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(200, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + .3);
+            g.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + .35);
+            osc.start(ctx.currentTime); osc.stop(ctx.currentTime + .35);
+        }
+    } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════
+//  FIN DEL JUEGO
+// ═══════════════════════════════════════════════
+function endGame() {
+    const passed = G.points > 0;
+    document.getElementById('end-icon').textContent       = passed ? '🏆' : '💥';
+    const title = document.getElementById('end-title');
+    title.textContent = passed ? '¡Aprobado!' : 'Suspendido';
+    title.className   = 'end-title ' + (passed ? 'passed' : 'failed');
+    document.getElementById('end-pts').textContent        = G.points;
+    document.getElementById('s-correct').textContent      = G.correct;
+    document.getElementById('s-wrong').textContent        = G.wrong;
+    document.getElementById('s-lost').textContent         = G.lost;
+    const tot = G.correct + G.wrong;
+    document.getElementById('s-pct').textContent = tot > 0 ? Math.round(G.correct / tot * 100) + '%' : '0%';
+
+    const box = document.getElementById('end-errors-box');
+    if (G.errorLog.length === 0) {
+        box.innerHTML = '<div class="end-errors-title">Registro de fallos</div><div class="end-clean">✅ ¡Sin errores! Conducción perfecta.</div>';
+    } else {
+        const rows = G.errorLog.map(e =>
+            `<div class="end-err-item">Sit. ${e.round}: ${e.rule} <strong style="color:#f85149">(-${e.penalty} pts)</strong></div>`
+        ).join('');
+        box.innerHTML = `<div class="end-errors-title">Registro de fallos (${G.errorLog.length})</div>${rows}`;
+    }
+
+    showScreen('end');
+}
+</script>
+</body>
+</html>
