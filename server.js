@@ -168,6 +168,9 @@ app.post('/api/user/xp', verificarToken, async (req, res) => {
     try {
         const avui = new Date().toISOString().slice(0, 10); // YYYY-MM-DD UTC
 
+        // Solo los tests (no juegos) actualizan la racha
+        const esTest = tipus === 'test' || tipus === 'test_suspens';
+
         // Leer racha actual
         const userRes = await pool.query(
             'SELECT racha, ultima_activitat FROM users WHERE id = $1',
@@ -177,16 +180,21 @@ app.post('/api/user/xp', verificarToken, async (req, res) => {
         // pg v8 devuelve DATE como string "YYYY-MM-DD"
         const ultimaStr = ultima_activitat ? String(ultima_activitat).slice(0, 10) : null;
 
-        let novaRacha;
-        if (ultimaStr === avui) {
-            // Ya jugó hoy → racha sin cambio
-            novaRacha = rachaActual;
-        } else {
-            const ahir = new Date(avui + 'T00:00:00Z');
-            ahir.setUTCDate(ahir.getUTCDate() - 1);
-            const ahirStr = ahir.toISOString().slice(0, 10);
-            // Si jugó ayer → +1; si lleva más días → reinicia a 1
-            novaRacha = ultimaStr === ahirStr ? rachaActual + 1 : 1;
+        let novaRacha = rachaActual;
+        let novaUltimaActivitat = ultima_activitat;
+
+        if (esTest) {
+            if (ultimaStr === avui) {
+                // Ya hizo un test hoy → racha sin cambio
+                novaRacha = rachaActual;
+            } else {
+                const ahir = new Date(avui + 'T00:00:00Z');
+                ahir.setUTCDate(ahir.getUTCDate() - 1);
+                const ahirStr = ahir.toISOString().slice(0, 10);
+                // Si hizo test ayer → +1; si lleva más días sin test → reinicia a 1
+                novaRacha = ultimaStr === ahirStr ? rachaActual + 1 : 1;
+            }
+            novaUltimaActivitat = avui;
         }
 
         // Sumar XP, recalcular nivel/rang y actualizar racha
@@ -200,7 +208,7 @@ app.post('/api/user/xp', verificarToken, async (req, res) => {
                 ultima_activitat = $4
             WHERE id = $2
             RETURNING xp, nivel, rang, racha
-        `, [xp_ganado, req.user.id, novaRacha, avui]);
+        `, [xp_ganado, req.user.id, novaRacha, novaUltimaActivitat]);
 
         // Guardar registro de progreso si se pasa tipo y nombre
         if (tipus && nom) {

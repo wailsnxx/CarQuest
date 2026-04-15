@@ -109,12 +109,14 @@ body {
     font-size: 13px;
     transition: all 0.3s ease;
     font-family: inherit;
+    background-color: #ffffff;
+    color: #000000;
 }
 
 .grupo-formulario input:focus {
     outline: none;
     border-color: var(--color-primario);
-    background-color: rgba(255, 107, 53, 0.02);
+    background-color: #ffffff;
 }
 
 .grupo-formulario input::placeholder {
