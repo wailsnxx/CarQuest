@@ -68,65 +68,26 @@
                 </div>
 
                 <!-- Cabecera del día -->
-                <div class="diaris-header">
+                <div class="diaris-header" id="diarisHeader">
                     <h3>Retos de Hoy</h3>
-                    <p>Viernes, 7 de noviembre 2025</p>
-                    <p>Completados: 1 / 3</p>
-                    <div class="diaris-progress-track">
-                        <div class="diaris-progress-fill" style="width: 33%"></div>
+                    <p id="diarisfecha" style="opacity:.7; font-size:14px;">Cargando...</p>
+                    <p id="diarisCompletados" style="font-weight:600; margin-top:4px;">...</p>
+                    <div class="diaris-progress-track" style="margin-top:10px;">
+                        <div class="diaris-progress-fill" id="diarisProgressFill" style="width:0%; transition: width .8s ease;"></div>
                     </div>
                 </div>
 
-                <!-- Reto 1 - Completado -->
-                <div class="diari-repte diari-repte-completat">
-                    <div class="diari-repte-icon">✅</div>
-                    <div class="diari-repte-info">
-                        <h4>5 misiones sin errores</h4>
-                        <p>Completa 5 retos sin fallar</p>
-                        <p class="diari-repte-reward">✓ ¡Completado! +200 XP +50 🪙</p>
-                    </div>
-                </div>
-
-                <!-- Reto 2 - En progreso -->
-                <div class="diari-repte">
-                    <div class="diari-repte-icon">⭐</div>
-                    <div class="diari-repte-info">
-                        <h4>100 puntos XP hoy</h4>
-                        <p>Consigue 100 XP</p>
-                        <div class="diari-repte-progress">
-                            <span>Progreso: 75 / 100</span>
-                            <div class="diari-mini-track">
-                                <div class="diari-mini-fill" style="width: 75%"></div>
-                            </div>
-                        </div>
-                        <p class="diari-repte-reward-pending">Recompensa: +50 XP +25 🪙</p>
-                        <button class="repte-btn repte-btn-small">Continuar</button>
-                    </div>
-                </div>
-
-                <!-- Reto 3 - En progreso -->
-                <div class="diari-repte">
-                    <div class="diari-repte-icon">🎯</div>
-                    <div class="diari-repte-info">
-                        <h4>Aprueba 3 tests seguidos</h4>
-                        <p>Supera 3 tests consecutivos</p>
-                        <div class="diari-repte-progress">
-                            <span>Progreso: 1 / 3</span>
-                            <div class="diari-mini-track">
-                                <div class="diari-mini-fill" style="width: 33%"></div>
-                            </div>
-                        </div>
-                        <p class="diari-repte-reward-pending">Recompensa: +150 XP +40 🪙</p>
-                        <button class="repte-btn repte-btn-small">Continuar</button>
-                    </div>
+                <!-- Contenedor de retos (se rellena con JS) -->
+                <div id="retosContainer">
+                    <div style="text-align:center; padding:40px; opacity:.5;">Cargando retos...</div>
                 </div>
 
                 <!-- Bonificación Especial -->
-                <div class="diari-bonus">
+                <div class="diari-bonus" id="dariBonus" style="display:none;">
                     <div class="diari-bonus-icon">🎁</div>
                     <div class="diari-bonus-info">
                         <h4>Bonificación Especial</h4>
-                        <p>¡Completa todos los retos!</p>
+                        <p id="bonusMsg">¡Completa todos los retos para ganar el bonus!</p>
                         <div class="diari-bonus-tags">
                             <span class="bonus-tag tag-xp">+300 XP</span>
                             <span class="bonus-tag tag-coins">+50 🪙</span>
@@ -135,16 +96,113 @@
                     </div>
                 </div>
 
+                <!-- Toast de reto completado -->
+                <div id="retoToast" style="
+                    display:none; position:fixed; bottom:24px; right:24px; z-index:9999;
+                    background:linear-gradient(135deg,#0f766e,#065f46); color:#fff;
+                    border-radius:14px; padding:14px 20px; font-weight:600; font-size:14px;
+                    box-shadow:0 8px 30px rgba(0,0,0,.4); max-width:280px;
+                "></div>
             </div>
         </main>
     </div>
+
     <script src="app.js"></script>
     <script src="dashboard.js"></script>
     <script>
+        function formatearFecha(fechaStr) {
+            const [y, m, d] = fechaStr.split('-').map(Number);
+            return new Date(y, m - 1, d).toLocaleDateString('es-ES', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
+        }
+
+        function renderReto(reto) {
+            const pct = reto.objetivo > 0
+                ? Math.min(100, Math.round((reto.progres / reto.objetivo) * 100))
+                : 0;
+            const completado = reto.completat;
+
+            return `
+                <div class="diari-repte ${completado ? 'diari-repte-completat' : ''}">
+                    <div class="diari-repte-icon">${completado ? '✅' : reto.icona}</div>
+                    <div class="diari-repte-info">
+                        <h4>${reto.titulo}</h4>
+                        <p>${reto.descripcion}</p>
+                        ${completado
+                            ? `<p class="diari-repte-reward">✓ ¡Completado! +${reto.xp} XP +${reto.monedes} 🪙</p>`
+                            : `<div class="diari-repte-progress">
+                                   <span>Progreso: ${reto.progres} / ${reto.objetivo}</span>
+                                   <div class="diari-mini-track">
+                                       <div class="diari-mini-fill" style="width:${pct}%"></div>
+                                   </div>
+                               </div>
+                               <p class="diari-repte-reward-pending">Recompensa: +${reto.xp} XP +${reto.monedes} 🪙</p>
+                               <a href="${reto.link}" class="repte-btn repte-btn-small">Continuar →</a>`
+                        }
+                    </div>
+                </div>
+            `;
+        }
+
+        function mostrarToast(texto) {
+            const toast = document.getElementById('retoToast');
+            toast.textContent = texto;
+            toast.style.display = 'block';
+            clearTimeout(toast._t);
+            toast._t = setTimeout(() => { toast.style.display = 'none'; }, 4000);
+        }
+
+        async function carregarRetos() {
+            const token = localStorage.getItem('cq_token');
+            try {
+                const res = await fetch('/api/retos-diarios', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+
+                // Cabecera
+                document.getElementById('diarisfecha').textContent = formatearFecha(data.fecha);
+
+                const completats = data.retos.filter(r => r.completat).length;
+                const total = data.retos.length;
+                document.getElementById('diarisCompletados').textContent =
+                    `Completados: ${completats} / ${total}`;
+                document.getElementById('diarisProgressFill').style.width =
+                    `${Math.round((completats / total) * 100)}%`;
+
+                // Retos
+                document.getElementById('retosContainer').innerHTML =
+                    data.retos.map(renderReto).join('');
+
+                // Bonus
+                const bonusEl = document.getElementById('dariBonus');
+                bonusEl.style.display = 'block';
+                if (data.bonus_dado) {
+                    document.getElementById('bonusMsg').textContent = '✅ ¡Bonus reclamado! +300 XP +50 🪙';
+                    bonusEl.style.opacity = '0.6';
+                } else if (completats === total) {
+                    document.getElementById('bonusMsg').textContent = '✅ ¡Bonus ganado! +300 XP +50 🪙';
+                } else {
+                    document.getElementById('bonusMsg').textContent =
+                        `¡Completa todos los retos para ganar el bonus! (${total - completats} pendientes)`;
+                }
+            } catch (e) {
+                console.error('Error cargando retos:', e);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             if (!requireAuth()) return;
             initSidebar();
             await carregarUsuari();
+            await carregarRetos();
+
+            // Recargar retos al volver de otra página (por si el usuario completó algo)
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') carregarRetos();
+            });
         });
     </script>
 <script src="chatbot.js"></script>

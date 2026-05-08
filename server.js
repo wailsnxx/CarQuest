@@ -27,6 +27,109 @@ const PREGUNTES_DGT = todasPreguntes
 
 console.log(`📚 ${PREGUNTES_DGT.length} preguntas DGT cargadas`);
 
+// ============================================================
+// RETOS DIARIOS — configuración y helpers
+// ============================================================
+const RETOS_POOL = [
+    // tipo: tests_totals — completar N tests (aprobados o suspendidos)
+    { id:1, tipo:'tests_totals',  titulo:'Un test al día',      descripcion:'Completa 1 test de teoría',  objetivo:1, xp:50,  monedes:10, icona:'📋', link:'tests.html' },
+    { id:2, tipo:'tests_totals',  titulo:'Sesión de tests',     descripcion:'Completa 3 tests de teoría', objetivo:3, xp:150, monedes:30, icona:'📝', link:'tests.html' },
+    { id:3, tipo:'tests_totals',  titulo:'Estudiante dedicado', descripcion:'Completa 5 tests de teoría', objetivo:5, xp:250, monedes:60, icona:'📚', link:'tests.html' },
+    // tipo: tests_aprovats — aprobar N tests
+    { id:4, tipo:'tests_aprovats',titulo:'Primera victoria',    descripcion:'Aprueba 1 test de teoría',   objetivo:1, xp:100, monedes:25, icona:'🏆', link:'tests.html' },
+    { id:5, tipo:'tests_aprovats',titulo:'Pasa los tests',      descripcion:'Aprueba 2 tests de teoría',  objetivo:2, xp:200, monedes:50, icona:'✅', link:'tests.html' },
+    { id:6, tipo:'tests_aprovats',titulo:'Sin errores',         descripcion:'Aprueba 3 tests de teoría',  objetivo:3, xp:300, monedes:75, icona:'⭐', link:'tests.html' },
+    // tipo: jocs — completar N minijuegos
+    { id:7, tipo:'jocs',          titulo:'A jugar',             descripcion:'Completa 1 minijuego',       objetivo:1, xp:75,  monedes:15, icona:'🎯', link:'jocs.html' },
+    { id:8, tipo:'jocs',          titulo:'Juega y aprende',     descripcion:'Completa 2 minijuegos',      objetivo:2, xp:100, monedes:20, icona:'🎮', link:'jocs.html' },
+    { id:9, tipo:'jocs',          titulo:'Maestro del volante', descripcion:'Completa 3 minijuegos',      objetivo:3, xp:150, monedes:40, icona:'🏁', link:'jocs.html' },
+];
+
+// Selecciona 3 retos del día (uno de cada tipo) basándose en la fecha
+function seleccionarRetosDia(fecha) {
+    const day = Math.floor(new Date(fecha + 'T00:00:00Z').getTime() / 86400000);
+    const idx = day % 3;
+    return [RETOS_POOL[idx], RETOS_POOL[3 + idx], RETOS_POOL[6 + idx]];
+}
+
+// Actualiza el progreso de los retos activos del usuario según el tipo de actividad
+async function actualizarProgresRetos(userId, tipus) {
+    const avui = new Date().toISOString().slice(0, 10);
+    const retosHoy = seleccionarRetosDia(avui);
+    const completados = [];
+
+    for (const reto of retosHoy) {
+        const aplica =
+            (reto.tipo === 'tests_totals'  && (tipus === 'test' || tipus === 'test_suspens')) ||
+            (reto.tipo === 'tests_aprovats' && tipus === 'test') ||
+            (reto.tipo === 'jocs'           && tipus === 'joc');
+        if (!aplica) continue;
+
+        // Crear fila si no existe
+        await pool.query(
+            `INSERT INTO user_retos_diarios (user_id, fecha, reto_config_id)
+             VALUES ($1, $2, $3) ON CONFLICT (user_id, fecha, reto_config_id) DO NOTHING`,
+            [userId, avui, reto.id]
+        );
+
+        // Leer estado actual
+        const row = await pool.query(
+            `SELECT progres, completat FROM user_retos_diarios
+             WHERE user_id = $1 AND fecha = $2 AND reto_config_id = $3`,
+            [userId, avui, reto.id]
+        );
+        if (!row.rows.length || row.rows[0].completat) continue;
+
+        const nuevoProgres = row.rows[0].progres + 1;
+        const ahoraCompletado = nuevoProgres >= reto.objetivo;
+
+        await pool.query(
+            `UPDATE user_retos_diarios
+             SET progres = $1, completat = $2, recompensa_dada = $3
+             WHERE user_id = $4 AND fecha = $5 AND reto_config_id = $6`,
+            [nuevoProgres, ahoraCompletado, ahoraCompletado, userId, avui, reto.id]
+        );
+
+        if (ahoraCompletado) {
+            await pool.query(
+                `UPDATE users
+                 SET xp      = xp + $1,
+                     nivel   = GREATEST(1, FLOOR((xp + $1) / 1000) + 1),
+                     rang    = update_rang(xp + $1),
+                     monedes = monedes + $2
+                 WHERE id = $3`,
+                [reto.xp, reto.monedes, userId]
+            );
+            completados.push({ titulo: reto.titulo, xp: reto.xp, monedes: reto.monedes });
+        }
+    }
+
+    // Comprobar bonus (todos los 3 retos completados)
+    if (completados.length > 0) {
+        const tot = await pool.query(
+            `SELECT COUNT(*) FROM user_retos_diarios
+             WHERE user_id = $1 AND fecha = $2 AND completat = true`,
+            [userId, avui]
+        );
+        if (parseInt(tot.rows[0].count) >= 3) {
+            const ins = await pool.query(
+                `INSERT INTO user_bonus_diario (user_id, fecha)
+                 VALUES ($1, $2) ON CONFLICT DO NOTHING RETURNING user_id`,
+                [userId, avui]
+            );
+            if (ins.rows.length > 0) {
+                await pool.query(
+                    `UPDATE users SET xp = xp + 300, monedes = monedes + 50 WHERE id = $1`,
+                    [userId]
+                );
+                completados.push({ titulo: '¡Bonus diario!', xp: 300, monedes: 50, bonus: true });
+            }
+        }
+    }
+
+    return completados;
+}
+
 // Primera mitad dividida en tests de 30 preguntas
 const meitat = Math.floor(PREGUNTES_DGT.length / 2);
 const TESTS_NORMALS = [];
@@ -46,8 +149,36 @@ const pool = new Pool({
     ssl: { rejectUnauthorized: false }  // required for Neon
 });
 
+async function initDB() {
+    // Columnas de racha que pueden no existir en la tabla users
+    await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS racha INTEGER NOT NULL DEFAULT 0`);
+    await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS ultima_activitat DATE`);
+    await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS monedes INTEGER NOT NULL DEFAULT 0`);
+
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS user_retos_diarios (
+            id              SERIAL PRIMARY KEY,
+            user_id         INTEGER NOT NULL,
+            fecha           DATE    NOT NULL,
+            reto_config_id  INTEGER NOT NULL,
+            progres         INTEGER NOT NULL DEFAULT 0,
+            completat       BOOLEAN NOT NULL DEFAULT FALSE,
+            recompensa_dada BOOLEAN NOT NULL DEFAULT FALSE,
+            UNIQUE(user_id, fecha, reto_config_id)
+        )
+    `);
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS user_bonus_diario (
+            user_id INTEGER NOT NULL,
+            fecha   DATE    NOT NULL,
+            PRIMARY KEY (user_id, fecha)
+        )
+    `);
+    console.log('✅ Tablas y columnas listas');
+}
+
 pool.connect()
-    .then(() => console.log('✅ Conectado a PostgreSQL (Neon)'))
+    .then(() => { console.log('✅ Conectado a PostgreSQL (Neon)'); return initDB(); })
     .catch(err => console.error('❌ Error conectando a la DB:', err.message));
 
 // ============================================================
@@ -218,7 +349,16 @@ app.post('/api/user/xp', verificarToken, async (req, res) => {
             );
         }
 
-        res.json({ mensaje: `+${xp_ganado} XP ganados`, ...result.rows[0] });
+        // Actualizar progreso de retos diarios
+        const retos_completados = await actualizarProgresRetos(req.user.id, tipus);
+
+        // Re-leer XP final (puede incluir recompensas de retos)
+        const final = await pool.query(
+            'SELECT xp, nivel, rang, racha, monedes FROM users WHERE id = $1',
+            [req.user.id]
+        );
+
+        res.json({ mensaje: `+${xp_ganado} XP ganados`, ...final.rows[0], retos_completados });
     } catch (err) {
         console.error('Error añadiendo XP:', err);
         res.status(500).json({ error: 'Error interno del servidor' });
@@ -313,6 +453,54 @@ app.post('/api/user/avatar', verificarToken, async (req, res) => {
         res.json({ ok: true });
     } catch (err) {
         res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+
+// ============================================================
+// RUTAS DE RETOS DIARIOS
+// ============================================================
+
+// GET /api/retos-diarios — retos del día con progreso del usuario
+app.get('/api/retos-diarios', verificarToken, async (req, res) => {
+    const avui = new Date().toISOString().slice(0, 10);
+    const userId = req.user.id;
+    const retosHoy = seleccionarRetosDia(avui);
+
+    try {
+        // Crear filas si no existen
+        for (const reto of retosHoy) {
+            await pool.query(
+                `INSERT INTO user_retos_diarios (user_id, fecha, reto_config_id)
+                 VALUES ($1, $2, $3) ON CONFLICT (user_id, fecha, reto_config_id) DO NOTHING`,
+                [userId, avui, reto.id]
+            );
+        }
+
+        // Leer progreso actual
+        const rows = await pool.query(
+            `SELECT reto_config_id, progres, completat, recompensa_dada
+             FROM user_retos_diarios WHERE user_id = $1 AND fecha = $2`,
+            [userId, avui]
+        );
+        const progresMap = {};
+        rows.rows.forEach(r => { progresMap[r.reto_config_id] = r; });
+
+        const retos = retosHoy.map(reto => ({
+            ...reto,
+            progres:         progresMap[reto.id]?.progres          ?? 0,
+            completat:       progresMap[reto.id]?.completat        ?? false,
+            recompensa_dada: progresMap[reto.id]?.recompensa_dada  ?? false,
+        }));
+
+        const bonusDado = (await pool.query(
+            `SELECT 1 FROM user_bonus_diario WHERE user_id = $1 AND fecha = $2`,
+            [userId, avui]
+        )).rows.length > 0;
+
+        res.json({ fecha: avui, retos, bonus_dado: bonusDado });
+    } catch (err) {
+        console.error('Error en retos diarios:', err);
+        res.status(500).json({ error: 'Error interno' });
     }
 });
 

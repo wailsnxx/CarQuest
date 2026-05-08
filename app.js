@@ -46,7 +46,10 @@ function actualitzarUIUsuari(user) {
     // Progreso
     const info = calcularRangInfo(user.xp);
     document.querySelectorAll('.js-progres-pct').forEach(el => el.textContent = `${info.progres}%`);
-    document.querySelectorAll('.js-progres-fill').forEach(el => el.style.width = `${info.progres}%`);
+    document.querySelectorAll('.js-progres-fill').forEach(el => {
+        el.dataset.progress = info.progres;
+        el.style.width = `${info.progres}%`;
+    });
     document.querySelectorAll('.js-rang-seguent').forEach(el => el.textContent = info.seguent ? info.seguent.nom : '¡Rango máximo!');
     document.querySelectorAll('.js-rang-actual').forEach(el => el.textContent = info.actual.nom);
 }
@@ -92,9 +95,10 @@ async function guanyarXP(xp, tipus, nom, puntuacio = 0) {
         const data = await res.json();
         const user = obtUsuari();
         if (user && data.xp !== undefined) {
-            user.xp   = data.xp;
-            user.nivel = data.nivel;
-            user.rang  = data.rang;
+            user.xp      = data.xp;
+            user.nivel   = data.nivel;
+            user.rang    = data.rang;
+            if (data.monedes !== undefined) user.monedes = data.monedes;
             localStorage.setItem('cq_usuario', JSON.stringify(user));
             actualitzarUIUsuari(user);
         }
