@@ -1,0 +1,846 @@
+{
+  "pais": "España",
+  "permiso": {
+    "tipo": "B",
+    "descripcion": "Permiso de conducción para turismos y vehículos ligeros",
+    "edad_minima": 18,
+    "vehiculos_permitidos": [
+      {
+        "categoria": "Turismos",
+        "masa_maxima_autorizada_kg": 3500,
+        "plazas_maximas": 9
+      },
+      {
+        "categoria": "Remolques ligeros",
+        "masa_maxima_autorizada_kg": 750
+      },
+      {
+        "categoria": "Ciclomotores",
+        "cilindrada_maxima_cc": 50
+      },
+      {
+        "categoria": "Motocicletas A1",
+        "condicion": "Con más de 3 años de experiencia"
+      }
+    ]
+  },
+  "documentacion_obligatoria": {
+    "conductor": [
+      "Permiso de conducir válido",
+      "Documento Nacional de Identidad o NIE",
+      "No conducir bajo suspensión administrativa o judicial"
+    ],
+    "vehiculo": [
+      "Permiso de circulación",
+      "Tarjeta ITV",
+      "Seguro obligatorio en vigor",
+      "Distintivo ambiental si aplica"
+    ]
+  },
+  "velocidades_maximas": {
+    "vias_urbanas": {
+      "un_carril_por_sentido": 30,
+      "dos_o_mas_carriles_por_sentido": 50,
+      "plataforma_unica": 20
+    },
+    "carreteras_convencionales": {
+      "turismos": 90,
+      "autobuses": 90,
+      "camiones": 80
+    },
+    "autovias_y_autopistas": {
+      "turismos": 120,
+      "autobuses": 100,
+      "camiones": 90
+    },
+    "minimas": {
+      "autopistas_y_autovias": 60
+    }
+  },
+  "tasas_alcohol": {
+    "general_mg_l_aire": 0.25,
+    "general_g_l_sangre": 0.5,
+    "noveles_mg_l_aire": 0.15,
+    "noveles_g_l_sangre": 0.3,
+    "profesionales_mg_l_aire": 0.15,
+    "profesionales_g_l_sangre": 0.3
+  },
+  "drogas": {
+    "norma_general": "Prohibido conducir con presencia de drogas en el organismo salvo sustancias prescritas médicamente y bajo condiciones adecuadas",
+    "sancion_euros": 1000,
+    "perdida_puntos": 6
+  },
+  "puntos_carnet": {
+    "puntos_iniciales": 8,
+    "puntos_normales": 12,
+    "maximos": 15,
+    "recuperacion": {
+      "sin_infracciones_anos": 2,
+      "curso_recuperacion_parcial_horas": 12,
+      "curso_recuperacion_total_horas": 24
+    }
+  },
+  "infracciones": {
+    "muy_graves": [
+      {
+        "descripcion": "Conducir con exceso de alcohol",
+        "multa": 1000,
+        "puntos": 6
+      },
+      {
+        "descripcion": "Conducir bajo efectos de drogas",
+        "multa": 1000,
+        "puntos": 6
+      },
+      {
+        "descripcion": "Uso manual del móvil",
+        "multa": 200,
+        "puntos": 6
+      },
+      {
+        "descripcion": "No usar cinturón",
+        "multa": 200,
+        "puntos": 4
+      },
+      {
+        "descripcion": "Exceso de velocidad grave",
+        "multa": 600,
+        "puntos": 6
+      }
+    ],
+    "graves": [
+      {
+        "descripcion": "No respetar señal STOP",
+        "multa": 200,
+        "puntos": 4
+      },
+      {
+        "descripcion": "No mantener distancia de seguridad",
+        "multa": 200,
+        "puntos": 4
+      }
+    ],
+    "leves": [
+      {
+        "descripcion": "Estacionamiento indebido",
+        "multa": 100,
+        "puntos": 0
+      }
+    ]
+  },
+  "prioridades_paso": {
+    "normas_generales": [
+      "Tienen prioridad los vehículos que circulan por vías pavimentadas frente a los que salen de caminos",
+      "En ausencia de señalización, prioridad para quien viene por la derecha",
+      "Los vehículos sobre raíles tienen prioridad",
+      "Los vehículos prioritarios en servicio urgente tienen prioridad"
+    ],
+    "glorietas": {
+      "norma": "Tienen prioridad los vehículos que ya circulan dentro de la glorieta"
+    },
+    "pendientes": {
+      "norma": "En pendientes estrechas tiene prioridad el vehículo que sube"
+    }
+  },
+  "distancias_seguridad": {
+    "general": "Debe mantenerse distancia suficiente para detener el vehículo sin colisionar",
+    "adelantamiento_fuera_poblado_metros": 100,
+    "adelantamiento_fuera_poblado_tiempo_segundos": 4
+  },
+  "adelantamientos": {
+    "normas": [
+      "Comprobar visibilidad suficiente",
+      "Señalizar maniobra",
+      "Mantener separación lateral adecuada",
+      "No adelantar en curvas sin visibilidad",
+      "No adelantar en pasos de peatones señalizados salvo excepciones"
+    ],
+    "prohibiciones": [
+      "Túneles con un solo carril por sentido",
+      "Intersecciones salvo prioridad expresa",
+      "Pasos a nivel",
+      "Líneas continuas"
+    ]
+  },
+  "estacionamiento_y_parada": {
+    "parada": {
+      "definicion": "Inmovilización inferior a 2 minutos sin abandonar el vehículo"
+    },
+    "estacionamiento": {
+      "definicion": "Inmovilización superior a 2 minutos o abandono del vehículo"
+    },
+    "prohibiciones": [
+      "Curvas y cambios de rasante",
+      "Pasos de peatones",
+      "Carriles bici",
+      "Túneles",
+      "Paradas de autobús",
+      "Zonas de carga y descarga"
+    ]
+  },
+  "luces": {
+    "cortas": {
+      "uso": [
+        "De noche",
+        "Túneles",
+        "Carriles reversibles",
+        "Condiciones meteorológicas adversas"
+      ]
+    },
+    "largas": {
+      "uso": [
+        "Vías insuficientemente iluminadas"
+      ],
+      "prohibiciones": [
+        "Deslumbrar a otros usuarios"
+      ]
+    },
+    "antiniebla": {
+      "delanteras": "Opcionales",
+      "traseras": "Obligatorias con niebla densa, lluvia intensa o nieve"
+    }
+  },
+  "neumaticos": {
+    "profundidad_minima_dibujo_mm": 1.6,
+    "recomendacion": "Comprobar presión periódicamente",
+    "riesgos": [
+      "Aquaplaning",
+      "Mayor distancia de frenado",
+      "Pérdida de adherencia"
+    ]
+  },
+  "itv": {
+    "turismos": {
+      "primera_itv_anos": 4,
+      "de_4_a_10_anos": "Cada 2 años",
+      "mas_de_10_anos": "Anual"
+    }
+  },
+  "seguridad_vial": {
+    "cinturon": {
+      "obligatorio": true,
+      "excepciones": [
+        "Marcha atrás o estacionamiento",
+        "Certificado médico excepcional"
+      ]
+    },
+    "casco": {
+      "obligatorio_moto": true,
+      "homologado": true
+    },
+    "sri": {
+      "descripcion": "Sistema de retención infantil",
+      "altura_obligatoria_cm": 135,
+      "recomendado_hasta_cm": 150
+    }
+  },
+  "emergencias": {
+    "pasos": [
+      "Proteger",
+      "Avisar",
+      "Socorrer"
+    ],
+    "telefono_emergencias": 112,
+    "chaleco_reflectante": true,
+    "triangulos": {
+      "obligatorios": false,
+      "sustitucion_por_v16": true
+    }
+  },
+  "senales": {
+    "peligro": [
+      {
+        "codigo": "P-1",
+        "nombre": "Intersección con prioridad",
+        "forma": "Triangular",
+        "color": "Borde rojo"
+      },
+      {
+        "codigo": "P-2",
+        "nombre": "Intersección con prioridad de la derecha",
+        "forma": "Triangular"
+      },
+      {
+        "codigo": "P-13",
+        "nombre": "Curva peligrosa",
+        "forma": "Triangular"
+      },
+      {
+        "codigo": "P-20",
+        "nombre": "Paso para peatones",
+        "forma": "Triangular"
+      },
+      {
+        "codigo": "P-24",
+        "nombre": "Paso de ciclistas",
+        "forma": "Triangular"
+      },
+      {
+        "codigo": "P-33",
+        "nombre": "Visibilidad reducida",
+        "forma": "Triangular"
+      }
+    ],
+    "prohibicion": [
+      {
+        "codigo": "R-1",
+        "nombre": "Stop",
+        "forma": "Octogonal",
+        "accion": "Detención obligatoria"
+      },
+      {
+        "codigo": "R-2",
+        "nombre": "Ceda el paso",
+        "forma": "Triángulo invertido"
+      },
+      {
+        "codigo": "R-100",
+        "nombre": "Circulación prohibida",
+        "forma": "Circular"
+      },
+      {
+        "codigo": "R-301",
+        "nombre": "Velocidad máxima",
+        "forma": "Circular"
+      },
+      {
+        "codigo": "R-308",
+        "nombre": "Estacionamiento prohibido",
+        "forma": "Circular"
+      }
+    ],
+    "obligacion": [
+      {
+        "codigo": "R-400a",
+        "nombre": "Sentido obligatorio",
+        "forma": "Circular azul"
+      },
+      {
+        "codigo": "R-401a",
+        "nombre": "Dirección obligatoria",
+        "forma": "Circular azul"
+      },
+      {
+        "codigo": "R-407a",
+        "nombre": "Vía reservada para ciclos",
+        "forma": "Circular azul"
+      }
+    ],
+    "indicacion": [
+      {
+        "codigo": "S-1",
+        "nombre": "Autopista",
+        "forma": "Rectangular azul"
+      },
+      {
+        "codigo": "S-2",
+        "nombre": "Fin de autopista",
+        "forma": "Rectangular azul"
+      },
+      {
+        "codigo": "S-13",
+        "nombre": "Paso para peatones",
+        "forma": "Cuadrada azul"
+      }
+    ],
+    "marcas_viales": {
+      "linea_continua": "Prohibido rebasarla",
+      "linea_discontinua": "Permite adelantamiento si es seguro",
+      "cebreado": "Zona no transitable",
+      "paso_peatones": "Prioridad peatones"
+    }
+  },
+  "agentes": {
+    "prioridad_senalizacion": [
+      "Agentes",
+      "Señalización circunstancial",
+      "Semáforos",
+      "Señales verticales",
+      "Marcas viales"
+    ]
+  },
+  "semaforos": {
+    "rojo": "Detención obligatoria",
+    "amarillo": "Detenerse si puede hacerse en condiciones de seguridad",
+    "verde": "Paso permitido",
+    "verde_flecha": "Permite seguir dirección indicada",
+    "amarillo_intermitente": "Precaución"
+  },
+  "conduccion_eficiente": {
+    "recomendaciones": [
+      "Circular en marchas largas",
+      "Mantener velocidad uniforme",
+      "Evitar acelerones y frenazos",
+      "Comprobar presión de neumáticos",
+      "Usar freno motor"
+    ]
+  },
+  "condiciones_meteorologicas": {
+    "lluvia": {
+      "riesgos": [
+        "Aquaplaning",
+        "Menor adherencia"
+      ],
+      "recomendaciones": [
+        "Reducir velocidad",
+        "Aumentar distancia de seguridad"
+      ]
+    },
+    "niebla": {
+      "luces": [
+        "Antiniebla",
+        "Cruce"
+      ],
+      "recomendaciones": [
+        "No usar largas",
+        "Seguir líneas de borde"
+      ]
+    },
+    "nieve": {
+      "equipamiento": [
+        "Cadenas",
+        "Neumáticos invierno"
+      ]
+    }
+  },
+  "mecanica_basica": {
+    "motor": {
+      "aceite": "Lubrica piezas móviles",
+      "refrigerante": "Mantiene temperatura adecuada"
+    },
+    "frenos": {
+      "abs": "Evita bloqueo de ruedas",
+      "distancia_frenado": "Aumenta con velocidad y mal estado de vía"
+    },
+    "bateria": {
+      "funcion": "Suministrar energía eléctrica"
+    }
+  },
+  "accidentes": {
+    "factores": {
+      "humanos": [
+        "Distracciones",
+        "Alcohol",
+        "Fatiga",
+        "Velocidad"
+      ],
+      "vehiculo": [
+        "Neumáticos defectuosos",
+        "Frenos en mal estado"
+      ],
+      "via": [
+        "Mala señalización",
+        "Pavimento deslizante"
+      ]
+    }
+  },
+  "usuarios_vulnerables": {
+    "peatones": {
+      "prioridad": true,
+      "precauciones": [
+        "Zonas escolares",
+        "Pasos de peatones"
+      ]
+    },
+    "ciclistas": {
+      "distancia_lateral_metros": 1.5,
+      "adelantamiento": "Puede invadirse línea continua si no hay peligro"
+    },
+    "motoristas": {
+      "riesgos": [
+        "Menor visibilidad",
+        "Mayor vulnerabilidad"
+      ]
+    }
+  },
+  "carga": {
+    "normas": [
+      "No comprometer estabilidad",
+      "No ocultar luces ni matrícula",
+      "Carga bien sujeta"
+    ]
+  },
+  "medio_ambiente": {
+    "zonas_bajas_emisiones": {
+      "descripcion": "Restricciones de acceso según distintivo ambiental"
+    },
+    "distintivos": [
+      "0 emisiones",
+      "ECO",
+      "C",
+      "B"
+    ]
+  },
+  "glosario": {
+    "mma": "Masa Máxima Autorizada",
+    "itv": "Inspección Técnica de Vehículos",
+    "abs": "Sistema antibloqueo de frenos",
+    "esp": "Control electrónico de estabilidad",
+    "airbag": "Bolsa de aire de seguridad"
+  },
+  "test_ejemplo": [
+    {
+      "pregunta": "¿Cuál es la velocidad máxima en autopista para turismos?",
+      "respuestas": [
+        "90 km/h",
+        "100 km/h",
+        "120 km/h"
+      ],
+      "correcta": 2
+    },
+    {
+      "pregunta": "¿Qué indica una línea continua?",
+      "respuestas": [
+        "Permite adelantar",
+        "Prohíbe rebasarla",
+        "Carril reversible"
+      ],
+      "correcta": 1
+    },
+    {
+      "pregunta": "¿Qué debe hacer ante una luz roja?",
+      "respuestas": [
+        "Acelerar",
+        "Detenerse",
+        "Continuar con precaución"
+      ],
+      "correcta": 1
+    }
+  ]
+,
+  "temario_completo_dgt": {
+    "normativa_general": {
+      "leyes": [
+        "Ley de Seguridad Vial",
+        "Reglamento General de Circulación",
+        "Reglamento General de Conductores",
+        "Reglamento General de Vehículos"
+      ],
+      "obligaciones_conductor": [
+        "Mantener libertad de movimientos",
+        "Mantener atención permanente",
+        "No usar dispositivos incompatibles con la conducción",
+        "Someterse a pruebas de alcohol y drogas cuando sea requerido"
+      ]
+    },
+    "tipos_vias": {
+      "urbanas": {
+        "descripcion": "Vías dentro de poblado",
+        "tipos": [
+          "Calles residenciales",
+          "Avenidas",
+          "Calles de sentido único",
+          "Zonas peatonales"
+        ]
+      },
+      "interurbanas": {
+        "descripcion": "Vías fuera de poblado",
+        "tipos": [
+          "Autopistas",
+          "Autovías",
+          "Carreteras convencionales",
+          "Vías para automóviles"
+        ]
+      }
+    },
+    "uso_carriles": {
+      "normas": [
+        "Circular por la derecha salvo adelantamiento",
+        "No cambiar de carril bruscamente",
+        "Usar carril derecho en autopistas si está libre",
+        "Carril izquierdo destinado principalmente a adelantamientos"
+      ],
+      "carriles_especiales": {
+        "busvao": "Reservado para autobuses y vehículos autorizados",
+        "reversible": "Separado por doble línea discontinua",
+        "sentido_contrario": "Habilitado temporalmente",
+        "adicional": "Usado en congestiones o circunstancias especiales"
+      }
+    },
+    "maniobras": {
+      "incorporacion": {
+        "normas": [
+          "Ceder paso a quienes circulan por la vía",
+          "Usar carril de aceleración",
+          "Señalizar maniobra"
+        ]
+      },
+      "cambio_sentido": {
+        "prohibiciones": [
+          "Curvas",
+          "Cambios de rasante",
+          "Túneles",
+          "Autopistas y autovías salvo lugares habilitados"
+        ]
+      },
+      "marcha_atras": {
+        "distancia_maxima_metros": 15,
+        "uso": "Solo cuando no sea posible avanzar o cambiar dirección"
+      }
+    },
+    "semaforos_detallados": {
+      "peatones": {
+        "verde": "Pueden cruzar",
+        "rojo": "No deben cruzar"
+      },
+      "tranvias": {
+        "barra_horizontal": "Detención",
+        "barra_vertical": "Paso permitido"
+      },
+      "carril": {
+        "flecha_verde": "Carril abierto",
+        "aspa_roja": "Carril cerrado"
+      }
+    },
+    "senales_agentes": {
+      "brazo_levantado": "Obliga a detenerse",
+      "brazo_extendido_horizontal": "Detención para quienes se aproximen de frente",
+      "toques_silbato": {
+        "cortos_frecuentes": "Detención",
+        "largos": "Reanudar marcha"
+      }
+    },
+    "senales_obras": {
+      "descripcion": "Señalización temporal en obras",
+      "color_predominante": "Amarillo"
+    },
+    "prioridad_vehiculos": {
+      "vehiculos_prioritarios": [
+        "Policía",
+        "Bomberos",
+        "Ambulancias",
+        "Protección civil"
+      ],
+      "condiciones": [
+        "Uso simultáneo de señales luminosas y acústicas",
+        "Prioridad de paso en servicio urgente"
+      ]
+    },
+    "peatones": {
+      "normas": [
+        "Cruzar por pasos habilitados",
+        "Circular por acera",
+        "En carretera ir por izquierda si no hay arcén"
+      ],
+      "prohibiciones": [
+        "Cruzar autopistas",
+        "Cruzar con semáforo rojo"
+      ]
+    },
+    "animales": {
+      "precauciones": [
+        "Reducir velocidad en zonas señalizadas",
+        "Usar luces de cruce de noche"
+      ]
+    },
+    "fatiga_y_sueno": {
+      "sintomas": [
+        "Bostezos",
+        "Picor de ojos",
+        "Pérdida de concentración",
+        "Desviaciones involuntarias"
+      ],
+      "prevencion": [
+        "Descansar cada 2 horas",
+        "Dormir adecuadamente",
+        "Evitar comidas copiosas"
+      ]
+    },
+    "distracciones": {
+      "principales": [
+        "Uso del móvil",
+        "Manipular navegador",
+        "Comer o fumar",
+        "Conversaciones intensas"
+      ]
+    },
+    "primeros_auxilios": {
+      "hemorragias": "Presionar la herida",
+      "inconsciente": "Comprobar respiración",
+      "reanimacion": {
+        "compresiones_por_minuto": "100-120",
+        "relacion_compresiones_respiraciones": "30:2"
+      }
+    },
+    "vehiculo": {
+      "elementos_seguridad_activa": [
+        "ABS",
+        "ESP",
+        "Control de tracción",
+        "Neumáticos"
+      ],
+      "elementos_seguridad_pasiva": [
+        "Airbag",
+        "Cinturón",
+        "Reposacabezas",
+        "Carrocería deformable"
+      ],
+      "panel_testigos": {
+        "rojo": "Avería grave",
+        "amarillo": "Advertencia",
+        "verde": "Funcionamiento correcto"
+      }
+    },
+    "combustibles": {
+      "gasolina": {
+        "uso": "Motores gasolina"
+      },
+      "diesel": {
+        "uso": "Motores diésel"
+      },
+      "electricos": {
+        "ventajas": [
+          "Menor contaminación",
+          "Menor ruido"
+        ]
+      }
+    },
+    "neumaticos_detallado": {
+      "tipos": [
+        "Verano",
+        "Invierno",
+        "All season"
+      ],
+      "presion": "Debe revisarse en frío",
+      "desgaste_irregular": [
+        "Mala alineación",
+        "Presión incorrecta"
+      ]
+    },
+    "frenado": {
+      "tipos": [
+        "Freno de servicio",
+        "Freno de estacionamiento",
+        "Freno motor"
+      ],
+      "distancias": {
+        "reaccion": "Depende del conductor",
+        "frenado": "Depende de velocidad y adherencia",
+        "detencion": "Suma de reacción y frenado"
+      }
+    },
+    "seguro": {
+      "obligatorio": true,
+      "tipos": [
+        "Responsabilidad civil",
+        "Terceros ampliado",
+        "Todo riesgo"
+      ]
+    },
+    "remolques": {
+      "ligeros": "Hasta 750 kg",
+      "no_ligeros": "Más de 750 kg",
+      "normas": [
+        "Mayor distancia de frenado",
+        "Velocidad adaptada"
+      ]
+    },
+    "senales_horizontal_detalladas": {
+      "linea_borde": "Delimita calzada",
+      "flechas": "Indican dirección",
+      "isletas": "Separan sentidos o canalizan tráfico",
+      "zigzag": "Prohibido estacionar"
+    },
+    "marcas_colores": {
+      "amarillas": "Restricciones temporales",
+      "azules": "Zona de estacionamiento regulado",
+      "verdes": "Estacionamiento limitado residentes"
+    },
+    "transporte_menores": {
+      "menores_135cm": "Deben usar sistema retención infantil",
+      "plaza_delantera": "Solo excepciones permitidas"
+    },
+    "documentacion_detallada": {
+      "duplicados": "Posibles en caso de pérdida",
+      "itv_desfavorable": "Solo desplazamiento al taller o ITV"
+    },
+    "medioambiente_detallado": {
+      "eco_conduccion": {
+        "beneficios": [
+          "Ahorro combustible",
+          "Menos emisiones",
+          "Menor desgaste"
+        ]
+      }
+    },
+    "accidentes_detallado": {
+      "cadena_supervivencia": [
+        "Alerta temprana",
+        "RCP precoz",
+        "Desfibrilación",
+        "Asistencia sanitaria"
+      ]
+    },
+    "mantenimiento": {
+      "revisiones": [
+        "Aceite",
+        "Filtros",
+        "Líquido refrigerante",
+        "Líquido de frenos",
+        "Luces"
+      ]
+    },
+    "senales_completas": {
+      "peligro_adicionales": [
+        "Pavimento deslizante",
+        "Animales en libertad",
+        "Viento transversal",
+        "Obras",
+        "Semáforos",
+        "Retenciones"
+      ],
+      "prohibicion_adicionales": [
+        "Prohibido adelantar",
+        "Entrada prohibida",
+        "Limitación masa",
+        "Limitación altura",
+        "Limitación anchura"
+      ],
+      "indicacion_adicionales": [
+        "Hospital",
+        "Gasolinera",
+        "Área descanso",
+        "Teléfono SOS",
+        "Parking"
+      ]
+    },
+    "test_avanzado": [
+      {
+        "pregunta": "¿Quién tiene prioridad en una glorieta?",
+        "respuestas": [
+          "Quien entra primero",
+          "Quien circula dentro",
+          "Quien viene por la derecha"
+        ],
+        "correcta": 1
+      },
+      {
+        "pregunta": "¿Cada cuánto debe descansar en viajes largos?",
+        "respuestas": [
+          "Cada 30 minutos",
+          "Cada 2 horas",
+          "Cada 5 horas"
+        ],
+        "correcta": 1
+      },
+      {
+        "pregunta": "¿Cuál es la profundidad mínima legal del neumático?",
+        "respuestas": [
+          "1 mm",
+          "1.6 mm",
+          "2.5 mm"
+        ],
+        "correcta": 1
+      },
+      {
+        "pregunta": "¿Qué luz debe usar con niebla densa?",
+        "respuestas": [
+          "Largas",
+          "Antiniebla trasera",
+          "Solo posición"
+        ],
+        "correcta": 1
+      }
+    ]
+  }
+}

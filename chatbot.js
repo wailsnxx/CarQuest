@@ -4,9 +4,12 @@
     // ── HTML del widget ────────────────────────────────────────────────────
     const html = `
     <div id="cq-chat-widget">
+        <!-- Burbuja de llamada -->
+        <div class="cq-callout" id="cq-callout">¡Pregúntame!</div>
+
         <!-- Botón flotante -->
         <button id="cq-chat-btn" aria-label="Abrir asistente">
-            <span class="cq-icon-chat">💬</span>
+            <span class="cq-icon-chat"><img src="imgs/icono.jpeg" alt="" class="cq-btn-img"></span>
             <span class="cq-icon-close">✕</span>
             <span class="cq-badge" id="cq-badge" hidden>1</span>
         </button>
@@ -15,29 +18,41 @@
         <div id="cq-chat-panel" aria-hidden="true">
             <!-- Cabecera -->
             <div class="cq-header">
-                <div class="cq-header-avatar">🚗</div>
+                <div class="cq-header-avatar"><img src="imgs/rayo.jpg" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>
                 <div class="cq-header-info">
-                    <div class="cq-header-name">Asistente CarQuest</div>
+                    <div class="cq-header-name">MacQueen</div>
                     <div class="cq-header-status">
                         <span class="cq-dot"></span> En línea
                     </div>
                 </div>
+                <button class="cq-header-reset" id="cq-reset-btn" aria-label="Reiniciar chat" title="Reiniciar chat">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+                        <polyline points="1 4 1 10 7 10"></polyline>
+                        <path d="M3.51 15a9 9 0 1 0 .49-4.5"></path>
+                    </svg>
+                </button>
                 <button class="cq-header-close" id="cq-close-btn" aria-label="Cerrar">✕</button>
             </div>
 
             <!-- Mensajes -->
             <div class="cq-messages" id="cq-messages">
                 <div class="cq-msg cq-msg-bot">
-                    <div class="cq-msg-avatar">🚗</div>
+                    <div class="cq-msg-avatar"><img src="imgs/rayo.jpg" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>
                     <div class="cq-msg-bubble">
-                        ¡Hola! Soy el asistente de <strong>CarQuest</strong>.<br>
+                        ¡Hola! Soy <strong>MacQueen</strong>, asistente de CarQuest.<br>
                         Puedo ayudarte con teoría de conducción, preguntas del test y consejos para aprobar. ¿Cómo puedo ayudarte?
                     </div>
                 </div>
                 <div class="cq-suggestions">
-                    <button class="cq-sugg" data-text="Explícame una norma de circulación">📖 Normas de circulación</button>
-                    <button class="cq-sugg" data-text="¿Cómo puedo mejorar mi racha?">🔥 Mejorar la racha</button>
-                    <button class="cq-sugg" data-text="¿Qué juegos hay disponibles?">🎯 Juegos disponibles</button>
+                    <button class="cq-sugg" data-text="¿Cuál es la velocidad máxima en autopista?">🚗 Velocidad en autopista</button>
+                    <button class="cq-sugg" data-text="¿Cuántos puntos tiene el carné y cómo se pierden?">📋 Puntos del carné</button>
+                    <button class="cq-sugg" data-text="¿Cuál es la tasa de alcohol permitida?">🍺 Tasa de alcohol</button>
+                    <button class="cq-sugg" data-text="¿Qué significa el semáforo en ámbar?">🚦 Semáforos</button>
+                    <button class="cq-sugg" data-text="¿Cuándo está prohibido adelantar?">🚗 Adelantamiento</button>
+                    <button class="cq-sugg" data-text="¿Dónde está prohibido aparcar?">🅿️ Estacionamiento</button>
+                    <button class="cq-sugg" data-text="¿Qué es la regla PAS en emergencias?">🆘 Emergencias (PAS)</button>
+                    <button class="cq-sugg" data-text="¿Qué luces debo usar con niebla?">💡 Luces con niebla</button>
+                    <button class="cq-sugg" data-text="¿Quién tiene prioridad en una rotonda?">🔄 Prioridad en rotondas</button>
                 </div>
             </div>
 
@@ -77,6 +92,28 @@
         font-family: 'Inter', 'Segoe UI', sans-serif;
     }
 
+    /* ── Burbuja de llamada ── */
+    .cq-callout {
+        position: absolute;
+        bottom: 78px;
+        right: 0;
+        background: #fff;
+        color: #1a1a2e;
+        font-size: 14px;
+        font-weight: 700;
+        padding: 9px 16px;
+        border-radius: 20px 20px 4px 20px;
+        box-shadow: 0 4px 18px rgba(0,0,0,.25);
+        white-space: nowrap;
+        animation: cq-callout-pulse 3s ease-in-out infinite;
+        pointer-events: none;
+    }
+    #cq-chat-widget.open .cq-callout { display: none; }
+    @keyframes cq-callout-pulse {
+        0%, 100% { transform: translateY(0); }
+        50%       { transform: translateY(-5px); }
+    }
+
     /* ── Botó flotant ── */
     #cq-chat-btn {
         width: 64px;
@@ -102,6 +139,13 @@
     #cq-chat-btn:active { transform: scale(.95); }
 
     .cq-icon-close { display: none; font-size: 18px; font-weight: 700; }
+    .cq-btn-img {
+        width: 56px;
+        height: 56px;
+        object-fit: cover;
+        border-radius: 50%;
+        display: block;
+    }
 
     #cq-chat-widget.open .cq-icon-chat  { display: none; }
     #cq-chat-widget.open .cq-icon-close { display: block; }
@@ -126,11 +170,12 @@
 
     /* ── Panell de xat ── */
     #cq-chat-panel {
-        position: absolute;
+        position: fixed;
         bottom: 78px;
-        right: 0;
-        width: 420px;
-        max-height: 580px;
+        top: 8px;
+        right: 24px;
+        width: 520px;
+        max-height: none;
         background: linear-gradient(180deg, #131c2e, #0f172a);
         border: 1px solid rgba(255, 255, 255, .08);
         border-radius: 18px;
@@ -193,6 +238,20 @@
         display: inline-block;
         box-shadow: 0 0 6px #06A77D;
     }
+    .cq-header-reset {
+        background: none;
+        border: none;
+        color: rgba(255,255,255,.4);
+        cursor: pointer;
+        padding: 4px;
+        line-height: 1;
+        transition: color .15s, transform .3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .cq-header-reset:hover { color: #FF6B35; transform: rotate(-180deg); }
+
     .cq-header-close {
         background: none;
         border: none;
@@ -246,7 +305,7 @@
         font-size: 14px;
         color: rgba(255,255,255,.85);
         line-height: 1.55;
-        max-width: 310px;
+        max-width: 400px;
     }
     .cq-msg-bubble strong { color: #FF6B35; }
 
@@ -283,10 +342,10 @@
 
     /* Suggeriments ràpids */
     .cq-suggestions {
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         gap: 6px;
-        padding-left: 36px;
+        padding-left: 40px;
     }
     .cq-sugg {
         background: rgba(255,107,53,.08);
@@ -357,14 +416,16 @@
     .cq-send-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
 
     /* ── Mòbil ── */
-    @media (max-width: 520px) {
+    @media (max-width: 600px) {
         #cq-chat-panel {
             width: calc(100vw - 24px);
-            right: -12px;
+            right: 12px;
             bottom: 76px;
-            max-height: 72vh;
+            top: 8px;
+            max-height: none;
         }
         #cq-chat-widget { bottom: 16px; right: 16px; }
+        .cq-suggestions { grid-template-columns: 1fr; }
     }`;
     document.head.appendChild(style);
 
@@ -377,6 +438,35 @@
     const input    = document.getElementById('cq-input');
     const sendBtn  = document.getElementById('cq-send-btn');
     const badge    = document.getElementById('cq-badge');
+    const resetBtn = document.getElementById('cq-reset-btn');
+
+    const INITIAL_HTML = `
+        <div class="cq-msg cq-msg-bot">
+            <div class="cq-msg-avatar"><img src="imgs/rayo.jpg" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>
+            <div class="cq-msg-bubble">
+                ¡Hola! Soy <strong>MacQueen</strong>, tu asistente de conducción.<br>
+                Puedo ayudarte con teoría, preguntas del test y consejos para aprobar. ¿Cómo puedo ayudarte?
+            </div>
+        </div>
+        <div class="cq-suggestions">
+            <button class="cq-sugg" data-text="¿Cuál es la velocidad máxima en autopista?">🚗 Velocidad en autopista</button>
+            <button class="cq-sugg" data-text="¿Cuántos puntos tiene el carné y cómo se pierden?">📋 Puntos del carné</button>
+            <button class="cq-sugg" data-text="¿Cuál es la tasa de alcohol permitida?">🍺 Tasa de alcohol</button>
+            <button class="cq-sugg" data-text="¿Qué significa el semáforo en ámbar?">🚦 Semáforos</button>
+            <button class="cq-sugg" data-text="¿Cuándo está prohibido adelantar?">🚗 Adelantamiento</button>
+            <button class="cq-sugg" data-text="¿Dónde está prohibido aparcar?">🅿️ Estacionamiento</button>
+            <button class="cq-sugg" data-text="¿Qué es la regla PAS en emergencias?">🆘 Emergencias (PAS)</button>
+            <button class="cq-sugg" data-text="¿Qué luces debo usar con niebla?">💡 Luces con niebla</button>
+            <button class="cq-sugg" data-text="¿Quién tiene prioridad en una rotonda?">🔄 Prioridad en rotondas</button>
+        </div>`;
+
+    function resetChat() {
+        messages.innerHTML = INITIAL_HTML;
+        input.value = '';
+        input.style.height = 'auto';
+        sendBtn.disabled = false;
+        scrollToBottom();
+    }
 
     let isOpen = false;
 
@@ -641,7 +731,7 @@ Las monedas son la moneda de CarQuest.<br>
 
         // ── SALUDO ──
         { tags: ['hola','buenas','hi','hey','saludos','buenos días','buenas tardes','ola'],
-          r: `¡Hola! 👋 Soy el asistente de <strong>CarQuest</strong>.<br>Puedo ayudarte con:<br>
+          r: `¡Hola! 👋 Soy <strong>MacQueen</strong>, tu asistente de conducción.<br>Puedo ayudarte con:<br>
 • 🚦 Normas y señales de tráfico (DGT)<br>
 • 📝 Preguntas de teoría de conducción<br>
 • 🎮 Cómo funcionan los juegos y la app<br><br>
@@ -681,6 +771,18 @@ Las monedas son la moneda de CarQuest.<br>
     }
 
     function simularTyping(texto, bubble, cb) {
+        // Para contenido HTML largo (respuestas DGT) mostrar directamente con fade
+        if (texto.includes('<strong>') || texto.length > 150) {
+            bubble.style.opacity = '0';
+            bubble.innerHTML = texto;
+            requestAnimationFrame(() => {
+                bubble.style.transition = 'opacity 0.3s ease';
+                bubble.style.opacity = '1';
+                scrollToBottom();
+                if (cb) cb();
+            });
+            return;
+        }
         let i = 0;
         bubble.innerHTML = '';
         const interval = setInterval(() => {
@@ -691,14 +793,13 @@ Las monedas son la moneda de CarQuest.<br>
                 if (cb) cb();
                 return;
             }
-            // Avanza en chunks de 4 chars para que sea rápido pero fluido
             i = Math.min(i + 4, texto.length);
             bubble.innerHTML = texto.slice(0, i) + '<span style="opacity:.3">▌</span>';
             scrollToBottom();
         }, 12);
     }
 
-    function sendMessage() {
+    async function sendMessage() {
         const text = input.value.trim();
         if (!text) return;
 
@@ -709,16 +810,27 @@ Las monedas son la moneda de CarQuest.<br>
 
         const typing = addTyping();
 
-        // Tiempo de "pensar" proporcional al texto (entre 400ms y 900ms)
-        const delay = Math.min(900, 400 + text.length * 5);
+        try {
+            const res = await fetch('/api/chatbot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            });
+            const data = await res.json();
 
-        setTimeout(() => {
+            typing.remove();
+
+            const respuesta = data.found ? data.answer : buscarRespuesta(text);
+            const div = addMessage('', 'bot');
+            const bubble = div.querySelector('.cq-msg-bubble');
+            simularTyping(respuesta, bubble, () => { sendBtn.disabled = false; });
+        } catch (_) {
             typing.remove();
             const respuesta = buscarRespuesta(text);
             const div = addMessage('', 'bot');
             const bubble = div.querySelector('.cq-msg-bubble');
             simularTyping(respuesta, bubble, () => { sendBtn.disabled = false; });
-        }, delay);
+        }
     }
 
     function addMessage(text, role) {
@@ -726,7 +838,7 @@ Las monedas son la moneda de CarQuest.<br>
         const div = document.createElement('div');
         div.className = `cq-msg cq-msg-${role}`;
         div.innerHTML = isBot
-            ? `<div class="cq-msg-avatar">🚗</div><div class="cq-msg-bubble">${text}</div>`
+            ? `<div class="cq-msg-avatar"><img src="imgs/rayo.jpg" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div><div class="cq-msg-bubble">${text}</div>`
             : `<div class="cq-msg-bubble">${escapeHtml(text)}</div>`;
         messages.appendChild(div);
         scrollToBottom();
@@ -736,7 +848,7 @@ Las monedas son la moneda de CarQuest.<br>
     function addTyping() {
         const div = document.createElement('div');
         div.className = 'cq-msg cq-msg-bot cq-typing';
-        div.innerHTML = `<div class="cq-msg-avatar">🚗</div>
+        div.innerHTML = `<div class="cq-msg-avatar"><img src="imgs/rayo.jpg" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>
             <div class="cq-msg-bubble">
                 <span class="cq-typing-dot"></span>
                 <span class="cq-typing-dot"></span>
@@ -763,6 +875,7 @@ Las monedas son la moneda de CarQuest.<br>
     // Events
     btn.addEventListener('click', togglePanel);
     closeBtn.addEventListener('click', togglePanel);
+    resetBtn.addEventListener('click', resetChat);
 
     sendBtn.addEventListener('click', sendMessage);
 
