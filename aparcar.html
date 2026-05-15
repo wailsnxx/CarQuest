@@ -309,10 +309,10 @@
         </nav>
         <div class="sidebar-bottom">
             <div class="sidebar-user">
-                <div class="sidebar-user-avatar">🙂</div>
+                <div class="sidebar-user-avatar js-avatar">🙂</div>
                 <div class="sidebar-user-info">
-                    <strong>Conductor Novell</strong>
-                    <span>1500 XP · Nivell 2</span>
+                    <strong class="js-sidebar-nom">...</strong>
+                    <span class="js-sidebar-info">...</span>
                 </div>
             </div>
         </div>
@@ -454,6 +454,7 @@
     </main>
 </div><!-- /dashboard-wrap -->
 
+<script src="app.js"></script>
 <script src="dashboard.js"></script>
 <script>
 // ====================================================
@@ -929,6 +930,24 @@ function showGameover() {
     document.getElementById('xpEarned').textContent   = '⭐ +' + xp + ' XP';
     document.getElementById('coinsEarned').textContent= '🪙 +' + coins;
 
+    // Guardar XP en la BD
+    const token = localStorage.getItem('cq_token');
+    if (token) {
+        fetch('/api/user/xp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ xp_ganado: xp, tipus: 'joc', nom: 'Aparcamiento Perfecto', puntuacio: levelsOK })
+        }).then(r => r.json()).then(d => {
+            if (d.xp !== undefined) {
+                const u = JSON.parse(localStorage.getItem('cq_usuario') || '{}');
+                u.xp = d.xp; u.nivel = d.nivel; u.rang = d.rang;
+                if (d.monedes !== undefined) u.monedes = d.monedes;
+                localStorage.setItem('cq_usuario', JSON.stringify(u));
+                if (typeof actualitzarUIUsuari === 'function') actualitzarUIUsuari(u);
+            }
+        }).catch(() => {});
+    }
+
     const allOk = levelsOK === total;
     document.getElementById('finalEmoji').textContent = allOk ? '🏆' : levelsOK > 0 ? '⭐' : '😓';
     document.getElementById('finalTitle').textContent = allOk ? 'Tots els nivells superats!' :
@@ -1334,6 +1353,16 @@ function showScreen(name) {
     });
     document.getElementById('screen' + name).classList.remove('hidden');
 }
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    if (typeof requireAuth === 'function' && !requireAuth()) return;
+    initSidebar();
+    if (typeof carregarUsuari === 'function') {
+        const user = await carregarUsuari();
+        if (user) document.querySelectorAll('.js-avatar').forEach(el => el.textContent = user.avatar || '🙂');
+    }
+});
 </script>
 <script src="chatbot.js"></script>
 </body>

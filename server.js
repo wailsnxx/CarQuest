@@ -10,6 +10,10 @@ require('dotenv').config();
 // Cargar banco de preguntas DGT (2947 preguntas oficiales)
 const todasPreguntes = JSON.parse(fs.readFileSync(path.join(__dirname, 'preguntes_dgt.json'), 'utf8'));
 
+// Cargar contenido de lecciones de teoría
+const TEORIA_CONTENIDO = JSON.parse(fs.readFileSync(path.join(__dirname, 'teoria_contenido.json'), 'utf8'));
+console.log(`📖 ${TEORIA_CONTENIDO.categorias.length} categorías de teoría cargadas`);
+
 // Normalizar formato: { pregunta, opcions:[a,b,c], correcta:0|1|2, explicacio }
 const PREGUNTES_DGT = todasPreguntes
     .filter(q => q.question && q['a.'] && q['b.'] && q['c.'])
@@ -172,6 +176,14 @@ async function initDB() {
             user_id INTEGER NOT NULL,
             fecha   DATE    NOT NULL,
             PRIMARY KEY (user_id, fecha)
+        )
+    `);
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS user_items (
+            id      SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL,
+            item_id VARCHAR NOT NULL,
+            UNIQUE(user_id, item_id)
         )
     `);
     console.log('✅ Tablas y columnas listas');
@@ -508,10 +520,21 @@ app.get('/api/retos-diarios', verificarToken, async (req, res) => {
 // RUTAS DE PREGUNTES DGT
 // ============================================================
 
-// GET /api/preguntes?n=10&tema=all — devuelve N preguntas aleatorias
+// GET /api/preguntes?n=10&tema=senales|normas|seguridad — devuelve N preguntas aleatorias
 app.get('/api/preguntes', (req, res) => {
     const n = Math.min(parseInt(req.query.n) || 10, 30);
-    const barrejades = [...PREGUNTES_DGT].sort(() => Math.random() - 0.5);
+    const tema = req.query.tema;
+    const TEMA_KEYWORDS = {
+        senales:   /señal|semáforo|semaforo|indicaci(ón|on)|balizamient|marca vial|ceda el paso|paso de peatón|paso de peaton/i,
+        normas:    /velocidad|adelantar|adelantamiento|preferencia de paso|carril|distancia de seguridad|incorpora(rse|ción|cion)|cambio de sentido|giro (a la|en U)|prohibi(do|ción)/i,
+        seguridad: /cinturón|cinturon|casco|alcohol|droga|fatiga|alumbrado|luces (de|del)|freno(s)?|neumático|neumatico|airbag|sist(ema)? de retenci(ón|on)|visibilidad|cansancio/i,
+    };
+    let pregPool = PREGUNTES_DGT;
+    if (tema && TEMA_KEYWORDS[tema]) {
+        pregPool = PREGUNTES_DGT.filter(q => TEMA_KEYWORDS[tema].test(q.pregunta));
+        if (pregPool.length < n) pregPool = PREGUNTES_DGT;
+    }
+    const barrejades = [...pregPool].sort(() => Math.random() - 0.5);
     res.json(barrejades.slice(0, n));
 });
 
@@ -673,6 +696,193 @@ app.get('/api/elige-responsable/ranking', async (_req, res) => {
         `);
         res.json(result.rows);
     } catch (err) {
+        res.status(500).json({ error: 'Error interno' });
+    }
+});
+
+// ============================================================
+// RUTAS DE TIENDA
+// ============================================================
+
+const TIENDA_ITEMS = [
+    { id: 'suv',             nombre: 'SUV',           emoji: '🚙', categoria: 'cotxe',   precio: 500,  nivel: 1 },
+    { id: 'deportivo',       nombre: 'Deportivo',     emoji: '🏎️', categoria: 'cotxe',   precio: 1000, nivel: 5 },
+    { id: 'taxi',            nombre: 'Taxi',          emoji: '🚕', categoria: 'cotxe',   precio: 750,  nivel: 3 },
+    { id: 'furgoneta',       nombre: 'Furgoneta',     emoji: '🚐', categoria: 'cotxe',   precio: 800,  nivel: 4 },
+    { id: 'f1',              nombre: 'Fórmula 1',     emoji: '🏁', categoria: 'cotxe',   precio: 2000, nivel: 8 },
+    { id: 'color_rojo',      nombre: 'Rojo',          emoji: '🔴', categoria: 'color',   precio: 100,  nivel: 1 },
+    { id: 'color_azul',      nombre: 'Azul',          emoji: '🔵', categoria: 'color',   precio: 100,  nivel: 1 },
+    { id: 'color_verde',     nombre: 'Verde',         emoji: '🟢', categoria: 'color',   precio: 100,  nivel: 1 },
+    { id: 'sticker_llamas',  nombre: 'Llamas',        emoji: '🔥', categoria: 'sticker', precio: 200,  nivel: 1 },
+    { id: 'sticker_estrella',nombre: 'Estrella',      emoji: '⭐', categoria: 'sticker', precio: 150,  nivel: 1 },
+    { id: 'sticker_rayo',    nombre: 'Rayo',          emoji: '⚡', categoria: 'sticker', precio: 150,  nivel: 1 },
+    { id: 'spoiler',         nombre: 'Spoiler',       emoji: '🏁', categoria: 'pieza',   precio: 300,  nivel: 2 },
+    { id: 'ruedas_racing',   nombre: 'Ruedas Racing', emoji: '⚙️', categoria: 'pieza',   precio: 400,  nivel: 3 },
+];
+
+// GET /api/tienda/mis-items — items comprados por el usuario
+app.get('/api/tienda/mis-items', verificarToken, async (req, res) => {
+    try {
+        const result = await pool.query(
+            'SELECT item_id FROM user_items WHERE user_id = $1',
+            [req.user.id]
+        );
+        res.json(result.rows.map(r => r.item_id));
+    } catch (err) {
+        res.status(500).json({ error: 'Error interno' });
+    }
+});
+
+// POST /api/tienda/comprar — comprar un item
+app.post('/api/tienda/comprar', verificarToken, async (req, res) => {
+    const { item_id } = req.body;
+    const item = TIENDA_ITEMS.find(i => i.id === item_id);
+    if (!item) return res.status(404).json({ error: 'Item no encontrado' });
+
+    try {
+        const userRes = await pool.query(
+            'SELECT monedes, nivel FROM users WHERE id = $1',
+            [req.user.id]
+        );
+        const { monedes, nivel } = userRes.rows[0];
+
+        if (nivel < item.nivel) {
+            return res.status(403).json({ error: `Necesitas nivel ${item.nivel} para desbloquear este item` });
+        }
+        if (monedes < item.precio) {
+            return res.status(400).json({ error: `Monedas insuficientes (tienes ${monedes}, necesitas ${item.precio})` });
+        }
+
+        // Comprobar si ya lo tiene
+        const yaComprado = await pool.query(
+            'SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = $2',
+            [req.user.id, item_id]
+        );
+        if (yaComprado.rows.length > 0) {
+            return res.status(409).json({ error: 'Ya tienes este item' });
+        }
+
+        // Deducir monedas y añadir item
+        await pool.query(
+            'UPDATE users SET monedes = monedes - $1 WHERE id = $2',
+            [item.precio, req.user.id]
+        );
+        await pool.query(
+            'INSERT INTO user_items (user_id, item_id) VALUES ($1, $2)',
+            [req.user.id, item_id]
+        );
+
+        const updated = await pool.query(
+            'SELECT monedes FROM users WHERE id = $1',
+            [req.user.id]
+        );
+        res.json({ ok: true, monedes: updated.rows[0].monedes, item_comprado: item.nombre });
+    } catch (err) {
+        console.error('Error comprando item:', err);
+        res.status(500).json({ error: 'Error interno' });
+    }
+});
+
+// ============================================================
+// RUTAS DE TEORÍA
+// ============================================================
+
+// GET /api/teoria/categorias — devuelve categorías con progreso del usuario
+app.get('/api/teoria/categorias', verificarToken, async (req, res) => {
+    try {
+        const result = await pool.query(
+            "SELECT nom FROM progres WHERE user_id = $1 AND tipus = 'teoria' AND completat = true",
+            [req.user.id]
+        );
+        const completadas = new Set(result.rows.map(r => r.nom));
+
+        const data = TEORIA_CONTENIDO.categorias.map(cat => ({
+            id: cat.id,
+            nombre: cat.nombre,
+            icono: cat.icono,
+            color: cat.color,
+            descripcion: cat.descripcion,
+            lecciones: cat.lecciones.map(lec => ({
+                id: lec.id,
+                nombre: lec.nombre,
+                xp: lec.xp,
+                completada: completadas.has(`teoria_${cat.id}_${lec.id}`)
+            }))
+        }));
+
+        res.json(data);
+    } catch (err) {
+        console.error('Error en teoria/categorias:', err);
+        res.status(500).json({ error: 'Error interno' });
+    }
+});
+
+// GET /api/teoria/leccion/:catId/:lecId — devuelve el contenido de una lección
+app.get('/api/teoria/leccion/:catId/:lecId', verificarToken, async (req, res) => {
+    const { catId, lecId } = req.params;
+    const cat = TEORIA_CONTENIDO.categorias.find(c => c.id === catId);
+    if (!cat) return res.status(404).json({ error: 'Categoría no encontrada' });
+    const lec = cat.lecciones.find(l => l.id === lecId);
+    if (!lec) return res.status(404).json({ error: 'Lección no encontrada' });
+
+    const nom = `teoria_${catId}_${lecId}`;
+    const yaCompletada = await pool.query(
+        "SELECT 1 FROM progres WHERE user_id = $1 AND nom = $2 AND completat = true",
+        [req.user.id, nom]
+    );
+
+    res.json({
+        categoria: { id: cat.id, nombre: cat.nombre, icono: cat.icono, color: cat.color },
+        leccion: { ...lec, completada: yaCompletada.rows.length > 0 }
+    });
+});
+
+// POST /api/teoria/completar — marca una lección como completada y da XP (solo una vez)
+app.post('/api/teoria/completar', verificarToken, async (req, res) => {
+    const { categoria_id, leccion_id } = req.body;
+    if (!categoria_id || !leccion_id) return res.status(400).json({ error: 'Faltan parámetros' });
+
+    const cat = TEORIA_CONTENIDO.categorias.find(c => c.id === categoria_id);
+    if (!cat) return res.status(404).json({ error: 'Categoría no encontrada' });
+    const lec = cat.lecciones.find(l => l.id === leccion_id);
+    if (!lec) return res.status(404).json({ error: 'Lección no encontrada' });
+
+    const nom = `teoria_${categoria_id}_${leccion_id}`;
+
+    try {
+        // Comprobar si ya fue completada
+        const yaCompletada = await pool.query(
+            "SELECT 1 FROM progres WHERE user_id = $1 AND nom = $2 AND completat = true",
+            [req.user.id, nom]
+        );
+        if (yaCompletada.rows.length > 0) {
+            return res.json({ ya_completada: true, mensaje: 'Esta lección ya fue completada' });
+        }
+
+        // Guardar en progres
+        await pool.query(
+            "INSERT INTO progres (user_id, tipus, nom, puntuacio, completat) VALUES ($1, 'teoria', $2, $3, true)",
+            [req.user.id, nom, lec.xp]
+        );
+
+        // Sumar XP y actualizar nivel/rango
+        const result = await pool.query(`
+            UPDATE users
+            SET xp    = xp + $1,
+                nivel = GREATEST(1, FLOOR((xp + $1) / 1000) + 1),
+                rang  = update_rang(xp + $1)
+            WHERE id = $2
+            RETURNING xp, nivel, rang, monedes
+        `, [lec.xp, req.user.id]);
+
+        res.json({
+            ya_completada: false,
+            xp_ganado: lec.xp,
+            leccion: lec.nombre,
+            ...result.rows[0]
+        });
+    } catch (err) {
+        console.error('Error completando lección:', err);
         res.status(500).json({ error: 'Error interno' });
     }
 });

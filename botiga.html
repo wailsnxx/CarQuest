@@ -5,6 +5,19 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>CarQuest — Tienda</title>
     <link rel="stylesheet" href="estilos.css">
+    <style>
+        .toast-compra {
+            position: fixed; top: 1.5rem; right: 1.5rem; z-index: 9999;
+            padding: 0.9rem 1.4rem; border-radius: 0.75rem;
+            font-weight: 700; font-size: 0.95rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,.4);
+            animation: toastIn .3s ease, toastOut .4s ease 2.5s forwards;
+        }
+        .toast-ok  { background: linear-gradient(135deg,#10b981,#059669); color:#fff; }
+        .toast-err { background: linear-gradient(135deg,#ef4444,#dc2626); color:#fff; }
+        @keyframes toastIn  { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes toastOut { to  {opacity:0;transform:translateY(-16px)} }
+    </style>
 </head>
 <body class="dashboard-body">
     <div class="dashboard-wrap">
@@ -18,32 +31,16 @@
             </div>
             <nav class="sidebar-nav">
                 <div class="sidebar-section-label">Principal</div>
-                <a href="inici.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">🏠</span> Inicio
-                </a>
-                <a href="perfil.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">👤</span> Perfil
-                </a>
+                <a href="inici.html" class="sidebar-link"><span class="sidebar-link-icon">🏠</span> Inicio</a>
+                <a href="perfil.html" class="sidebar-link"><span class="sidebar-link-icon">👤</span> Perfil</a>
                 <div class="sidebar-section-label">Aprender</div>
-                <a href="teoria.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">📖</span> Teoría
-                </a>
-                <a href="jocs.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">🎯</span> Juegos
-                </a>
-                <a href="tests.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">📝</span> Tests
-                </a>
-                <a href="diaris.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">📅</span> Diarios
-                </a>
+                <a href="teoria.html" class="sidebar-link"><span class="sidebar-link-icon">📖</span> Teoría</a>
+                <a href="jocs.html" class="sidebar-link"><span class="sidebar-link-icon">🎯</span> Juegos</a>
+                <a href="tests.html" class="sidebar-link"><span class="sidebar-link-icon">📝</span> Tests</a>
+                <a href="diaris.html" class="sidebar-link"><span class="sidebar-link-icon">📅</span> Diarios</a>
                 <div class="sidebar-section-label">Comunidad</div>
-                <a href="ranquing.html" class="sidebar-link">
-                    <span class="sidebar-link-icon">🏆</span> Ranking
-                </a>
-                <a href="botiga.html" class="sidebar-link activo">
-                    <span class="sidebar-link-icon">🛒</span> Tienda
-                </a>
+                <a href="ranquing.html" class="sidebar-link"><span class="sidebar-link-icon">🏆</span> Ranking</a>
+                <a href="botiga.html" class="sidebar-link activo"><span class="sidebar-link-icon">🛒</span> Tienda</a>
             </nav>
             <div class="sidebar-bottom">
                 <div class="sidebar-user">
@@ -65,125 +62,157 @@
                 <div class="botiga-header">
                     <div class="page-title">Tienda</div>
                     <div style="display:flex; align-items:center; gap:12px;">
-                        <div class="botiga-monedes">🪙 <span class="js-monedes">0</span> Monedas</div>
+                        <div class="botiga-monedes">🪙 <span class="js-monedes" id="monedes-display">0</span> Monedas</div>
                         <a href="#" onclick="tancarSessio()" class="btn-logout-header">Cerrar sesión</a>
                     </div>
                 </div>
 
-                <!-- Coches -->
                 <section class="botiga-section">
                     <h4>🚗 Coches</h4>
-                    <div class="botiga-grid">
+                    <div class="botiga-grid" id="grid-cotxe">
                         <div class="botiga-item botiga-item-owned">
                             <div class="botiga-item-emoji">🚗</div>
                             <p class="botiga-item-name">Coche Básico</p>
                             <span class="botiga-badge-owned">✓ Tuyo</span>
                         </div>
-                        <div class="botiga-item">
-                            <div class="botiga-item-emoji">🚙</div>
-                            <p class="botiga-item-name">SUV</p>
-                            <p class="botiga-item-price">500 🪙</p>
-                            <button class="botiga-btn-comprar">Comprar</button>
-                        </div>
-                        <div class="botiga-item">
-                            <div class="botiga-item-emoji">🏎️</div>
-                            <p class="botiga-item-name">Deportivo</p>
-                            <p class="botiga-item-price">1000 🪙</p>
-                            <span class="botiga-badge-locked">🔒 Bloqueado</span>
-                        </div>
-                        <div class="botiga-item">
-                            <div class="botiga-item-emoji">🚕</div>
-                            <p class="botiga-item-name">Taxi</p>
-                            <p class="botiga-item-price">750 🪙</p>
-                            <span class="botiga-badge-locked">🔒 Bloqueado</span>
-                        </div>
-                        <div class="botiga-item">
-                            <div class="botiga-item-emoji">🚐</div>
-                            <p class="botiga-item-name">Furgoneta</p>
-                            <p class="botiga-item-price">800 🪙</p>
-                            <span class="botiga-badge-locked">🔒 Bloqueado</span>
-                        </div>
-                        <div class="botiga-item">
-                            <div class="botiga-item-emoji">🏁</div>
-                            <p class="botiga-item-name">Fórmula 1</p>
-                            <p class="botiga-item-price">2000 🪙</p>
-                            <span class="botiga-badge-locked">🔒 Bloqueado</span>
-                        </div>
                     </div>
                 </section>
 
-                <!-- Colores -->
                 <section class="botiga-section">
                     <h4>🎨 Colores</h4>
-                    <div class="botiga-grid">
-                        <div class="botiga-item">
-                            <div class="botiga-item-emoji">🔴</div>
-                            <p class="botiga-item-name">Rojo</p>
-                            <p class="botiga-item-price">100 🪙</p>
-                        </div>
-                        <div class="botiga-item">
-                            <div class="botiga-item-emoji">🔵</div>
-                            <p class="botiga-item-name">Azul</p>
-                            <p class="botiga-item-price">100 🪙</p>
-                        </div>
-                        <div class="botiga-item">
-                            <div class="botiga-item-emoji">🟢</div>
-                            <p class="botiga-item-name">Verde</p>
-                            <p class="botiga-item-price">100 🪙</p>
-                        </div>
-                    </div>
+                    <div class="botiga-grid" id="grid-color"></div>
                 </section>
 
-                <!-- Pegatinas -->
                 <section class="botiga-section">
                     <h4>⭐ Pegatinas</h4>
-                    <div class="botiga-grid">
-                        <div class="botiga-item">
-                            <div class="botiga-item-emoji">🔥</div>
-                            <p class="botiga-item-name">Llamas</p>
-                            <p class="botiga-item-price">200 🪙</p>
-                        </div>
-                        <div class="botiga-item">
-                            <div class="botiga-item-emoji">⭐</div>
-                            <p class="botiga-item-name">Estrella</p>
-                            <p class="botiga-item-price">150 🪙</p>
-                        </div>
-                        <div class="botiga-item">
-                            <div class="botiga-item-emoji">⚡</div>
-                            <p class="botiga-item-name">Rayo</p>
-                            <p class="botiga-item-price">150 🪙</p>
-                        </div>
-                    </div>
+                    <div class="botiga-grid" id="grid-sticker"></div>
                 </section>
 
-                <!-- Piezas Especiales -->
                 <section class="botiga-section">
                     <h4>⚙️ Piezas Especiales</h4>
-                    <div class="botiga-grid">
-                        <div class="botiga-item">
-                            <div class="botiga-item-emoji">🏁</div>
-                            <p class="botiga-item-name">Spoiler</p>
-                            <p class="botiga-item-price">300 🪙</p>
-                        </div>
-                        <div class="botiga-item">
-                            <div class="botiga-item-emoji">⚙️</div>
-                            <p class="botiga-item-name">Ruedas Racing</p>
-                            <p class="botiga-item-price">400 🪙</p>
-                        </div>
-                    </div>
+                    <div class="botiga-grid" id="grid-pieza"></div>
                 </section>
 
             </div>
         </main>
     </div>
+
     <script src="app.js"></script>
     <script src="dashboard.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            if (!requireAuth()) return;
-            initSidebar();
-            await carregarUsuari();
+    const ITEMS = [
+        { id:'suv',             nombre:'SUV',           emoji:'🚙', cat:'cotxe',   precio:500,  nivel:1 },
+        { id:'deportivo',       nombre:'Deportivo',     emoji:'🏎️', cat:'cotxe',   precio:1000, nivel:5 },
+        { id:'taxi',            nombre:'Taxi',          emoji:'🚕', cat:'cotxe',   precio:750,  nivel:3 },
+        { id:'furgoneta',       nombre:'Furgoneta',     emoji:'🚐', cat:'cotxe',   precio:800,  nivel:4 },
+        { id:'f1',              nombre:'Fórmula 1',     emoji:'🏁', cat:'cotxe',   precio:2000, nivel:8 },
+        { id:'color_rojo',      nombre:'Rojo',          emoji:'🔴', cat:'color',   precio:100,  nivel:1 },
+        { id:'color_azul',      nombre:'Azul',          emoji:'🔵', cat:'color',   precio:100,  nivel:1 },
+        { id:'color_verde',     nombre:'Verde',         emoji:'🟢', cat:'color',   precio:100,  nivel:1 },
+        { id:'sticker_llamas',  nombre:'Llamas',        emoji:'🔥', cat:'sticker', precio:200,  nivel:1 },
+        { id:'sticker_estrella',nombre:'Estrella',      emoji:'⭐', cat:'sticker', precio:150,  nivel:1 },
+        { id:'sticker_rayo',    nombre:'Rayo',          emoji:'⚡', cat:'sticker', precio:150,  nivel:1 },
+        { id:'spoiler',         nombre:'Spoiler',       emoji:'🏁', cat:'pieza',   precio:300,  nivel:2 },
+        { id:'ruedas_racing',   nombre:'Ruedas Racing', emoji:'⚙️', cat:'pieza',   precio:400,  nivel:3 },
+    ];
+
+    function showToast(msg, ok = true) {
+        const t = document.createElement('div');
+        t.className = 'toast-compra ' + (ok ? 'toast-ok' : 'toast-err');
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 3100);
+    }
+
+    function renderItems(misItems, userNivel, userMonedes) {
+        const cats = ['cotxe', 'color', 'sticker', 'pieza'];
+        cats.forEach(cat => {
+            const grid = document.getElementById('grid-' + cat);
+            if (!grid) return;
+            const catItems = ITEMS.filter(i => i.cat === cat);
+            grid.innerHTML = catItems.map(item => {
+                const owned = misItems.includes(item.id);
+                const locked = userNivel < item.nivel;
+                const canBuy = !owned && !locked && userMonedes >= item.precio;
+                const affordable = !owned && !locked && userMonedes < item.precio;
+
+                if (owned) {
+                    return `<div class="botiga-item botiga-item-owned">
+                        <div class="botiga-item-emoji">${item.emoji}</div>
+                        <p class="botiga-item-name">${item.nombre}</p>
+                        <span class="botiga-badge-owned">✓ Tuyo</span>
+                    </div>`;
+                }
+                if (locked) {
+                    return `<div class="botiga-item" style="opacity:.6">
+                        <div class="botiga-item-emoji">${item.emoji}</div>
+                        <p class="botiga-item-name">${item.nombre}</p>
+                        <p class="botiga-item-price">${item.precio} 🪙</p>
+                        <span class="botiga-badge-locked">🔒 Nivel ${item.nivel}</span>
+                    </div>`;
+                }
+                return `<div class="botiga-item${affordable ? ' botiga-item-nomoney' : ''}">
+                    <div class="botiga-item-emoji">${item.emoji}</div>
+                    <p class="botiga-item-name">${item.nombre}</p>
+                    <p class="botiga-item-price">${item.precio} 🪙</p>
+                    <button class="botiga-btn-comprar" ${affordable ? 'disabled title="Monedas insuficientes"' : ''}
+                        onclick="comprar('${item.id}','${item.nombre}',${item.precio})">
+                        ${affordable ? '💸 Sin monedas' : 'Comprar'}
+                    </button>
+                </div>`;
+            }).join('');
         });
+    }
+
+    async function comprar(itemId, nombre, precio) {
+        const token = obtToken();
+        try {
+            const res = await fetch('/api/tienda/comprar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ item_id: itemId })
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                showToast(data.error || 'Error al comprar', false);
+                return;
+            }
+            // Actualizar monedas en localStorage y UI
+            const user = obtUsuari();
+            if (user && data.monedes !== undefined) {
+                user.monedes = data.monedes;
+                localStorage.setItem('cq_usuario', JSON.stringify(user));
+                actualitzarUIUsuari(user);
+                document.getElementById('monedes-display').textContent = data.monedes;
+            }
+            showToast(`✓ ¡${nombre} comprado!`);
+            // Recargar la tienda para actualizar el estado
+            await cargarTienda();
+        } catch {
+            showToast('Error de conexión', false);
+        }
+    }
+
+    async function cargarTienda() {
+        const token = obtToken();
+        const user = obtUsuari();
+        if (!user) return;
+        try {
+            const misItems = await fetch('/api/tienda/mis-items', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            }).then(r => r.json()).catch(() => []);
+            renderItems(misItems, user.nivel || 1, user.monedes || 0);
+        } catch {}
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        if (!requireAuth()) return;
+        initSidebar();
+        const user = await carregarUsuari();
+        if (!user) return;
+        document.getElementById('monedes-display').textContent = user.monedes || 0;
+        await cargarTienda();
+    });
     </script>
 <script src="chatbot.js"></script>
 </body>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>CarQuest — Lección</title>
+    <link rel="stylesheet" href="estilos.css">
+    <style>
+        .leccion-wrap {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+        .leccion-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .leccion-nav a {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .leccion-nav .sep { color: var(--text-muted); font-size: 0.85rem; }
+        .leccion-nav .current { color: var(--text); font-size: 0.9rem; }
+
+        .leccion-header {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.75rem 2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1.25rem;
+        }
+        .leccion-cat-icon {
+            font-size: 2.25rem;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        .leccion-header-info h2 {
+            margin: 0 0 0.3rem;
+            font-size: 1.4rem;
+            color: var(--text);
+        }
+        .leccion-header-info .leccion-cat-name {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .leccion-xp-badge {
+            margin-left: auto;
+            background: rgba(250,204,21,0.12);
+            border: 1px solid rgba(250,204,21,0.3);
+            color: #facc15;
+            border-radius: 999px;
+            padding: 0.35rem 0.9rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+            align-self: flex-start;
+        }
+
+        .leccion-seccion {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.25rem;
+        }
+        .leccion-seccion h3 {
+            margin: 0 0 0.85rem;
+            font-size: 1.05rem;
+            color: var(--accent);
+        }
+        .leccion-seccion p {
+            color: var(--text);
+            line-height: 1.7;
+            margin: 0;
+        }
+        .leccion-seccion ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .leccion-seccion ul li {
+            padding: 0.45rem 0;
+            color: var(--text);
+            line-height: 1.6;
+            border-bottom: 1px solid var(--border);
+        }
+        .leccion-seccion ul li:last-child { border-bottom: none; }
+
+        .leccion-consejo {
+            background: rgba(99,102,241,0.08);
+            border: 1px solid rgba(99,102,241,0.25);
+            border-radius: 1rem;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+        .leccion-consejo-icon { font-size: 1.4rem; flex-shrink: 0; }
+        .leccion-consejo p { margin: 0; color: var(--text); line-height: 1.6; font-size: 0.95rem; }
+        .leccion-consejo strong { color: var(--accent); display: block; margin-bottom: 0.3rem; }
+
+        .leccion-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .btn-completar {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.9rem 1.5rem;
+            border-radius: 0.75rem;
+            border: none;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+        .btn-completar:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+        .btn-completar:disabled { opacity: 0.5; cursor: default; }
+        .btn-completar.ya-completada {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        .btn-volver {
+            padding: 0.9rem 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+        .btn-volver:hover { border-color: var(--accent); }
+
+        .leccion-listas {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.25rem;
+        }
+        .leccion-lista-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .leccion-lista-btn:hover,
+        .leccion-lista-btn.activo {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(99,102,241,0.08);
+        }
+        .leccion-lista-btn.completada-pill {
+            border-color: #10b981;
+            color: #10b981;
+        }
+
+        .xp-toast {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 1rem;
+            box-shadow: 0 4px 20px rgba(99,102,241,0.4);
+            z-index: 9999;
+            animation: toastIn 0.3s ease, toastOut 0.4s ease 2.5s forwards;
+        }
+        @keyframes toastIn  { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes toastOut { to   { opacity:0; transform:translateY(-20px); } }
+
+        .loading-state { text-align:center; padding: 3rem; color: var(--text-muted); }
+    </style>
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-wrap">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-box"></div>
+                <div>
+                    <h1>CarQuest</h1>
+                    <p>Aprende a conducir jugando</p>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="sidebar-section-label">Principal</div>
+                <a href="inici.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🏠</span> Inicio
+                </a>
+                <a href="perfil.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">👤</span> Perfil
+                </a>
+                <div class="sidebar-section-label">Aprender</div>
+                <a href="teoria.html" class="sidebar-link activo">
+                    <span class="sidebar-link-icon">📖</span> Teoría
+                </a>
+                <a href="jocs.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🎯</span> Juegos
+                </a>
+                <a href="tests.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">📝</span> Tests
+                </a>
+                <a href="diaris.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">📅</span> Diarios
+                </a>
+                <div class="sidebar-section-label">Comunidad</div>
+                <a href="ranquing.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🏆</span> Ranking
+                </a>
+                <a href="botiga.html" class="sidebar-link">
+                    <span class="sidebar-link-icon">🛒</span> Tienda
+                </a>
+            </nav>
+            <div class="sidebar-bottom">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar js-avatar">🙂</div>
+                    <div class="sidebar-user-info">
+                        <strong class="js-sidebar-nom">...</strong>
+                        <span class="js-sidebar-info">...</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <main class="main-content">
+            <div class="mobile-header">
+                <button class="mobile-menu-btn" id="menuBtn">☰</button>
+                <span style="font-weight:700; color:#fff;">CarQuest</span>
+            </div>
+            <div class="content-sheet">
+                <div class="page-header">
+                    <div class="page-title" id="page-title">Teoría</div>
+                    <a href="#" onclick="tancarSessio()" class="btn-logout-header">Cerrar sesión</a>
+                </div>
+                <div id="leccion-content">
+                    <div class="loading-state">Cargando lección...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="dashboard.js"></script>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        let catId = params.get('cat');
+        let lecId = params.get('lec');
+        let catData = null;
+        let leccionData = null;
+
+        function mostrarToast(msg) {
+            const t = document.createElement('div');
+            t.className = 'xp-toast';
+            t.textContent = msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+
+        function renderSelectorLecciones(categorias, catActual, lecActual) {
+            const cat = categorias.find(c => c.id === catActual);
+            if (!cat) return '';
+            return `<div class="leccion-listas">
+                ${cat.lecciones.map(lec => {
+                    const activo = lec.id === lecActual ? ' activo' : '';
+                    const comp = lec.completada ? ' completada-pill' : '';
+                    const check = lec.completada ? '✓ ' : '';
+                    return `<button class="leccion-lista-btn${activo}${comp}"
+                        onclick="cambiarLeccion('${cat.id}', '${lec.id}')">${check}${lec.nombre}</button>`;
+                }).join('')}
+            </div>`;
+        }
+
+        function renderLeccion(data, categorias) {
+            const { categoria, leccion } = data;
+            const yaCompletada = leccion.completada;
+
+            const btnClass = yaCompletada ? 'btn-completar ya-completada' : 'btn-completar';
+            const btnTexto = yaCompletada ? '✓ Lección completada' : `Completar lección (+${leccion.xp} XP)`;
+            const btnDisabled = yaCompletada ? 'disabled' : '';
+
+            const secciones = leccion.secciones.map(sec => {
+                let contenido;
+                if (sec.lista) {
+                    contenido = `<ul>${sec.lista.map(item => `<li>${item}</li>`).join('')}</ul>`;
+                } else {
+                    contenido = `<p>${sec.texto}</p>`;
+                }
+                return `<div class="leccion-seccion">
+                    <h3>${sec.titulo}</h3>
+                    ${contenido}
+                </div>`;
+            }).join('');
+
+            const consejo = leccion.consejo ? `
+                <div class="leccion-consejo">
+                    <span class="leccion-consejo-icon">💡</span>
+                    <p><strong>Consejo clave</strong>${leccion.consejo}</p>
+                </div>` : '';
+
+            const selectorHtml = categorias ? renderSelectorLecciones(categorias, categoria.id, leccion.id) : '';
+
+            return `
+                <div class="leccion-wrap">
+                    <div class="leccion-nav">
+                        <a href="teoria.html">Teoría</a>
+                        <span class="sep">›</span>
+                        <a href="leccion.html?cat=${categoria.id}">${categoria.nombre}</a>
+                        <span class="sep">›</span>
+                        <span class="current">${leccion.nombre}</span>
+                    </div>
+
+                    ${selectorHtml}
+
+                    <div class="leccion-header">
+                        <div class="leccion-cat-icon">${categoria.icono}</div>
+                        <div class="leccion-header-info">
+                            <h2>${leccion.nombre}</h2>
+                            <span class="leccion-cat-name">${categoria.nombre}</span>
+                        </div>
+                        <span class="leccion-xp-badge">+${leccion.xp} XP</span>
+                    </div>
+
+                    ${secciones}
+                    ${consejo}
+
+                    <div class="leccion-actions">
+                        <a href="teoria.html" class="btn-volver">← Volver</a>
+                        <button class="${btnClass}" id="btn-completar" ${btnDisabled}
+                            onclick="completarLeccion('${categoria.id}', '${leccion.id}')">
+                            ${btnTexto}
+                        </button>
+                    </div>
+                </div>`;
+        }
+
+        function renderSelectorCategoria(categorias, catActual) {
+            const cat = categorias.find(c => c.id === catActual);
+            if (!cat) return '<div class="loading-state">Categoría no encontrada.</div>';
+
+            const lecciones = cat.lecciones.map(lec => {
+                const done = lec.completada ? ' completada' : '';
+                const dot = lec.completada ? ' done' : '';
+                return `<div class="hub-card" style="cursor:pointer" onclick="cambiarLeccion('${cat.id}','${lec.id}')">
+                    <div style="display:flex;align-items:center;gap:0.75rem;padding:1rem;">
+                        <span class="hub-llico-dot${dot}" style="flex-shrink:0"></span>
+                        <div>
+                            <strong style="color:var(--text)">${lec.nombre}</strong>
+                            <div style="color:var(--text-muted);font-size:0.85rem;margin-top:0.2rem">+${lec.xp} XP</div>
+                        </div>
+                        <span style="margin-left:auto;color:var(--text-muted)">→</span>
+                    </div>
+                </div>`;
+            }).join('');
+
+            return `<div class="leccion-wrap">
+                <div class="leccion-nav">
+                    <a href="teoria.html">Teoría</a>
+                    <span class="sep">›</span>
+                    <span class="current">${cat.nombre}</span>
+                </div>
+                <div class="leccion-header">
+                    <div class="leccion-cat-icon">${cat.icono}</div>
+                    <div class="leccion-header-info">
+                        <h2>${cat.nombre}</h2>
+                        <span class="leccion-cat-name">${cat.descripcion}</span>
+                    </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                    ${lecciones}
+                </div>
+                <div style="margin-top:1.5rem;">
+                    <a href="teoria.html" class="btn-volver">← Volver a Teoría</a>
+                </div>
+            </div>`;
+        }
+
+        async function cargarLeccion(cId, lId) {
+            const token = obtToken();
+            try {
+                const [lecRes, catRes] = await Promise.all([
+                    fetch(`/api/teoria/leccion/${cId}/${lId}`, { headers: { 'Authorization': `Bearer ${token}` } }),
+                    fetch('/api/teoria/categorias', { headers: { 'Authorization': `Bearer ${token}` } })
+                ]);
+                if (!lecRes.ok) throw new Error();
+                const data = await lecRes.json();
+                const categorias = catRes.ok ? await catRes.json() : null;
+                document.getElementById('page-title').textContent = data.leccion.nombre;
+                document.getElementById('leccion-content').innerHTML = renderLeccion(data, categorias);
+            } catch {
+                document.getElementById('leccion-content').innerHTML =
+                    '<div class="loading-state">Error al cargar la lección. <a href="teoria.html">Volver</a></div>';
+            }
+        }
+
+        async function cargarCategoria(cId) {
+            const token = obtToken();
+            try {
+                const res = await fetch('/api/teoria/categorias', { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!res.ok) throw new Error();
+                const categorias = await res.json();
+                const cat = categorias.find(c => c.id === cId);
+                document.getElementById('page-title').textContent = cat ? cat.nombre : 'Teoría';
+                document.getElementById('leccion-content').innerHTML = renderSelectorCategoria(categorias, cId);
+            } catch {
+                document.getElementById('leccion-content').innerHTML =
+                    '<div class="loading-state">Error al cargar. <a href="teoria.html">Volver</a></div>';
+            }
+        }
+
+        async function completarLeccion(cId, lId) {
+            const btn = document.getElementById('btn-completar');
+            btn.disabled = true;
+            btn.textContent = 'Guardando...';
+
+            const token = obtToken();
+            try {
+                const res = await fetch('/api/teoria/completar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ categoria_id: cId, leccion_id: lId })
+                });
+                const data = await res.json();
+
+                if (data.ya_completada) {
+                    btn.textContent = '✓ Lección completada';
+                    btn.className = 'btn-completar ya-completada';
+                    return;
+                }
+
+                // Actualizar XP en localStorage y UI
+                const user = obtUsuari();
+                if (user && data.xp !== undefined) {
+                    user.xp    = data.xp;
+                    user.nivel = data.nivel;
+                    user.rang  = data.rang;
+                    localStorage.setItem('cq_usuario', JSON.stringify(user));
+                    actualitzarUIUsuari(user);
+                }
+
+                mostrarToast(`+${data.xp_ganado} XP ganados`);
+                btn.textContent = '✓ Lección completada';
+                btn.className = 'btn-completar ya-completada';
+
+                // Siguiente lección automáticamente
+                setTimeout(() => {
+                    const nextBtn = document.querySelector('.leccion-lista-btn:not(.completada-pill):not(.activo)');
+                    if (nextBtn) {
+                        nextBtn.style.animation = 'toastIn 0.4s ease';
+                        nextBtn.style.borderColor = 'var(--accent)';
+                    }
+                }, 600);
+
+            } catch {
+                btn.disabled = false;
+                btn.textContent = 'Error, inténtalo de nuevo';
+            }
+        }
+
+        function cambiarLeccion(cId, lId) {
+            window.location.href = `leccion.html?cat=${cId}&lec=${lId}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!requireAuth()) return;
+            initSidebar();
+            await carregarUsuari();
+
+            if (catId && lecId) {
+                await cargarLeccion(catId, lecId);
+            } else if (catId) {
+                await cargarCategoria(catId);
+            } else {
+                window.location.href = 'teoria.html';
+            }
+        });
+    </script>
+    <script src="chatbot.js"></script>
+</body>
+</html>

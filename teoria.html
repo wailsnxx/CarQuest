@@ -77,177 +77,30 @@
                     </div>
                     <div class="hub-hero-stats">
                         <div class="hub-hero-stat">
-                            <span class="hub-stat-number">10</span>
+                            <span class="hub-stat-number" id="stat-completadas">—</span>
                             <span class="hub-stat-label">Completadas</span>
                         </div>
                         <div class="hub-hero-stat-divider"></div>
                         <div class="hub-hero-stat">
-                            <span class="hub-stat-number">22</span>
+                            <span class="hub-stat-number" id="stat-total">—</span>
                             <span class="hub-stat-label">Total Lecciones</span>
                         </div>
                         <div class="hub-hero-stat-divider"></div>
                         <div class="hub-hero-stat">
-                            <span class="hub-stat-number hub-stat-highlight">45%</span>
+                            <span class="hub-stat-number hub-stat-highlight" id="stat-progres">—</span>
                             <span class="hub-stat-label">Progreso</span>
                         </div>
                     </div>
                     <div class="hub-progress-bar">
-                        <div class="hub-progress-fill" style="width: 45%"></div>
+                        <div class="hub-progress-fill" id="hero-progress-fill" style="width: 0%"></div>
                     </div>
                 </div>
 
-                <!-- Grid de categorías -->
-                <div class="hub-grid">
-
-                    <!-- Señales de Tráfico -->
-                    <div class="hub-card hub-card-green">
-                        <div class="hub-card-accent"></div>
-                        <div class="hub-card-top">
-                            <div class="hub-card-icon-wrap hub-icon-green">
-                                <span>🚦</span>
-                            </div>
-                            <div class="hub-card-badge-progress">3/4</div>
-                        </div>
-                        <h4>Señales de Tráfico</h4>
-                        <p>Identifica e interpreta todas las señales de circulación</p>
-                        <div class="hub-card-progress">
-                            <div class="hub-card-track">
-                                <div class="hub-card-fill" style="width: 75%"></div>
-                            </div>
-                        </div>
-                        <ul class="hub-llico-list">
-                            <li class="hub-llico completada"><span class="hub-llico-dot done"></span>Señales de Prohibición</li>
-                            <li class="hub-llico"><span class="hub-llico-dot"></span>Señales de Obligación</li>
-                            <li class="hub-llico"><span class="hub-llico-dot"></span>Señales de Peligro</li>
-                            <li class="hub-llico"><span class="hub-llico-dot"></span>Señales de Información</li>
-                        </ul>
-                        <button class="hub-btn hub-btn-green">Continuar</button>
+                <!-- Grid de categorías (cargado dinámicamente) -->
+                <div class="hub-grid" id="hub-grid">
+                    <div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--text-muted);">
+                        Cargando lecciones...
                     </div>
-
-                    <!-- Normas de Circulación -->
-                    <div class="hub-card hub-card-blue">
-                        <div class="hub-card-accent"></div>
-                        <div class="hub-card-top">
-                            <div class="hub-card-icon-wrap hub-icon-blue">
-                                <span>📋</span>
-                            </div>
-                            <div class="hub-card-badge-progress">2/4</div>
-                        </div>
-                        <h4>Normas de Circulación</h4>
-                        <p>Las reglas básicas para circular correctamente</p>
-                        <div class="hub-card-progress">
-                            <div class="hub-card-track">
-                                <div class="hub-card-fill" style="width: 50%"></div>
-                            </div>
-                        </div>
-                        <ul class="hub-llico-list">
-                            <li class="hub-llico completada"><span class="hub-llico-dot done"></span>Límites de Velocidad</li>
-                            <li class="hub-llico completada"><span class="hub-llico-dot done"></span>Adelantamientos</li>
-                            <li class="hub-llico"><span class="hub-llico-dot"></span>Intersecciones</li>
-                            <li class="hub-llico"><span class="hub-llico-dot"></span>Estacionamiento</li>
-                        </ul>
-                        <button class="hub-btn hub-btn-blue">Continuar</button>
-                    </div>
-
-                    <!-- Seguridad Vial -->
-                    <div class="hub-card hub-card-orange">
-                        <div class="hub-card-accent"></div>
-                        <div class="hub-card-top">
-                            <div class="hub-card-icon-wrap hub-icon-orange">
-                                <span>🛡️</span>
-                            </div>
-                            <div class="hub-card-badge-progress">2/4</div>
-                        </div>
-                        <h4>Seguridad Vial</h4>
-                        <p>Conduce de forma segura en cualquier situación</p>
-                        <div class="hub-card-progress">
-                            <div class="hub-card-track">
-                                <div class="hub-card-fill" style="width: 50%"></div>
-                            </div>
-                        </div>
-                        <ul class="hub-llico-list">
-                            <li class="hub-llico completada"><span class="hub-llico-dot done"></span>Cinturón de Seguridad</li>
-                            <li class="hub-llico completada"><span class="hub-llico-dot done"></span>Distancia de Seguridad</li>
-                            <li class="hub-llico"><span class="hub-llico-dot"></span>Condiciones Adversas</li>
-                            <li class="hub-llico"><span class="hub-llico-dot"></span>Fatiga y Distracción</li>
-                        </ul>
-                        <button class="hub-btn hub-btn-orange">Continuar</button>
-                    </div>
-
-                    <!-- Mecánica Básica -->
-                    <div class="hub-card hub-card-purple">
-                        <div class="hub-card-accent"></div>
-                        <div class="hub-card-top">
-                            <div class="hub-card-icon-wrap hub-icon-purple">
-                                <span>🔧</span>
-                            </div>
-                            <div class="hub-card-badge-progress">1/4</div>
-                        </div>
-                        <h4>Mecánica Básica</h4>
-                        <p>Conoce tu vehículo por dentro y por fuera</p>
-                        <div class="hub-card-progress">
-                            <div class="hub-card-track">
-                                <div class="hub-card-fill" style="width: 25%"></div>
-                            </div>
-                        </div>
-                        <ul class="hub-llico-list">
-                            <li class="hub-llico completada"><span class="hub-llico-dot done"></span>El Motor</li>
-                            <li class="hub-llico"><span class="hub-llico-dot"></span>Sistema de Frenos</li>
-                            <li class="hub-llico"><span class="hub-llico-dot"></span>Neumáticos</li>
-                            <li class="hub-llico"><span class="hub-llico-dot"></span>Luces e Indicadores</li>
-                        </ul>
-                        <button class="hub-btn hub-btn-purple">Empezar</button>
-                    </div>
-
-                    <!-- Primeros Auxilios -->
-                    <div class="hub-card hub-card-red">
-                        <div class="hub-card-accent"></div>
-                        <div class="hub-card-top">
-                            <div class="hub-card-icon-wrap hub-icon-red">
-                                <span>🚑</span>
-                            </div>
-                            <div class="hub-card-badge-progress">1/3</div>
-                        </div>
-                        <h4>Primeros Auxilios</h4>
-                        <p>Cómo actuar en caso de accidente de tráfico</p>
-                        <div class="hub-card-progress">
-                            <div class="hub-card-track">
-                                <div class="hub-card-fill" style="width: 33%"></div>
-                            </div>
-                        </div>
-                        <ul class="hub-llico-list">
-                            <li class="hub-llico completada"><span class="hub-llico-dot done"></span>Protocol PAS</li>
-                            <li class="hub-llico"><span class="hub-llico-dot"></span>Tratamiento de Heridas</li>
-                            <li class="hub-llico"><span class="hub-llico-dot"></span>RCP Básico</li>
-                        </ul>
-                        <button class="hub-btn hub-btn-red">Empezar</button>
-                    </div>
-
-                    <!-- Prioridades -->
-                    <div class="hub-card hub-card-cyan">
-                        <div class="hub-card-accent"></div>
-                        <div class="hub-card-top">
-                            <div class="hub-card-icon-wrap hub-icon-cyan">
-                                <span>⚖️</span>
-                            </div>
-                            <div class="hub-card-badge-progress">1/4</div>
-                        </div>
-                        <h4>Prioridades</h4>
-                        <p>¿Quién pasa primero? Las reglas de prioridad</p>
-                        <div class="hub-card-progress">
-                            <div class="hub-card-track">
-                                <div class="hub-card-fill" style="width: 25%"></div>
-                            </div>
-                        </div>
-                        <ul class="hub-llico-list">
-                            <li class="hub-llico completada"><span class="hub-llico-dot done"></span>Rotondas</li>
-                            <li class="hub-llico"><span class="hub-llico-dot"></span>Cruces</li>
-                            <li class="hub-llico"><span class="hub-llico-dot"></span>Señales de Agentes</li>
-                            <li class="hub-llico"><span class="hub-llico-dot"></span>Vehículos de Emergencia</li>
-                        </ul>
-                        <button class="hub-btn hub-btn-cyan">Empezar</button>
-                    </div>
-
                 </div>
 
                 <!-- Consejo del día -->
@@ -265,10 +118,91 @@
     <script src="app.js"></script>
     <script src="dashboard.js"></script>
     <script>
+        const COLOR_MAP = {
+            green:  { card: 'hub-card-green',  btn: 'hub-btn-green',  icon: 'hub-icon-green'  },
+            blue:   { card: 'hub-card-blue',   btn: 'hub-btn-blue',   icon: 'hub-icon-blue'   },
+            orange: { card: 'hub-card-orange', btn: 'hub-btn-orange', icon: 'hub-icon-orange' },
+            purple: { card: 'hub-card-purple', btn: 'hub-btn-purple', icon: 'hub-icon-purple' },
+            red:    { card: 'hub-card-red',    btn: 'hub-btn-red',    icon: 'hub-icon-red'    },
+            cyan:   { card: 'hub-card-cyan',   btn: 'hub-btn-cyan',   icon: 'hub-icon-cyan'   },
+        };
+
+        function renderCategorias(categorias) {
+            const grid = document.getElementById('hub-grid');
+            let totalLecciones = 0;
+            let totalCompletadas = 0;
+
+            grid.innerHTML = categorias.map(cat => {
+                const completadas = cat.lecciones.filter(l => l.completada).length;
+                const total = cat.lecciones.length;
+                const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+                totalLecciones += total;
+                totalCompletadas += completadas;
+
+                const c = COLOR_MAP[cat.color] || COLOR_MAP.blue;
+                const btnTexto = completadas === 0 ? 'Empezar' : completadas === total ? 'Repasar' : 'Continuar';
+
+                const liItems = cat.lecciones.map(lec => {
+                    const done = lec.completada ? ' completada' : '';
+                    const dot = lec.completada ? ' done' : '';
+                    return `<li class="hub-llico${done}">
+                        <span class="hub-llico-dot${dot}"></span>${lec.nombre}
+                    </li>`;
+                }).join('');
+
+                return `
+                <div class="hub-card ${c.card}">
+                    <div class="hub-card-accent"></div>
+                    <div class="hub-card-top">
+                        <div class="hub-card-icon-wrap ${c.icon}">
+                            <span>${cat.icono}</span>
+                        </div>
+                        <div class="hub-card-badge-progress">${completadas}/${total}</div>
+                    </div>
+                    <h4>${cat.nombre}</h4>
+                    <p>${cat.descripcion}</p>
+                    <div class="hub-card-progress">
+                        <div class="hub-card-track">
+                            <div class="hub-card-fill" style="width: ${pct}%"></div>
+                        </div>
+                    </div>
+                    <ul class="hub-llico-list">${liItems}</ul>
+                    <button class="hub-btn ${c.btn}" onclick="irACategoria('${cat.id}')">${btnTexto}</button>
+                </div>`;
+            }).join('');
+
+            // Actualizar stats del hero
+            const progPct = totalLecciones > 0 ? Math.round((totalCompletadas / totalLecciones) * 100) : 0;
+            document.getElementById('stat-completadas').textContent = totalCompletadas;
+            document.getElementById('stat-total').textContent = totalLecciones;
+            document.getElementById('stat-progres').textContent = progPct + '%';
+            document.getElementById('hero-progress-fill').style.width = progPct + '%';
+        }
+
+        function irACategoria(catId) {
+            window.location.href = `leccion.html?cat=${catId}`;
+        }
+
+        async function carregarTeoria() {
+            const token = obtToken();
+            try {
+                const res = await fetch('/api/teoria/categorias', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Error cargando teoría');
+                const categorias = await res.json();
+                renderCategorias(categorias);
+            } catch (e) {
+                document.getElementById('hub-grid').innerHTML =
+                    '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--text-muted);">Error al cargar las lecciones. Inténtalo de nuevo.</div>';
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             if (!requireAuth()) return;
             initSidebar();
             await carregarUsuari();
+            await carregarTeoria();
         });
     </script>
 <script src="chatbot.js"></script>
