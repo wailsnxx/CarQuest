@@ -414,7 +414,9 @@ body {
     position: sticky;
     top: 0;
     overflow-y: auto;
+    scrollbar-width: none;
 }
+.sidebar::-webkit-scrollbar { display: none; }
 
 .sidebar-logo {
     display: flex;
@@ -577,7 +579,12 @@ body {
     overflow-y: auto;
     padding: 24px 28px;
     background: radial-gradient(800px 400px at 30% 10%, rgba(255,107,53,0.03), transparent);
+    scrollbar-width: thin;
+    scrollbar-color: #0b1528 #071226;
 }
+.main-content::-webkit-scrollbar { width: 6px; }
+.main-content::-webkit-scrollbar-track { background: #071226; }
+.main-content::-webkit-scrollbar-thumb { background: #0f1f38; border-radius: 3px; }
 
 .content-sheet {
     width: 100%;

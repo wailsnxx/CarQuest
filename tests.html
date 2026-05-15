@@ -114,9 +114,9 @@
                         <h4 class="test-card-title">Test por Temas</h4>
                         <p class="test-card-desc">Elige un tema específico</p>
                         <div class="test-temes-list">
-                            <a href="#" class="test-tema-link" onclick="iniciarTest('normal',10,30,false,false)">Señales</a>
-                            <a href="#" class="test-tema-link" onclick="iniciarTest('normal',10,30,false,false)">Normas</a>
-                            <a href="#" class="test-tema-link" onclick="iniciarTest('normal',10,30,false,false)">Seguridad</a>
+                            <a href="#" class="test-tema-link" onclick="iniciarTestTema('senales')">Señales</a>
+                            <a href="#" class="test-tema-link" onclick="iniciarTestTema('normas')">Normas</a>
+                            <a href="#" class="test-tema-link" onclick="iniciarTestTema('seguridad')">Seguridad</a>
                         </div>
                     </div>
 
@@ -279,6 +279,16 @@
         if (!preguntes.length) { alert('Error cargando preguntas'); return; }
         estat = { tipus, preguntes, xpMaxim, killer, examen, index: 0, respostes: new Array(preguntes.length).fill(null) };
         document.getElementById('testTipus').textContent = { normal: 'Test Normal', killer: 'Test Killer', examen: 'Examen Oficial' }[tipus] || 'Test';
+        mostrarPregunta(0);
+        document.getElementById('modalTest').style.display = 'flex';
+    }
+
+    async function iniciarTestTema(tema) {
+        const NOMBRES = { senales: 'Señales', normas: 'Normas de Circulación', seguridad: 'Seguridad Vial' };
+        const preguntes = await fetch(`/api/preguntes?n=10&tema=${tema}`).then(r => r.json()).catch(() => []);
+        if (!preguntes.length) { alert('Error cargando preguntas'); return; }
+        estat = { tipus: 'normal', preguntes, xpMaxim: 30, killer: false, examen: false, index: 0, respostes: new Array(preguntes.length).fill(null) };
+        document.getElementById('testTipus').textContent = NOMBRES[tema] || tema;
         mostrarPregunta(0);
         document.getElementById('modalTest').style.display = 'flex';
     }

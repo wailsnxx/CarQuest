@@ -1,0 +1,672 @@
+{
+  "categorias": [
+    {
+      "id": "senales",
+      "nombre": "Señales de Tráfico",
+      "icono": "🚦",
+      "color": "green",
+      "descripcion": "Identifica e interpreta todas las señales de circulación",
+      "lecciones": [
+        {
+          "id": "prohibicion",
+          "nombre": "Señales de Prohibición",
+          "xp": 50,
+          "secciones": [
+            {
+              "titulo": "¿Qué son las señales de prohibición?",
+              "texto": "Las señales de prohibición prohíben determinadas maniobras, circulaciones o estacionamientos. Son de forma circular con borde rojo y fondo blanco. Su incumplimiento supone una infracción grave."
+            },
+            {
+              "titulo": "Señales más importantes",
+              "lista": [
+                "🚫 Prohibido el paso — prohíbe la circulación en ambos sentidos",
+                "🚗 Dirección prohibida — prohíbe circular en ese sentido",
+                "⛔ Ceda el paso — obligación de ceder el paso a vehículos con prioridad",
+                "🅿️ Estacionamiento prohibido — no se puede dejar el vehículo parado",
+                "📵 Prohibido adelantar — no se puede sobrepasar a otro vehículo",
+                "🔇 Prohibido tocar bocina — en zonas urbanas o de silencio"
+              ]
+            },
+            {
+              "titulo": "Cómo identificarlas",
+              "texto": "Siempre tienen forma circular. El borde es de color rojo y el fondo blanco. El símbolo o texto del interior indica qué está prohibido. A veces incluyen una distancia o un horario debajo."
+            }
+          ],
+          "consejo": "Memoriza las más comunes primero: stop, ceda el paso, dirección prohibida y prohibido adelantar. Son las que más aparecen en el examen."
+        },
+        {
+          "id": "obligacion",
+          "nombre": "Señales de Obligación",
+          "xp": 50,
+          "secciones": [
+            {
+              "titulo": "¿Qué son las señales de obligación?",
+              "texto": "Las señales de obligación imponen a los conductores la obligación de seguir un determinado comportamiento. Son de forma circular con fondo azul y símbolo blanco."
+            },
+            {
+              "titulo": "Señales principales",
+              "lista": [
+                "➡️ Sentido obligatorio — debes circular en esa dirección",
+                "🔄 Paso obligatorio — debes pasar por el carril indicado",
+                "🚴 Carril obligatorio para ciclistas — los ciclistas deben usarlo",
+                "🏎️ Velocidad mínima — debes circular como mínimo a esa velocidad",
+                "⛓️ Cadenas obligatorias — necesario por condiciones de nieve o hielo"
+              ]
+            },
+            {
+              "titulo": "Diferencia con las de prohibición",
+              "texto": "Mientras las de prohibición tienen fondo blanco y borde rojo, las de obligación tienen fondo azul. Ambas son circulares. El fondo azul significa que DEBES hacer algo; el blanco con rojo que NO PUEDES hacerlo."
+            }
+          ],
+          "consejo": "La diferencia más fácil: azul = obligatorio, blanco con rojo = prohibido. Esta regla te ayudará en la mayoría de preguntas del examen."
+        },
+        {
+          "id": "peligro",
+          "nombre": "Señales de Peligro",
+          "xp": 50,
+          "secciones": [
+            {
+              "titulo": "¿Qué son las señales de peligro?",
+              "texto": "Las señales de peligro advierten a los conductores de la proximidad de un tramo de carretera que presenta algún peligro o dificultad. Son de forma triangular con borde rojo y fondo amarillo o blanco."
+            },
+            {
+              "titulo": "Señales más comunes",
+              "lista": [
+                "⚠️ Curva peligrosa — hay una curva pronunciada adelante",
+                "🚧 Obras — hay trabajos en la carretera",
+                "🦌 Animales sueltos — posibilidad de encontrar animales",
+                "🧒 Paso de escolares — zona de niños y colegios",
+                "🌊 Firme deslizante — la carretera puede estar resbaladiza",
+                "⛰️ Pendiente peligrosa — bajada o subida pronunciada",
+                "🚦 Semáforo — hay un semáforo próximo"
+              ]
+            },
+            {
+              "titulo": "¿A qué distancia se colocan?",
+              "texto": "En carretera se colocan entre 150 y 250 metros antes del peligro. En ciudad, entre 50 y 100 metros. Siempre debes reducir la velocidad al verlas."
+            }
+          ],
+          "consejo": "Triángulo con borde rojo = peligro. Siempre debes reducir la velocidad y aumentar la atención al ver estas señales."
+        },
+        {
+          "id": "informacion",
+          "nombre": "Señales de Información",
+          "xp": 50,
+          "secciones": [
+            {
+              "titulo": "¿Qué son las señales de información?",
+              "texto": "Las señales de información orientan a los usuarios de la vía y les proporcionan información útil como indicaciones de dirección, localidades, distancias y servicios disponibles."
+            },
+            {
+              "titulo": "Tipos principales",
+              "lista": [
+                "🟦 Señales de indicación — información general (aparcamiento, hospital, teléfono)",
+                "🟩 Señales de orientación — carreteras convencionales (fondo verde o blanco)",
+                "🟦 Señales de autopista — fondo azul en autopistas y autovías",
+                "⬛ Señales de servicios — indicaciones de gasolinera, restaurante, hotel",
+                "🟡 Señales de obras — información temporal durante trabajos"
+              ]
+            },
+            {
+              "titulo": "Colores y su significado",
+              "texto": "Azul: autopistas y autovías. Verde: carreteras convencionales nacionales. Blanco: carreteras locales. Marrón: lugares de interés turístico y cultural. Naranja: desvíos por obras."
+            }
+          ],
+          "consejo": "El color del fondo indica el tipo de vía. Azul = autopista. Verde = carretera nacional. Esta información es clave para el examen."
+        }
+      ]
+    },
+    {
+      "id": "normas",
+      "nombre": "Normas de Circulación",
+      "icono": "📋",
+      "color": "blue",
+      "descripcion": "Las reglas básicas para circular correctamente",
+      "lecciones": [
+        {
+          "id": "velocidad",
+          "nombre": "Límites de Velocidad",
+          "xp": 50,
+          "secciones": [
+            {
+              "titulo": "Velocidades máximas en España",
+              "texto": "La velocidad máxima permitida varía según el tipo de vía y el vehículo. Respetar los límites es esencial para la seguridad vial y evitar sanciones."
+            },
+            {
+              "titulo": "Límites generales",
+              "lista": [
+                "🏙️ Vías urbanas: 30 km/h (en general), 50 km/h en vías principales",
+                "🛣️ Carretera convencional: 90 km/h",
+                "🚗 Autovía y autopista: 120 km/h",
+                "🌧️ Con lluvia (autopista): 110 km/h",
+                "🌫️ Con visibilidad reducida: ajusta según condiciones"
+              ]
+            },
+            {
+              "titulo": "Factores que modifican la velocidad",
+              "texto": "Debes reducir la velocidad ante: niebla, lluvia, hielo, viento lateral fuerte, obras, paso de peatones, curvas peligrosas y en zonas escolares o residenciales. La velocidad adecuada es siempre la que permite detenerse a tiempo."
+            }
+          ],
+          "consejo": "Recuerda: 30 km/h en ciudad, 90 en carretera, 120 en autopista. Son los tres números básicos que debes memorizar."
+        },
+        {
+          "id": "adelantamientos",
+          "nombre": "Adelantamientos",
+          "xp": 50,
+          "secciones": [
+            {
+              "titulo": "¿Cuándo se puede adelantar?",
+              "texto": "El adelantamiento está permitido cuando la señalización lo permite, hay visibilidad suficiente, el carril contrario está libre y la maniobra puede completarse con seguridad. Siempre se adelanta por la izquierda."
+            },
+            {
+              "titulo": "Prohibiciones de adelantamiento",
+              "lista": [
+                "❌ En curvas sin visibilidad",
+                "❌ En cambios de rasante",
+                "❌ En intersecciones (salvo excepciones)",
+                "❌ Cuando haya línea continua central",
+                "❌ En pasos a nivel sin barreras",
+                "❌ Cuando el vehículo precedente vaya a girar a la izquierda",
+                "❌ Cuando otro vehículo ya esté adelantando"
+              ]
+            },
+            {
+              "titulo": "Procedimiento correcto",
+              "texto": "1. Asegúrate de que es seguro y permitido. 2. Activa el intermitente izquierdo. 3. Comprueba el espejo y el punto ciego. 4. Ocupa el carril contrario. 5. Supera al vehículo con suficiente separación lateral. 6. Vuelve a tu carril activando el intermitente derecho."
+            }
+          ],
+          "consejo": "Antes de adelantar: VER (visibilidad), PODER (señalización lo permite) y QUERER (confirmación final de seguridad). Los tres pasos siempre."
+        },
+        {
+          "id": "intersecciones",
+          "nombre": "Intersecciones",
+          "xp": 50,
+          "secciones": [
+            {
+              "titulo": "Reglas en intersecciones",
+              "texto": "En las intersecciones la norma general es ceder el paso a los vehículos que vengan por la derecha. Sin embargo, existen excepciones que modifican esta regla básica."
+            },
+            {
+              "titulo": "Prioridad en intersecciones",
+              "lista": [
+                "➡️ Derecha tiene prioridad (norma general)",
+                "⛔ Señal de stop: detención completa y ceder el paso",
+                "⚠️ Ceda el paso: ceder sin necesidad de detenerse si no hay vehículos",
+                "🚦 Semáforo verde: tienes prioridad",
+                "🛣️ Vía preferente: los que están en ella tienen prioridad",
+                "🏗️ Obras: sigue las indicaciones del agente o señales"
+              ]
+            },
+            {
+              "titulo": "Giros en intersecciones",
+              "texto": "Para girar a la derecha: colócate cerca de la derecha. Para girar a la izquierda: colócate cerca del eje central. Siempre señaliza con suficiente antelación (mínimo 30 metros antes)."
+            }
+          ],
+          "consejo": "La jerarquía es: agente > semáforo > señal vertical > marca vial > norma general. Si hay un agente, olvida el resto."
+        },
+        {
+          "id": "estacionamiento",
+          "nombre": "Estacionamiento",
+          "xp": 50,
+          "secciones": [
+            {
+              "titulo": "Diferencia entre parada y estacionamiento",
+              "texto": "Parada: inmovilización breve del vehículo (menos de 2 minutos), con el conductor presente y dispuesto a circular. Estacionamiento: inmovilización durante más tiempo o sin el conductor presente."
+            },
+            {
+              "titulo": "Dónde está prohibido estacionar",
+              "lista": [
+                "🚫 En pasos de peatones",
+                "🚫 En carriles bici o reservados",
+                "🚫 En doble fila",
+                "🚫 Junto a señales de tráfico",
+                "🚫 En zonas de carga y descarga fuera de horario",
+                "🚫 A menos de 5m de una intersección",
+                "🚫 En bocas de incendio",
+                "🚫 En aparcamientos reservados a minusválidos sin tarjeta"
+              ]
+            },
+            {
+              "titulo": "Zonas de estacionamiento regulado",
+              "texto": "La zona azul (ORA) permite estacionar por tiempo limitado previo pago. La zona verde es para residentes. Siempre pon el ticket visible detrás del parabrisas y respeta el tiempo máximo permitido."
+            }
+          ],
+          "consejo": "Recuerda los 5 metros: a menos de 5m de un cruce NO puedes estacionar. Es la infracción más frecuente en ciudad."
+        }
+      ]
+    },
+    {
+      "id": "seguridad",
+      "nombre": "Seguridad Vial",
+      "icono": "🛡️",
+      "color": "orange",
+      "descripcion": "Conduce de forma segura en cualquier situación",
+      "lecciones": [
+        {
+          "id": "cinturon",
+          "nombre": "Cinturón de Seguridad",
+          "xp": 50,
+          "secciones": [
+            {
+              "titulo": "Por qué es obligatorio",
+              "texto": "El cinturón de seguridad reduce el riesgo de muerte en un accidente frontal en un 45% y en vuelco en un 75%. Es obligatorio para todos los ocupantes del vehículo, tanto en ciudad como en carretera."
+            },
+            {
+              "titulo": "Normas básicas",
+              "lista": [
+                "✅ Obligatorio para conductor y todos los pasajeros",
+                "✅ En la parte trasera también es obligatorio",
+                "✅ Los niños menores de 135 cm deben usar silla homologada",
+                "✅ Las embarazadas deben ajustarlo entre el abdomen y la cadera",
+                "❌ No se puede llevar el cinturón cruzado o por debajo del brazo",
+                "❌ No exime de su uso estar embarazada (usar adaptador)"
+              ]
+            },
+            {
+              "titulo": "Sanciones",
+              "texto": "No llevar el cinturón es una infracción grave. Supone una multa de 200€ y la pérdida de 3 puntos del carné. El conductor es responsable de que todos los pasajeros menores de edad lo usen."
+            }
+          ],
+          "consejo": "Primero el cinturón, luego arranca. Es el primer hábito de seguridad que debes incorporar. No hay excusa para no usarlo."
+        },
+        {
+          "id": "distancia",
+          "nombre": "Distancia de Seguridad",
+          "xp": 50,
+          "secciones": [
+            {
+              "titulo": "¿Qué es la distancia de seguridad?",
+              "texto": "Es la separación mínima que debes mantener con el vehículo que circula delante, suficiente para detenerse en caso de frenada brusca sin colisionar. Depende de la velocidad y las condiciones de la vía."
+            },
+            {
+              "titulo": "Cómo calcularla",
+              "lista": [
+                "🕐 Regla de los 2 segundos: el tiempo mínimo entre tú y el vehículo delantero",
+                "🌧️ Con lluvia: aplica la regla de los 4 segundos",
+                "🌫️ Con niebla: distancia mínima = tu visibilidad",
+                "🛣️ A 120 km/h: mínimo 70 metros de distancia",
+                "🏙️ A 50 km/h en ciudad: mínimo unos 25 metros"
+              ]
+            },
+            {
+              "titulo": "Factores que afectan la distancia",
+              "texto": "Estado del firme (mojado, con hielo), velocidad del vehículo, estado de los frenos y neumáticos, tiempo de reacción del conductor (fatiga, alcohol, distracciones), y el peso del vehículo (camiones necesitan más distancia)."
+            }
+          ],
+          "consejo": "Usa la regla de los 2 segundos: cuando el coche delantero pase un punto fijo, empieza a contar 'mil uno, mil dos'. Si lo alcanzas antes, vas demasiado cerca."
+        },
+        {
+          "id": "condiciones",
+          "nombre": "Condiciones Adversas",
+          "xp": 50,
+          "secciones": [
+            {
+              "titulo": "Conducir bajo condiciones adversas",
+              "texto": "Las condiciones meteorológicas adversas aumentan el riesgo de accidente. Debes adaptar siempre la velocidad y la conducción al estado de la vía y la visibilidad disponible."
+            },
+            {
+              "titulo": "Principales condiciones adversas",
+              "lista": [
+                "🌧️ Lluvia: reduce la adherencia, aumenta distancia de frenado",
+                "❄️ Hielo o nieve: requiere cadenas o neumáticos de invierno",
+                "🌫️ Niebla: usa luces antiniebla, reduce velocidad drásticamente",
+                "💨 Viento lateral: peligroso en túneles, puentes y adelantamientos",
+                "☀️ Sol de cara: usa visera, gafas de sol; cuidado con deslumbramiento",
+                "🌊 Aquaplaning: el vehículo pierde contacto con el suelo por exceso de agua"
+              ]
+            },
+            {
+              "titulo": "¿Qué hacer en aquaplaning?",
+              "texto": "Si sufres aquaplaning: no frenes bruscamente, no gires bruscamente el volante, suelta el acelerador gradualmente, mantén la dirección y deja que el vehículo recupere la tracción. Es la respuesta más importante que debes recordar."
+            }
+          ],
+          "consejo": "Ante la duda: reduce la velocidad. No hay prisa que justifique arriesgar la vida. Si la visibilidad es muy reducida, para en un lugar seguro."
+        },
+        {
+          "id": "fatiga",
+          "nombre": "Fatiga y Distracción",
+          "xp": 50,
+          "secciones": [
+            {
+              "titulo": "La fatiga al volante",
+              "texto": "La fatiga es responsable del 30% de los accidentes mortales en carretera. Conduce igual que el alcohol: reduce reflejos, altera la percepción y provoca microsueños que duran entre 4 y 6 segundos (suficiente para perder el control del vehículo)."
+            },
+            {
+              "titulo": "Señales de fatiga",
+              "lista": [
+                "😴 Parpadeos frecuentes o pesadez en los ojos",
+                "😵 Dificultad para concentrarse en la conducción",
+                "🔄 Cabeceos involuntarios",
+                "🛣️ No recuerdas los últimos kilómetros",
+                "↔️ Desvíos involuntarios de carril",
+                "🦶 Reacciones más lentas de lo normal"
+              ]
+            },
+            {
+              "titulo": "Distracciones más peligrosas",
+              "texto": "Usar el móvil al volante multiplica por 4 el riesgo de accidente. Leer un mensaje a 120 km/h es equivalente a recorrer 100 metros con los ojos cerrados. También son peligrosas: comer, ajustar la radio, conversar con pasajeros o revisar el GPS sin manos libres."
+            }
+          ],
+          "consejo": "Cada 2 horas o 200 km, para 15 minutos. No es pérdida de tiempo, es una inversión en seguridad. Si tienes sueño, PARA: el café y abrir la ventana solo retrasan el microsueño."
+        }
+      ]
+    },
+    {
+      "id": "mecanica",
+      "nombre": "Mecánica Básica",
+      "icono": "🔧",
+      "color": "purple",
+      "descripcion": "Conoce tu vehículo por dentro y por fuera",
+      "lecciones": [
+        {
+          "id": "motor",
+          "nombre": "El Motor",
+          "xp": 50,
+          "secciones": [
+            {
+              "titulo": "Funcionamiento básico del motor",
+              "texto": "El motor de combustión interna convierte la energía química del combustible en energía mecánica. Los cilindros, pistones, válvulas y bujías trabajan coordinados en 4 tiempos: admisión, compresión, explosión y escape."
+            },
+            {
+              "titulo": "Indicadores clave del salpicadero",
+              "lista": [
+                "🌡️ Temperatura del motor: si sube al rojo, para inmediatamente",
+                "🛢️ Presión del aceite: si se enciende, para el motor de inmediato",
+                "⛽ Nivel de combustible: recarga antes de llegar a la reserva",
+                "🔋 Batería: si se enciende en marcha, hay problema de alternador",
+                "⚙️ Luz de avería (check engine): indica problema en el motor o emisiones"
+              ]
+            },
+            {
+              "titulo": "Mantenimiento básico",
+              "texto": "Revisa el nivel de aceite cada 1.000 km o antes de un viaje largo. Cambia el aceite según las indicaciones del fabricante (generalmente cada 10.000-15.000 km). Comprueba el líquido refrigerante en frío. Un motor bien mantenido dura mucho más y consume menos."
+            }
+          ],
+          "consejo": "Las tres luces que nunca debes ignorar: temperatura, presión de aceite y batería. Si se encienden mientras conduces, para en lugar seguro inmediatamente."
+        },
+        {
+          "id": "frenos",
+          "nombre": "Sistema de Frenos",
+          "xp": 50,
+          "secciones": [
+            {
+              "titulo": "Tipos de frenos",
+              "texto": "El sistema de frenos convierte la energía cinética en calor para detener el vehículo. Los frenos de disco (más eficientes) y los de tambor (traseros en muchos coches) trabajan hidráulicamente cuando pisas el pedal del freno."
+            },
+            {
+              "titulo": "El freno de mano (freno de estacionamiento)",
+              "lista": [
+                "🅿️ Úsalo siempre al aparcar, incluso en llano",
+                "⛰️ En cuestas: el freno de mano primero, luego mete marcha",
+                "🚗 No lo uses en movimiento excepto en emergencias",
+                "⚠️ Si se enciende el testigo en marcha, puede estar activado o hay poca pastilla",
+                "🔧 Las pastillas se revisan cada 20.000-30.000 km"
+              ]
+            },
+            {
+              "titulo": "Frenada de emergencia",
+              "texto": "Con ABS: pisa el freno a fondo sin soltar, el sistema evita el bloqueo de las ruedas. Sin ABS: frena con la técnica de bombeo (presiona y suelta rítmicamente). Nunca frenes fuerte y gires a la vez: puedes perder el control del vehículo."
+            }
+          ],
+          "consejo": "Con ABS: pisa a fondo y mantén. Sin ABS: bombea el pedal. Practicar la frenada de emergencia puede salvarte la vida en un momento crítico."
+        },
+        {
+          "id": "neumaticos",
+          "nombre": "Neumáticos",
+          "xp": 50,
+          "secciones": [
+            {
+              "titulo": "Importancia de los neumáticos",
+              "texto": "Los neumáticos son el único punto de contacto del vehículo con la carretera. Su estado afecta directamente a la frenada, la estabilidad y el consumo de combustible. Un neumático en mal estado puede provocar reventones a alta velocidad."
+            },
+            {
+              "titulo": "Parámetros clave",
+              "lista": [
+                "📏 Profundidad mínima de dibujo: 1,6 mm (legal), recomendado > 3 mm",
+                "💨 Presión: revísala en frío cada 2 semanas y antes de viajes largos",
+                "⚖️ Equilibrado y alineación: cada 10.000 km o si notas vibración",
+                "🔄 Rotación de neumáticos: cada 10.000-15.000 km para desgaste uniforme",
+                "❄️ Neumáticos de invierno: obligatorios en algunas comunidades con nieve"
+              ]
+            },
+            {
+              "titulo": "Señales de neumático en mal estado",
+              "texto": "Vibración del volante, el coche tira hacia un lado, consumo elevado de combustible, mayor distancia de frenado o un pinchazo recurrente en el mismo neumático. Ante cualquier duda, visita un taller especializado."
+            }
+          ],
+          "consejo": "La presión correcta ahorra combustible, reduce el desgaste y mejora la seguridad. 10% menos de presión = 10% más de consumo y mucho mayor riesgo de reventón."
+        },
+        {
+          "id": "luces",
+          "nombre": "Luces e Indicadores",
+          "xp": 50,
+          "secciones": [
+            {
+              "titulo": "Tipos de luces",
+              "texto": "El sistema de iluminación del vehículo tiene múltiples funciones: ver, ser visto, señalizar intenciones y advertir de peligros. Conocer cuándo usar cada tipo de luz es esencial para la seguridad y para el examen."
+            },
+            {
+              "titulo": "Luces y cuándo usarlas",
+              "lista": [
+                "💡 Luces de posición: obligatorias al circular de noche o con poca luz",
+                "🔦 Luces de cruce (cortas): siempre de noche en ciudad y con niebla",
+                "🌟 Luces de carretera (largas): en carretera sin alumbrado, nunca con tráfico",
+                "🌫️ Antiniebla: solo con niebla intensa o lluvia fuerte",
+                "⚠️ Luces de emergencia (4 intermitentes): avería, obstáculo o parada de urgencia",
+                "💤 Luz de marcha atrás: se activa sola al meter la marcha atrás"
+              ]
+            },
+            {
+              "titulo": "Luces en ciudad vs carretera",
+              "texto": "En ciudad: luces de cruce siempre (aunque haya alumbrado público). En carretera sin alumbrado: largas cuando no hay tráfico, cruce cuando hay vehículos. Las largas deslumbran a otros conductores: es una infracción mantenerlas con tráfico de frente."
+            }
+          ],
+          "consejo": "Nunca conduzcas sin las luces adecuadas. En caso de duda, usa las de cruce: son correctas en casi todas las situaciones y no molestan a nadie."
+        }
+      ]
+    },
+    {
+      "id": "auxilios",
+      "nombre": "Primeros Auxilios",
+      "icono": "🚑",
+      "color": "red",
+      "descripcion": "Cómo actuar en caso de accidente de tráfico",
+      "lecciones": [
+        {
+          "id": "pas",
+          "nombre": "Protocol PAS",
+          "xp": 60,
+          "secciones": [
+            {
+              "titulo": "El protocolo PAS",
+              "texto": "PAS es el protocolo de actuación ante un accidente de tráfico. Significa Proteger, Alertar y Socorrer. Es la secuencia correcta que debes seguir siempre, en ese orden exacto."
+            },
+            {
+              "titulo": "Los tres pasos del PAS",
+              "lista": [
+                "🛡️ PROTEGER: señaliza el accidente con los triángulos de emergencia a 50m del vehículo. Pon el chaleco reflectante ANTES de salir del vehículo. Aleja a los testigos del tráfico.",
+                "📞 ALERTAR: llama al 112 y da tu ubicación exacta, número de vehículos implicados, víctimas visibles y estado de los heridos.",
+                "🤲 SOCORRER: atiende a los heridos solo si sabes hacerlo. No muevas a los heridos salvo riesgo de incendio. Habla con ellos para tranquilizarlos."
+              ]
+            },
+            {
+              "titulo": "Lo que NO debes hacer",
+              "texto": "No muevas a los heridos (riesgo de lesiones en la columna). No des líquidos a los heridos inconscientes. No abandones la escena si eres testigo. No uses el móvil si no es para llamar al 112. No aparques mal tu vehículo."
+            }
+          ],
+          "consejo": "PAS: Proteger → Alertar → Socorrer. En ese orden siempre. Protegerte primero no es egoísmo, es necesario para poder ayudar a otros."
+        },
+        {
+          "id": "heridas",
+          "nombre": "Tratamiento de Heridas",
+          "xp": 60,
+          "secciones": [
+            {
+              "titulo": "Atención básica a heridas",
+              "texto": "Ante un herido en un accidente, tu prioridad es controlar las hemorragias graves. Una persona puede perder la conciencia por hemorragia en pocos minutos, por lo que actuar rápido es fundamental."
+            },
+            {
+              "titulo": "Cómo controlar una hemorragia",
+              "lista": [
+                "🩹 Presión directa: aplica un apósito limpio y presiona firmemente",
+                "🙋 Elevación: si es posible, eleva el miembro afectado por encima del corazón",
+                "⏱️ Mantén la presión al menos 10 minutos sin levantar el apósito",
+                "🚫 No retires objetos clavados: estabilizan, no los extraigas",
+                "🛑 Torniquete: solo como último recurso, registra la hora de aplicación"
+              ]
+            },
+            {
+              "titulo": "Quemaduras",
+              "texto": "En caso de quemaduras: enfría con agua fría (no helada) durante al menos 10 minutos. No uses hielo, mantequilla ni cremas. No revientes las ampollas. Cubre con un apósito limpio y seco. En quemaduras graves, llama al 112."
+            }
+          ],
+          "consejo": "Presión directa, elevación y esperar al 112. Esas tres acciones pueden salvar una vida mientras llega la ayuda profesional."
+        },
+        {
+          "id": "rcp",
+          "nombre": "RCP Básico",
+          "xp": 60,
+          "secciones": [
+            {
+              "titulo": "¿Qué es la RCP?",
+              "texto": "La Resucitación Cardiopulmonar (RCP) es una técnica de emergencia que mantiene la circulación sanguínea y la oxigenación cuando el corazón deja de latir. Cada minuto sin RCP reduce las posibilidades de supervivencia en un 10%."
+            },
+            {
+              "titulo": "Pasos de la RCP básica",
+              "lista": [
+                "1️⃣ Comprueba la seguridad del entorno",
+                "2️⃣ Comprueba si la persona responde (sacude los hombros suavemente)",
+                "3️⃣ Si no responde: pide a alguien que llame al 112",
+                "4️⃣ Abre la vía aérea (inclina la cabeza hacia atrás, eleva el mentón)",
+                "5️⃣ Comprueba si respira durante no más de 10 segundos",
+                "6️⃣ Si no respira: 30 compresiones torácicas fuertes y rápidas (100-120/min)",
+                "7️⃣ Alterna con 2 insuflaciones de rescate si estás formado",
+                "8️⃣ Continúa hasta que llegue el DEA o la ayuda profesional"
+              ]
+            },
+            {
+              "titulo": "Las compresiones torácicas",
+              "texto": "Coloca el talón de la mano en el centro del pecho (entre las tetillas). Pon la otra mano encima entrelazando los dedos. Brazos rectos, hombros sobre las manos. Comprime 5-6 cm. Ritmo: 100-120 compresiones por minuto (como el ritmo de 'Stayin' Alive' de los Bee Gees)."
+            }
+          ],
+          "consejo": "Cualquier RCP es mejor que ninguna RCP. No tengas miedo de hacerlo mal: una RCP imperfecta puede salvar una vida. El 112 te guiará en tiempo real."
+        }
+      ]
+    },
+    {
+      "id": "prioridades",
+      "nombre": "Prioridades",
+      "icono": "⚖️",
+      "color": "cyan",
+      "descripcion": "¿Quién pasa primero? Las reglas de prioridad",
+      "lecciones": [
+        {
+          "id": "rotondas",
+          "nombre": "Rotondas",
+          "xp": 50,
+          "secciones": [
+            {
+              "titulo": "Cómo funciona una rotonda",
+              "texto": "En una rotonda, los vehículos que circulan dentro tienen siempre prioridad sobre los que quieren entrar. La señal de ceda el paso a la entrada de las rotondas obliga a los que acceden a esperar si hay vehículos circulando."
+            },
+            {
+              "titulo": "Normas en rotonda",
+              "lista": [
+                "➡️ Los que están dentro tienen prioridad absoluta",
+                "🚗 La incorporación se hace por la derecha",
+                "📍 Para salir, colócate en el carril exterior con antelación",
+                "🔄 Señaliza la salida: intermitente derecho antes de salir",
+                "🏎️ Para dar más de una vuelta: permanece en el carril interior",
+                "🚴 Respeta a los ciclistas: tienen prioridad sobre los motoristas en algunas situaciones"
+              ]
+            },
+            {
+              "titulo": "Carriles en rotondas de varios carriles",
+              "texto": "En rotondas con varios carriles: si vas a salir pronto (1ª o 2ª salida), usa el carril exterior. Si vas a continuar por más salidas (3ª o más), usa el carril interior. Antes de cambiar de carril, señaliza y cede el paso."
+            }
+          ],
+          "consejo": "Rotonda = prioridad a los de dentro. Es simple: antes de entrar, mira a tu izquierda. Si hay vehículos, esperas. Sin señalizar la salida: infracción."
+        },
+        {
+          "id": "cruces",
+          "nombre": "Cruces",
+          "xp": 50,
+          "secciones": [
+            {
+              "titulo": "Norma general en cruces",
+              "texto": "En un cruce sin señalización, el vehículo de la derecha tiene prioridad. Esta norma general queda modificada por la presencia de semáforos, señales de ceda el paso o stop, o una vía preferente."
+            },
+            {
+              "titulo": "Jerarquía de prioridad en cruces",
+              "lista": [
+                "1º 👮 Agente de circulación: siempre manda",
+                "2º 🚦 Señales luminosas (semáforos)",
+                "3º 🪧 Señales verticales (stop, ceda el paso, vía preferente)",
+                "4º ➖ Marcas viales (líneas en el suelo)",
+                "5º 📐 Norma de la derecha (cuando no hay nada de lo anterior)"
+              ]
+            },
+            {
+              "titulo": "Casos especiales",
+              "texto": "Una vía que tiene señal de vía preferente da prioridad a todos los que circulan por ella sobre los que entran desde vías secundarias. Las vías pavimentadas tienen prioridad sobre las de tierra. Los vehículos que suben por una cuesta estrecha tienen prioridad sobre los que bajan."
+            }
+          ],
+          "consejo": "La derecha manda, SALVO que haya algo que lo modifique (señal, semáforo, agente). Aprende la jerarquía y aplícala en orden."
+        },
+        {
+          "id": "agentes",
+          "nombre": "Señales de Agentes",
+          "xp": 50,
+          "secciones": [
+            {
+              "titulo": "El agente de tráfico",
+              "texto": "Los agentes de tráfico (Guardia Civil, Policía Local o Nacional) tienen prioridad absoluta sobre cualquier señal, semáforo o norma de circulación. Sus indicaciones son de obligado cumplimiento inmediato."
+            },
+            {
+              "titulo": "Señales básicas del agente",
+              "lista": [
+                "✋ Brazo alzado verticalmente: STOP para todos los vehículos que se aproximan",
+                "↔️ Brazos extendidos horizontalmente: STOP para vehículos que se aproximan por delante y por detrás; paso libre por los lados",
+                "🔄 Brazo oscilando de arriba abajo: reduce la velocidad",
+                "🫵 Brazo extendido hacia un vehículo concreto: ese vehículo debe detenerse",
+                "💡 Señales nocturnas con linterna: mismo significado que los gestos diurnos"
+              ]
+            },
+            {
+              "titulo": "Obligaciones ante el agente",
+              "texto": "Debes obedecer inmediatamente, incluso si eso implica saltarte un semáforo en verde o cruzar una línea continua. El agente tiene siempre la última palabra. Si te detiene, para en el margen de la vía con seguridad."
+            }
+          ],
+          "consejo": "Agente con brazo en alto = para siempre, aunque el semáforo esté verde. El agente manda sobre todo. No hay excepción a esta regla."
+        },
+        {
+          "id": "emergencias",
+          "nombre": "Vehículos de Emergencia",
+          "xp": 50,
+          "secciones": [
+            {
+              "titulo": "Prioridad de los vehículos de emergencia",
+              "texto": "Los vehículos de emergencia (ambulancias, bomberos, policía) en servicio urgente —identificados por sus señales acústicas y luminosas activadas— tienen prioridad absoluta sobre el resto del tráfico."
+            },
+            {
+              "titulo": "Qué debes hacer",
+              "lista": [
+                "👂 Al escuchar sirenas: identifica el origen del sonido",
+                "🚗 Reduce la velocidad y busca dónde ceder el paso",
+                "➡️ En vías de un carril: acércate a la derecha y para si es necesario",
+                "↔️ En autovía: el carril izquierdo se desplaza a la izquierda, el derecho a la derecha",
+                "🚫 Nunca sigas a un vehículo de emergencia para aprovechar su paso",
+                "⛔ No aparques tapando accesos a hospitales, comisarías o parques de bomberos"
+              ]
+            },
+            {
+              "titulo": "El corredor de emergencias",
+              "texto": "En autopistas y autovías con retención, debes crear un corredor de emergencias en el centro de los carriles para que puedan pasar los vehículos de emergencia. Es obligatorio desde 2021. Los que van por el carril izquierdo se aproximan a la mediana; los del resto de carriles, a la derecha."
+            }
+          ],
+          "consejo": "Sirenas = cede el paso inmediatamente. Libera el carril central en autopistas (corredor de emergencias). Ignorar esto puede costar una vida."
+        }
+      ]
+    }
+  ]
+}

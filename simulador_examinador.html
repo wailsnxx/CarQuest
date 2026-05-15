@@ -755,7 +755,24 @@ function endGame() {
     }
 
     showScreen('end');
+
+    // Guardar XP
+    const xpGanado = passed ? 90 : 15;
+    const token = localStorage.getItem('cq_token');
+    if (token) {
+        fetch('/api/user/xp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ xp_ganado: xpGanado, tipus: 'joc', nom: 'Simulador Examinador', puntuacio: G.points })
+        }).catch(() => {});
+    }
 }
+</script>
+<script src="app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof requireAuth === 'function' && !requireAuth()) return;
+});
 </script>
 </body>
 </html>

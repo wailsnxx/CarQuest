@@ -10,8 +10,9 @@ require('dotenv').config();
 // Cargar banco de preguntas DGT (2947 preguntas oficiales)
 const todasPreguntes = JSON.parse(fs.readFileSync(path.join(__dirname, 'preguntes_dgt.json'), 'utf8'));
 
-// Cargar normas de conducción
-const NORMAS = JSON.parse(fs.readFileSync(path.join(__dirname, 'normas.json'), 'utf8'));
+// Cargar contenido de lecciones de teoría
+const TEORIA_CONTENIDO = JSON.parse(fs.readFileSync(path.join(__dirname, 'teoria_contenido.json'), 'utf8'));
+console.log(`📖 ${TEORIA_CONTENIDO.categorias.length} categorías de teoría cargadas`);
 
 // Normalizar formato: { pregunta, opcions:[a,b,c], correcta:0|1|2, explicacio }
 const PREGUNTES_DGT = todasPreguntes
@@ -175,6 +176,14 @@ async function initDB() {
             user_id INTEGER NOT NULL,
             fecha   DATE    NOT NULL,
             PRIMARY KEY (user_id, fecha)
+        )
+    `);
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS user_items (
+            id      SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL,
+            item_id VARCHAR NOT NULL,
+            UNIQUE(user_id, item_id)
         )
     `);
     console.log('✅ Tablas y columnas listas');
@@ -511,10 +520,21 @@ app.get('/api/retos-diarios', verificarToken, async (req, res) => {
 // RUTAS DE PREGUNTES DGT
 // ============================================================
 
-// GET /api/preguntes?n=10&tema=all — devuelve N preguntas aleatorias
+// GET /api/preguntes?n=10&tema=senales|normas|seguridad — devuelve N preguntas aleatorias
 app.get('/api/preguntes', (req, res) => {
     const n = Math.min(parseInt(req.query.n) || 10, 30);
-    const barrejades = [...PREGUNTES_DGT].sort(() => Math.random() - 0.5);
+    const tema = req.query.tema;
+    const TEMA_KEYWORDS = {
+        senales:   /señal|semáforo|semaforo|indicaci(ón|on)|balizamient|marca vial|ceda el paso|paso de peatón|paso de peaton/i,
+        normas:    /velocidad|adelantar|adelantamiento|preferencia de paso|carril|distancia de seguridad|incorpora(rse|ción|cion)|cambio de sentido|giro (a la|en U)|prohibi(do|ción)/i,
+        seguridad: /cinturón|cinturon|casco|alcohol|droga|fatiga|alumbrado|luces (de|del)|freno(s)?|neumático|neumatico|airbag|sist(ema)? de retenci(ón|on)|visibilidad|cansancio/i,
+    };
+    let pregPool = PREGUNTES_DGT;
+    if (tema && TEMA_KEYWORDS[tema]) {
+        pregPool = PREGUNTES_DGT.filter(q => TEMA_KEYWORDS[tema].test(q.pregunta));
+        if (pregPool.length < n) pregPool = PREGUNTES_DGT;
+    }
+    const barrejades = [...pregPool].sort(() => Math.random() - 0.5);
     res.json(barrejades.slice(0, n));
 });
 
@@ -681,331 +701,190 @@ app.get('/api/elige-responsable/ranking', async (_req, res) => {
 });
 
 // ============================================================
-// CHATBOT — búsqueda en normas.json
+// RUTAS DE TIENDA
 // ============================================================
 
-
-function normQ(s) {
-    return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[\u00bf\u00a1?!.,;:()'"-]/g, ' ');
-}
-
-const NORMAS_RULES = [
-    {
-        keys: ['velocidad','limite','maxima','minima','kmh','km/h','rapido','despacio','autopista','autovia','urbana','carretera'],
-        get: function() {
-            const v = NORMAS.velocidades_maximas;
-            return '<strong>\u{1F697} L\u00EDmites de velocidad:</strong><br><br>' +
-                '<strong>V\u00EDas urbanas:</strong><br>' +
-                '\u2022 Un carril por sentido: <strong>' + v.vias_urbanas.un_carril_por_sentido + ' km/h</strong><br>' +
-                '\u2022 Dos o m\u00E1s carriles: <strong>' + v.vias_urbanas.dos_o_mas_carriles_por_sentido + ' km/h</strong><br>' +
-                '\u2022 Plataforma \u00FAnica: <strong>' + v.vias_urbanas.plataforma_unica + ' km/h</strong><br><br>' +
-                '<strong>Carretera convencional:</strong><br>' +
-                '\u2022 Turismos y autobuses: <strong>' + v.carreteras_convencionales.turismos + ' km/h</strong><br>' +
-                '\u2022 Camiones: <strong>' + v.carreteras_convencionales.camiones + ' km/h</strong><br><br>' +
-                '<strong>Autopistas y autov\u00EDas:</strong><br>' +
-                '\u2022 Turismos: <strong>' + v.autovias_y_autopistas.turismos + ' km/h</strong><br>' +
-                '\u2022 Autobuses: <strong>' + v.autovias_y_autopistas.autobuses + ' km/h</strong><br>' +
-                '\u2022 Camiones: <strong>' + v.autovias_y_autopistas.camiones + ' km/h</strong><br>' +
-                '\u2022 M\u00EDnima: <strong>' + v.minimas.autopistas_y_autovias + ' km/h</strong>';
-        }
-    },
-    {
-        keys: ['alcohol','tasa','alcoholemia','beber','copa','gramo','novel','profesional'],
-        get: function() {
-            const a = NORMAS.tasas_alcohol;
-            const d = NORMAS.drogas;
-            return '<strong>\u{1F37A} Tasas de alcoholemia:</strong><br><br>' +
-                '\u2022 Generales: <strong>' + a.general_g_l_sangre + ' g/l</strong> (' + a.general_mg_l_aire + ' mg/l aire)<br>' +
-                '\u2022 Noveles (2 a\u00F1os): <strong>' + a.noveles_g_l_sangre + ' g/l</strong> (' + a.noveles_mg_l_aire + ' mg/l)<br>' +
-                '\u2022 Profesionales: <strong>' + a.profesionales_g_l_sangre + ' g/l</strong> (' + a.profesionales_mg_l_aire + ' mg/l)<br><br>' +
-                '\u{1F6AB} Drogas: ' + d.norma_general + '<br>' +
-                'Sanci\u00F3n: <strong>' + d.sancion_euros + '\u20AC</strong> y <strong>-' + d.perdida_puntos + ' puntos</strong><br><br>' +
-                '\u26A0\uFE0F Lo m\u00E1s seguro: <strong>0,0 de alcohol</strong>.';
-        }
-    },
-    {
-        keys: ['semaforo','luz roja','luz verde','ambar','amarillo','intermitente'],
-        get: function() {
-            const s = NORMAS.semaforos;
-            const sd = NORMAS.temario_completo_dgt.semaforos_detallados;
-            return '<strong>\u{1F6A6} Sem\u00E1foros:</strong><br><br>' +
-                '\u2022 \u{1F534} <strong>Rojo:</strong> ' + s.rojo + '<br>' +
-                '\u2022 \u{1F7E1} <strong>\u00C1mbar:</strong> ' + s.amarillo + '<br>' +
-                '\u2022 \u{1F7E2} <strong>Verde:</strong> ' + s.verde + '<br>' +
-                '\u2022 <strong>Flecha verde:</strong> ' + s.verde_flecha + '<br>' +
-                '\u2022 <strong>\u00C1mbar intermitente:</strong> ' + s.amarillo_intermitente + '<br><br>' +
-                '<strong>Peatones:</strong> Verde = ' + sd.peatones.verde + ' | Rojo = ' + sd.peatones.rojo;
-        }
-    },
-    {
-        keys: ['senal','senales','triangulo','circulo','stop','ceda','marca vial','linea continua','linea discontinua'],
-        get: function() {
-            const s = NORMAS.senales;
-            const mv = s.marcas_viales;
-            return '<strong>\u{1F6A6} Se\u00F1ales de tr\u00E1fico:</strong><br><br>' +
-                '<strong>Peligro (tri\u00E1ngulo rojo):</strong><br>' +
-                s.peligro.map(function(p){ return '\u2022 <strong>' + p.codigo + '</strong> ' + p.nombre; }).join('<br>') + '<br><br>' +
-                '<strong>Prohibici\u00F3n (c\u00EDrculo rojo):</strong><br>' +
-                s.prohibicion.map(function(p){ return '\u2022 <strong>' + p.codigo + '</strong> ' + p.nombre + (p.accion ? ': ' + p.accion : ''); }).join('<br>') + '<br><br>' +
-                '<strong>Marcas viales:</strong><br>' +
-                '\u2022 L\u00EDnea continua: <strong>' + mv.linea_continua + '</strong><br>' +
-                '\u2022 L\u00EDnea discontinua: <strong>' + mv.linea_discontinua + '</strong>';
-        }
-    },
-    {
-        keys: ['puntos','carne','carnet','infraccion','multa','sancion','grave','muy grave'],
-        get: function() {
-            const p = NORMAS.puntos_carnet;
-            const inf = NORMAS.infracciones;
-            return '<strong>\u{1F4CB} Sistema de puntos del carn\u00E9:</strong><br><br>' +
-                '\u2022 Noveles: <strong>' + p.puntos_iniciales + ' pts</strong><br>' +
-                '\u2022 Generales: <strong>' + p.puntos_normales + ' pts</strong><br>' +
-                '\u2022 M\u00E1ximo posible: <strong>' + p.maximos + ' pts</strong><br><br>' +
-                '<strong>Infracciones muy graves:</strong><br>' +
-                inf.muy_graves.map(function(i){ return '\u2022 ' + i.descripcion + ': <strong>-' + i.puntos + ' pts</strong> \u00B7 ' + i.multa + '\u20AC'; }).join('<br>') + '<br><br>' +
-                '<strong>Infracciones graves:</strong><br>' +
-                inf.graves.map(function(i){ return '\u2022 ' + i.descripcion + ': <strong>-' + i.puntos + ' pts</strong> \u00B7 ' + i.multa + '\u20AC'; }).join('<br>');
-        }
-    },
-    {
-        keys: ['cinturon','casco','sri','nino','silla','retencion infantil'],
-        get: function() {
-            const sv = NORMAS.seguridad_vial;
-            return '<strong>\u{1F512} Seguridad vial:</strong><br><br>' +
-                '<strong>Cintur\u00F3n:</strong> Obligatorio en todos los asientos<br>' +
-                'Excepciones: ' + sv.cinturon.excepciones.join(', ') + '<br><br>' +
-                '<strong>Casco (moto):</strong> Obligatorio y homologado<br><br>' +
-                '<strong>SRI (retenci\u00F3n infantil):</strong><br>' +
-                '\u2022 Obligatorio hasta <strong>' + sv.sri.altura_obligatoria_cm + ' cm</strong> de altura<br>' +
-                '\u2022 Recomendado hasta ' + sv.sri.recomendado_hasta_cm + ' cm';
-        }
-    },
-    {
-        keys: ['adelantar','adelantamiento','sobrepasar','rebasar','prohibido adelantar'],
-        get: function() {
-            const ad = NORMAS.adelantamientos;
-            return '<strong>\u{1F697} Adelantamiento:</strong><br><br>' +
-                '<strong>Normas:</strong><br>' +
-                ad.normas.map(function(n){ return '\u2022 ' + n; }).join('<br>') + '<br><br>' +
-                '<strong>Prohibido en:</strong><br>' +
-                ad.prohibiciones.map(function(p){ return '\u2022 ' + p; }).join('<br>');
-        }
-    },
-    {
-        keys: ['distancia seguridad','separacion','espacio delante'],
-        get: function() {
-            const ds = NORMAS.distancias_seguridad;
-            return '<strong>\u{1F4CF} Distancia de seguridad:</strong><br><br>' +
-                '\u2022 ' + ds.general + '<br>' +
-                '\u2022 Para adelantar fuera de poblado: m\u00EDnimo <strong>' + ds.adelantamiento_fuera_poblado_metros + ' m</strong> de visibilidad';
-        }
-    },
-    {
-        keys: ['aparcar','estacionar','parada','parking','zona azul','estacionamiento'],
-        get: function() {
-            const ep = NORMAS.estacionamiento_y_parada;
-            return '<strong>\u{1F17F}\uFE0F Estacionamiento y parada:</strong><br><br>' +
-                '<strong>Parada:</strong> ' + ep.parada.definicion + '<br>' +
-                '<strong>Estacionamiento:</strong> ' + ep.estacionamiento.definicion + '<br><br>' +
-                '<strong>Prohibido en:</strong><br>' +
-                ep.prohibiciones.map(function(p){ return '\u2022 ' + p; }).join('<br>');
-        }
-    },
-    {
-        keys: ['luces','cortas','largas','antiniebla','niebla','lluvia','nieve','visibilidad'],
-        get: function() {
-            const l = NORMAS.luces;
-            const cm = NORMAS.condiciones_meteorologicas;
-            return '<strong>\u{1F4A1} Luces y condiciones adversas:</strong><br><br>' +
-                '<strong>Luces cortas (cruce):</strong> ' + l.cortas.uso.join(', ') + '<br>' +
-                '<strong>Antiniebla traseras:</strong> ' + l.antiniebla.traseras + '<br><br>' +
-                '<strong>Lluvia:</strong> ' + cm.lluvia.recomendaciones.join(', ') + '<br>' +
-                '<strong>Niebla:</strong> ' + cm.niebla.recomendaciones.join(', ') + '<br>' +
-                '<strong>Nieve:</strong> ' + cm.nieve.equipamiento.join(', ');
-        }
-    },
-    {
-        keys: ['itv','inspeccion tecnica','revision obligatoria'],
-        get: function() {
-            const itv = NORMAS.itv.turismos;
-            return '<strong>\u{1F527} ITV para turismos:</strong><br><br>' +
-                '\u2022 Primera ITV: a los <strong>' + itv.primera_itv_anos + ' a\u00F1os</strong><br>' +
-                '\u2022 De 4 a 10 a\u00F1os: <strong>' + itv['de_4_a_10_anos'] + '</strong><br>' +
-                '\u2022 M\u00E1s de 10 a\u00F1os: <strong>' + itv['mas_de_10_anos'] + '</strong>';
-        }
-    },
-    {
-        keys: ['neumatico','rueda','llanta','aquaplaning','dibujo neumatico'],
-        get: function() {
-            const n = NORMAS.neumaticos;
-            return '<strong>\u{1F6DE} Neum\u00E1ticos:</strong><br><br>' +
-                '\u2022 Profundidad m\u00EDnima legal: <strong>' + n.profundidad_minima_dibujo_mm + ' mm</strong><br>' +
-                '\u2022 Presi\u00F3n: revisar en fr\u00EDo<br><br>' +
-                '<strong>Riesgos:</strong><br>' +
-                n.riesgos.map(function(r){ return '\u2022 ' + r; }).join('<br>');
-        }
-    },
-    {
-        keys: ['prioridad','rotonda','glorieta','pendiente','ceder paso'],
-        get: function() {
-            const p = NORMAS.prioridades_paso;
-            const pv = NORMAS.temario_completo_dgt.prioridad_vehiculos;
-            return '<strong>\u{1F6D1} Normas de prioridad:</strong><br><br>' +
-                p.normas_generales.map(function(n){ return '\u2022 ' + n; }).join('<br>') + '<br><br>' +
-                '\u{1F504} <strong>Rotondas:</strong> ' + p.glorietas.norma + '<br>' +
-                '\u26F0\uFE0F <strong>Pendientes:</strong> ' + p.pendientes.norma + '<br><br>' +
-                '<strong>Veh\u00EDculos prioritarios:</strong> ' + pv.vehiculos_prioritarios.join(', ');
-        }
-    },
-    {
-        keys: ['emergencia','accidente','averia','socorro','chaleco','triangulo','pas'],
-        get: function() {
-            const e = NORMAS.emergencias;
-            const pa = NORMAS.temario_completo_dgt.primeros_auxilios;
-            return '<strong>\u{1F198} Emergencias en carretera:</strong><br><br>' +
-                '<strong>Regla PAS:</strong><br>' +
-                e.pasos.map(function(p, i){ return '<strong>' + (i+1) + '. ' + p + '</strong>'; }).join(' \u2192 ') + '<br><br>' +
-                '\u260E\uFE0F Emergencias: <strong>' + e.telefono_emergencias + '</strong><br>' +
-                '\u{1F9BA} Chaleco: obligatorio antes de salir del veh\u00EDculo<br>' +
-                '\u26A0\uFE0F Se\u00F1al V-16 sustituye a los tri\u00E1ngulos<br><br>' +
-                '<strong>Primeros auxilios:</strong><br>' +
-                '\u2022 Hemorragias: ' + pa.hemorragias + '<br>' +
-                '\u2022 Inconsciente: ' + pa.inconsciente + '<br>' +
-                '\u2022 RCP: ' + pa.reanimacion.compresiones_por_minuto + ' comp/min, relaci\u00F3n ' + pa.reanimacion.relacion_compresiones_respiraciones;
-        }
-    },
-    {
-        keys: ['peaton','peatones','cruzar','ciclista','bicicleta','distancia lateral'],
-        get: function() {
-            const uv = NORMAS.usuarios_vulnerables;
-            const ped = NORMAS.temario_completo_dgt.peatones;
-            return '<strong>\u{1F6B6} Peatones y ciclistas:</strong><br><br>' +
-                '<strong>Peatones:</strong><br>' +
-                ped.normas.map(function(n){ return '\u2022 ' + n; }).join('<br>') + '<br><br>' +
-                '<strong>Ciclistas:</strong><br>' +
-                '\u2022 Distancia lateral m\u00EDnima: <strong>' + uv.ciclistas.distancia_lateral_metros + ' m</strong><br>' +
-                '\u2022 ' + uv.ciclistas.adelantamiento;
-        }
-    },
-    {
-        keys: ['fatiga','sueno','cansancio','somnolencia','descanso','dormirse'],
-        get: function() {
-            const f = NORMAS.temario_completo_dgt.fatiga_y_sueno;
-            return '<strong>\u{1F634} Fatiga y sue\u00F1o al volante:</strong><br><br>' +
-                '<strong>S\u00EDntomas:</strong><br>' +
-                f.sintomas.map(function(s){ return '\u2022 ' + s; }).join('<br>') + '<br><br>' +
-                '<strong>Prevenci\u00F3n:</strong><br>' +
-                f.prevencion.map(function(p){ return '\u2022 ' + p; }).join('<br>');
-        }
-    },
-    {
-        keys: ['movil','telefono','manos libres','distraccion'],
-        get: function() {
-            const d = NORMAS.temario_completo_dgt.distracciones;
-            const inf = NORMAS.infracciones.muy_graves.find(function(i){ return i.descripcion.toLowerCase().includes('movil'); });
-            return '<strong>\u{1F4F5} Distracciones al volante:</strong><br><br>' +
-                '<strong>Principales:</strong><br>' +
-                d.principales.map(function(p){ return '\u2022 ' + p; }).join('<br>') +
-                (inf ? '<br><br>\u26A0\uFE0F Uso del m\u00F3vil: <strong>-' + inf.puntos + ' puntos</strong> y multa de <strong>' + inf.multa + '\u20AC</strong>' : '');
-        }
-    },
-    {
-        keys: ['freno','frenada','frenado','abs','frenar'],
-        get: function() {
-            const fr = NORMAS.temario_completo_dgt.frenado;
-            const mec = NORMAS.mecanica_basica.frenos;
-            return '<strong>\u{1F6D1} Frenado:</strong><br><br>' +
-                '<strong>Tipos:</strong> ' + fr.tipos.join(', ') + '<br><br>' +
-                '\u2022 Reacci\u00F3n: ' + fr.distancias.reaccion + '<br>' +
-                '\u2022 Frenado: ' + fr.distancias.frenado + '<br>' +
-                '\u2022 Detenci\u00F3n total: ' + fr.distancias.detencion + '<br><br>' +
-                '\u2022 <strong>ABS:</strong> ' + mec.abs;
-        }
-    },
-    {
-        keys: ['agente','policia','guardia civil','brazo levantado','silbato'],
-        get: function() {
-            const a = NORMAS.temario_completo_dgt.senales_agentes;
-            const pr = NORMAS.agentes.prioridad_senalizacion;
-            return '<strong>\u{1F46E} Se\u00F1ales de los agentes:</strong><br><br>' +
-                '\u2022 Brazo levantado: <strong>' + a.brazo_levantado + '</strong><br>' +
-                '\u2022 Brazo horizontal: <strong>' + a.brazo_extendido_horizontal + '</strong><br>' +
-                '\u2022 Silbato corto: <strong>' + a.toques_silbato.cortos_frecuentes + '</strong><br>' +
-                '\u2022 Silbato largo: <strong>' + a.toques_silbato.largos + '</strong><br><br>' +
-                '<strong>Prioridad de se\u00F1alizaci\u00F3n:</strong><br>' +
-                pr.map(function(p, i){ return (i+1) + '. ' + p; }).join('<br>');
-        }
-    },
-    {
-        keys: ['documentacion','documento','dni','permiso circulacion','tarjeta itv','papeles'],
-        get: function() {
-            const doc = NORMAS.documentacion_obligatoria;
-            return '<strong>\u{1F4C1} Documentaci\u00F3n obligatoria:</strong><br><br>' +
-                '<strong>Del conductor:</strong><br>' +
-                doc.conductor.map(function(d){ return '\u2022 ' + d; }).join('<br>') + '<br><br>' +
-                '<strong>Del veh\u00EDculo:</strong><br>' +
-                doc.vehiculo.map(function(d){ return '\u2022 ' + d; }).join('<br>');
-        }
-    },
-    {
-        keys: ['carril','carril derecho','carril izquierdo','busvao','cambiar carril'],
-        get: function() {
-            const cu = NORMAS.temario_completo_dgt.uso_carriles;
-            return '<strong>\u{1F6E3}\uFE0F Uso de carriles:</strong><br><br>' +
-                cu.normas.map(function(n){ return '\u2022 ' + n; }).join('<br>') + '<br><br>' +
-                '<strong>Carriles especiales:</strong><br>' +
-                '\u2022 BUS-VAO: ' + cu.carriles_especiales.busvao + '<br>' +
-                '\u2022 Reversible: ' + cu.carriles_especiales.reversible;
-        }
-    },
-    {
-        keys: ['drogas','droga','cannabis','positivo drogas'],
-        get: function() {
-            const d = NORMAS.drogas;
-            return '<strong>\u{1F6AB} Drogas al volante:</strong><br><br>' +
-                d.norma_general + '<br><br>' +
-                '\u2022 Sanci\u00F3n: <strong>' + d.sancion_euros + '\u20AC</strong><br>' +
-                '\u2022 P\u00E9rdida de puntos: <strong>-' + d.perdida_puntos + ' puntos</strong>';
-        }
-    },
-    {
-        keys: ['seguro','responsabilidad civil','tipos seguro'],
-        get: function() {
-            const s = NORMAS.temario_completo_dgt.seguro;
-            return '<strong>\u{1F4C4} Seguro del veh\u00EDculo:</strong><br><br>' +
-                '\u2022 Obligatorio por ley<br><br>' +
-                '<strong>Tipos:</strong><br>' +
-                s.tipos.map(function(t){ return '\u2022 ' + t; }).join('<br>');
-        }
-    }
+const TIENDA_ITEMS = [
+    { id: 'suv',             nombre: 'SUV',           emoji: '🚙', categoria: 'cotxe',   precio: 500,  nivel: 1 },
+    { id: 'deportivo',       nombre: 'Deportivo',     emoji: '🏎️', categoria: 'cotxe',   precio: 1000, nivel: 5 },
+    { id: 'taxi',            nombre: 'Taxi',          emoji: '🚕', categoria: 'cotxe',   precio: 750,  nivel: 3 },
+    { id: 'furgoneta',       nombre: 'Furgoneta',     emoji: '🚐', categoria: 'cotxe',   precio: 800,  nivel: 4 },
+    { id: 'f1',              nombre: 'Fórmula 1',     emoji: '🏁', categoria: 'cotxe',   precio: 2000, nivel: 8 },
+    { id: 'color_rojo',      nombre: 'Rojo',          emoji: '🔴', categoria: 'color',   precio: 100,  nivel: 1 },
+    { id: 'color_azul',      nombre: 'Azul',          emoji: '🔵', categoria: 'color',   precio: 100,  nivel: 1 },
+    { id: 'color_verde',     nombre: 'Verde',         emoji: '🟢', categoria: 'color',   precio: 100,  nivel: 1 },
+    { id: 'sticker_llamas',  nombre: 'Llamas',        emoji: '🔥', categoria: 'sticker', precio: 200,  nivel: 1 },
+    { id: 'sticker_estrella',nombre: 'Estrella',      emoji: '⭐', categoria: 'sticker', precio: 150,  nivel: 1 },
+    { id: 'sticker_rayo',    nombre: 'Rayo',          emoji: '⚡', categoria: 'sticker', precio: 150,  nivel: 1 },
+    { id: 'spoiler',         nombre: 'Spoiler',       emoji: '🏁', categoria: 'pieza',   precio: 300,  nivel: 2 },
+    { id: 'ruedas_racing',   nombre: 'Ruedas Racing', emoji: '⚙️', categoria: 'pieza',   precio: 400,  nivel: 3 },
 ];
 
-function buscarEnNormas(mensaje) {
-    const t = normQ(mensaje);
-    let mejorScore = 0;
-    let mejorRegla = null;
-    for (let i = 0; i < NORMAS_RULES.length; i++) {
-        const regla = NORMAS_RULES[i];
-        let score = 0;
-        for (let j = 0; j < regla.keys.length; j++) {
-            const key = regla.keys[j];
-            if (t.includes(normQ(key))) score += key.includes(' ') ? 2 : 1;
-        }
-        if (score > mejorScore) { mejorScore = score; mejorRegla = regla; }
+// GET /api/tienda/mis-items — items comprados por el usuario
+app.get('/api/tienda/mis-items', verificarToken, async (req, res) => {
+    try {
+        const result = await pool.query(
+            'SELECT item_id FROM user_items WHERE user_id = $1',
+            [req.user.id]
+        );
+        res.json(result.rows.map(r => r.item_id));
+    } catch (err) {
+        res.status(500).json({ error: 'Error interno' });
     }
-    if (!mejorRegla || mejorScore === 0) return null;
-    try { return mejorRegla.get(); } catch(e) { return null; }
-}
+});
 
-// POST /api/chatbot — responde usando normas.json
-app.post('/api/chatbot', function(req, res) {
-    const message = req.body && req.body.message;
-    if (!message || typeof message !== 'string' || message.trim().length === 0) {
-        return res.status(400).json({ error: 'Mensaje invalido' });
+// POST /api/tienda/comprar — comprar un item
+app.post('/api/tienda/comprar', verificarToken, async (req, res) => {
+    const { item_id } = req.body;
+    const item = TIENDA_ITEMS.find(i => i.id === item_id);
+    if (!item) return res.status(404).json({ error: 'Item no encontrado' });
+
+    try {
+        const userRes = await pool.query(
+            'SELECT monedes, nivel FROM users WHERE id = $1',
+            [req.user.id]
+        );
+        const { monedes, nivel } = userRes.rows[0];
+
+        if (nivel < item.nivel) {
+            return res.status(403).json({ error: `Necesitas nivel ${item.nivel} para desbloquear este item` });
+        }
+        if (monedes < item.precio) {
+            return res.status(400).json({ error: `Monedas insuficientes (tienes ${monedes}, necesitas ${item.precio})` });
+        }
+
+        // Comprobar si ya lo tiene
+        const yaComprado = await pool.query(
+            'SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = $2',
+            [req.user.id, item_id]
+        );
+        if (yaComprado.rows.length > 0) {
+            return res.status(409).json({ error: 'Ya tienes este item' });
+        }
+
+        // Deducir monedas y añadir item
+        await pool.query(
+            'UPDATE users SET monedes = monedes - $1 WHERE id = $2',
+            [item.precio, req.user.id]
+        );
+        await pool.query(
+            'INSERT INTO user_items (user_id, item_id) VALUES ($1, $2)',
+            [req.user.id, item_id]
+        );
+
+        const updated = await pool.query(
+            'SELECT monedes FROM users WHERE id = $1',
+            [req.user.id]
+        );
+        res.json({ ok: true, monedes: updated.rows[0].monedes, item_comprado: item.nombre });
+    } catch (err) {
+        console.error('Error comprando item:', err);
+        res.status(500).json({ error: 'Error interno' });
     }
-    const respuesta = buscarEnNormas(message.trim());
-    if (!respuesta) return res.json({ found: false });
-    res.json({ found: true, answer: respuesta });
+});
+
+// ============================================================
+// RUTAS DE TEORÍA
+// ============================================================
+
+// GET /api/teoria/categorias — devuelve categorías con progreso del usuario
+app.get('/api/teoria/categorias', verificarToken, async (req, res) => {
+    try {
+        const result = await pool.query(
+            "SELECT nom FROM progres WHERE user_id = $1 AND tipus = 'teoria' AND completat = true",
+            [req.user.id]
+        );
+        const completadas = new Set(result.rows.map(r => r.nom));
+
+        const data = TEORIA_CONTENIDO.categorias.map(cat => ({
+            id: cat.id,
+            nombre: cat.nombre,
+            icono: cat.icono,
+            color: cat.color,
+            descripcion: cat.descripcion,
+            lecciones: cat.lecciones.map(lec => ({
+                id: lec.id,
+                nombre: lec.nombre,
+                xp: lec.xp,
+                completada: completadas.has(`teoria_${cat.id}_${lec.id}`)
+            }))
+        }));
+
+        res.json(data);
+    } catch (err) {
+        console.error('Error en teoria/categorias:', err);
+        res.status(500).json({ error: 'Error interno' });
+    }
+});
+
+// GET /api/teoria/leccion/:catId/:lecId — devuelve el contenido de una lección
+app.get('/api/teoria/leccion/:catId/:lecId', verificarToken, async (req, res) => {
+    const { catId, lecId } = req.params;
+    const cat = TEORIA_CONTENIDO.categorias.find(c => c.id === catId);
+    if (!cat) return res.status(404).json({ error: 'Categoría no encontrada' });
+    const lec = cat.lecciones.find(l => l.id === lecId);
+    if (!lec) return res.status(404).json({ error: 'Lección no encontrada' });
+
+    const nom = `teoria_${catId}_${lecId}`;
+    const yaCompletada = await pool.query(
+        "SELECT 1 FROM progres WHERE user_id = $1 AND nom = $2 AND completat = true",
+        [req.user.id, nom]
+    );
+
+    res.json({
+        categoria: { id: cat.id, nombre: cat.nombre, icono: cat.icono, color: cat.color },
+        leccion: { ...lec, completada: yaCompletada.rows.length > 0 }
+    });
+});
+
+// POST /api/teoria/completar — marca una lección como completada y da XP (solo una vez)
+app.post('/api/teoria/completar', verificarToken, async (req, res) => {
+    const { categoria_id, leccion_id } = req.body;
+    if (!categoria_id || !leccion_id) return res.status(400).json({ error: 'Faltan parámetros' });
+
+    const cat = TEORIA_CONTENIDO.categorias.find(c => c.id === categoria_id);
+    if (!cat) return res.status(404).json({ error: 'Categoría no encontrada' });
+    const lec = cat.lecciones.find(l => l.id === leccion_id);
+    if (!lec) return res.status(404).json({ error: 'Lección no encontrada' });
+
+    const nom = `teoria_${categoria_id}_${leccion_id}`;
+
+    try {
+        // Comprobar si ya fue completada
+        const yaCompletada = await pool.query(
+            "SELECT 1 FROM progres WHERE user_id = $1 AND nom = $2 AND completat = true",
+            [req.user.id, nom]
+        );
+        if (yaCompletada.rows.length > 0) {
+            return res.json({ ya_completada: true, mensaje: 'Esta lección ya fue completada' });
+        }
+
+        // Guardar en progres
+        await pool.query(
+            "INSERT INTO progres (user_id, tipus, nom, puntuacio, completat) VALUES ($1, 'teoria', $2, $3, true)",
+            [req.user.id, nom, lec.xp]
+        );
+
+        // Sumar XP y actualizar nivel/rango
+        const result = await pool.query(`
+            UPDATE users
+            SET xp    = xp + $1,
+                nivel = GREATEST(1, FLOOR((xp + $1) / 1000) + 1),
+                rang  = update_rang(xp + $1)
+            WHERE id = $2
+            RETURNING xp, nivel, rang, monedes
+        `, [lec.xp, req.user.id]);
+
+        res.json({
+            ya_completada: false,
+            xp_ganado: lec.xp,
+            leccion: lec.nombre,
+            ...result.rows[0]
+        });
+    } catch (err) {
+        console.error('Error completando lección:', err);
+        res.status(500).json({ error: 'Error interno' });
+    }
 });
 
 // ============================================================

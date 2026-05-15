@@ -547,10 +547,10 @@
         </nav>
         <div class="sidebar-bottom">
             <div class="sidebar-user">
-                <div class="sidebar-user-avatar">🙂</div>
+                <div class="sidebar-user-avatar js-avatar">🙂</div>
                 <div class="sidebar-user-info">
-                    <strong>Conductor Novell</strong>
-                    <span>1500 XP · Nivell 2</span>
+                    <strong class="js-sidebar-nom">...</strong>
+                    <span class="js-sidebar-info">...</span>
                 </div>
             </div>
         </div>
@@ -713,6 +713,7 @@
     </main>
 </div><!-- /dashboard-wrap -->
 
+<script src="app.js"></script>
 <script src="dashboard.js"></script>
 <script>
 // ====================================================
@@ -1030,11 +1031,11 @@ function showGameOver() {
     setTimeout(() => { bar.style.width = pct + '%'; }, 200);
 
     // Guardar score i carregar rànquing
-    if (avg !== null) saveScoreAndRanking(avg);
+    if (avg !== null) saveScoreAndRanking(avg, xp);
     else loadRanking();
 }
 
-async function saveScoreAndRanking(avg_ms) {
+async function saveScoreAndRanking(avg_ms, xpGanado) {
     const token = localStorage.getItem('cq_token');
     if (token) {
         try {
@@ -1043,6 +1044,18 @@ async function saveScoreAndRanking(avg_ms) {
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify({ avg_ms })
             });
+            const d = await fetch('/api/user/xp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ xp_ganado: xpGanado, tipus: 'joc', nom: 'Tiempo de Reacción', puntuacio: avg_ms })
+            }).then(r => r.json());
+            if (d.xp !== undefined) {
+                const u = JSON.parse(localStorage.getItem('cq_usuario') || '{}');
+                u.xp = d.xp; u.nivel = d.nivel; u.rang = d.rang;
+                if (d.monedes !== undefined) u.monedes = d.monedes;
+                localStorage.setItem('cq_usuario', JSON.stringify(u));
+                if (typeof actualitzarUIUsuari === 'function') actualitzarUIUsuari(u);
+            }
         } catch (_) {}
     }
     loadRanking();
@@ -1093,6 +1106,15 @@ function getRating(avg, early) {
     if (avg < 400)  return { name: 'Conductor Normal',pct: 38,  color: '#F77F00',         emoji: '🚗' };
     return                 { name: 'Conductor Lent',  pct: 18,  color: '#E63946',         emoji: '🐢' };
 }
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    if (typeof requireAuth === 'function' && !requireAuth()) return;
+    if (typeof carregarUsuari === 'function') {
+        const user = await carregarUsuari();
+        if (user) document.querySelectorAll('.js-avatar').forEach(el => el.textContent = user.avatar || '🙂');
+    }
+});
 </script>
 <script src="chatbot.js"></script>
 </body>
