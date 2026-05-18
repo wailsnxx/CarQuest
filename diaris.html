@@ -199,9 +199,12 @@
             await carregarUsuari();
             await carregarRetos();
 
-            // Recargar retos al volver de otra página (por si el usuario completó algo)
+            // Recargar retos y monedas al volver de otra página (por si el usuario completó algo)
             document.addEventListener('visibilitychange', () => {
-                if (document.visibilityState === 'visible') carregarRetos();
+                if (document.visibilityState === 'visible') {
+                    carregarUsuari();
+                    carregarRetos();
+                }
             });
         });
     </script>

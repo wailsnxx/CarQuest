@@ -1031,11 +1031,11 @@ function showGameOver() {
     setTimeout(() => { bar.style.width = pct + '%'; }, 200);
 
     // Guardar score i carregar rànquing
-    if (avg !== null) saveScoreAndRanking(avg, xp);
+    if (avg !== null) saveScoreAndRanking(avg, xp, coins);
     else loadRanking();
 }
 
-async function saveScoreAndRanking(avg_ms, xpGanado) {
+async function saveScoreAndRanking(avg_ms, xpGanado, coinsGanades) {
     const token = localStorage.getItem('cq_token');
     if (token) {
         try {
@@ -1044,19 +1044,8 @@ async function saveScoreAndRanking(avg_ms, xpGanado) {
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify({ avg_ms })
             });
-            const d = await fetch('/api/user/xp', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                body: JSON.stringify({ xp_ganado: xpGanado, tipus: 'joc', nom: 'Tiempo de Reacción', puntuacio: avg_ms })
-            }).then(r => r.json());
-            if (d.xp !== undefined) {
-                const u = JSON.parse(localStorage.getItem('cq_usuario') || '{}');
-                u.xp = d.xp; u.nivel = d.nivel; u.rang = d.rang;
-                if (d.monedes !== undefined) u.monedes = d.monedes;
-                localStorage.setItem('cq_usuario', JSON.stringify(u));
-                if (typeof actualitzarUIUsuari === 'function') actualitzarUIUsuari(u);
-            }
         } catch (_) {}
+        await guanyarXP(xpGanado, 'joc', 'Tiempo de Reacción', avg_ms, coinsGanades);
     }
     loadRanking();
 }

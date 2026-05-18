@@ -210,20 +210,9 @@
             text = `${encerts} / ${total} correctas`;
         }
 
-        // Guardar XP a la BD
-        const token = localStorage.getItem('cq_token');
-        await fetch('/api/user/xp', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ xp_ganado: xpGuanyat, tipus: 'joc', nom: jocEstat.nom, puntuacio: encerts })
-        }).then(r => r.json()).then(d => {
-            if (d.xp !== undefined) {
-                const u = JSON.parse(localStorage.getItem('cq_usuario') || '{}');
-                u.xp = d.xp; u.nivel = d.nivel; u.rang = d.rang;
-                localStorage.setItem('cq_usuario', JSON.stringify(u));
-                actualitzarUIUsuari(u);
-            }
-        }).catch(() => {});
+        // Guardar XP y monedas a la BD
+        const coinsGuanyats = Math.max(3, Math.round(xpGuanyat / 5));
+        await guanyarXP(xpGuanyat, 'joc', jocEstat.nom, encerts, coinsGuanyats);
 
         document.getElementById('jocResultatEmoji').textContent = xpGuanyat >= jocEstat.xp * 0.7 ? '🎉' : '👍';
         document.getElementById('jocResultatTitol').textContent = jocEstat.nom + ' ¡completado!';

@@ -79,8 +79,8 @@ async function carregarUsuari() {
     }
 }
 
-// Envía XP ganado a la base de datos
-async function guanyarXP(xp, tipus, nom, puntuacio = 0) {
+// Envía XP y monedas ganados a la base de datos
+async function guanyarXP(xp, tipus, nom, puntuacio = 0, monedes = 0) {
     const token = obtToken();
     if (!token) return null;
     try {
@@ -90,7 +90,7 @@ async function guanyarXP(xp, tipus, nom, puntuacio = 0) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ xp_ganado: xp, tipus, nom, puntuacio })
+            body: JSON.stringify({ xp_ganado: xp, monedes_ganades: monedes, tipus, nom, puntuacio })
         });
         const data = await res.json();
         const user = obtUsuari();
@@ -98,6 +98,7 @@ async function guanyarXP(xp, tipus, nom, puntuacio = 0) {
             user.xp      = data.xp;
             user.nivel   = data.nivel;
             user.rang    = data.rang;
+            user.racha   = data.racha ?? user.racha;
             if (data.monedes !== undefined) user.monedes = data.monedes;
             localStorage.setItem('cq_usuario', JSON.stringify(user));
             actualitzarUIUsuari(user);

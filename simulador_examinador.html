@@ -756,16 +756,10 @@ function endGame() {
 
     showScreen('end');
 
-    // Guardar XP
-    const xpGanado = passed ? 90 : 15;
-    const token = localStorage.getItem('cq_token');
-    if (token) {
-        fetch('/api/user/xp', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ xp_ganado: xpGanado, tipus: 'joc', nom: 'Simulador Examinador', puntuacio: G.points })
-        }).catch(() => {});
-    }
+    // Guardar XP y monedas
+    const xpGanado    = passed ? 90 : 15;
+    const coinsGanats = passed ? 18 : 3;
+    guanyarXP(xpGanado, 'joc', 'Simulador Examinador', G.points, coinsGanats);
 }
 </script>
 <script src="app.js"></script>

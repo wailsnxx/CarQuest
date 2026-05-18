@@ -239,7 +239,7 @@ app.post('/api/auth/register', async (req, res) => {
 
         // Insertar usuario
         const result = await pool.query(
-            'INSERT INTO users (nombre, email, password) VALUES ($1, $2, $3) RETURNING id, nombre, email, xp, nivel, rang',
+            'INSERT INTO users (nombre, email, password) VALUES ($1, $2, $3) RETURNING id, nombre, email, xp, nivel, rang, monedes',
             [nombre, email, hash]
         );
 
@@ -305,8 +305,9 @@ app.get('/api/user/me', verificarToken, async (req, res) => {
 
 // POST /api/user/xp — añadir XP al usuario (al completar test/juego)
 app.post('/api/user/xp', verificarToken, async (req, res) => {
-    const { xp_ganado, tipus, nom, puntuacio } = req.body;
+    const { xp_ganado, monedes_ganades, tipus, nom, puntuacio } = req.body;
     if (!xp_ganado || xp_ganado < 0) return res.status(400).json({ error: 'XP inválido' });
+    const coinsToAdd = (monedes_ganades && monedes_ganades > 0) ? Math.floor(monedes_ganades) : 0;
 
     try {
         const avui = new Date().toISOString().slice(0, 10); // YYYY-MM-DD UTC
@@ -340,7 +341,7 @@ app.post('/api/user/xp', verificarToken, async (req, res) => {
             novaUltimaActivitat = avui;
         }
 
-        // Sumar XP, recalcular nivel/rang y actualizar racha
+        // Sumar XP y monedas, recalcular nivel/rang y actualizar racha
         const result = await pool.query(`
             UPDATE users
             SET
@@ -348,10 +349,11 @@ app.post('/api/user/xp', verificarToken, async (req, res) => {
                 nivel            = GREATEST(1, FLOOR((xp + $1) / 1000) + 1),
                 rang             = update_rang(xp + $1),
                 racha            = $3,
-                ultima_activitat = $4
+                ultima_activitat = $4,
+                monedes          = monedes + $5
             WHERE id = $2
             RETURNING xp, nivel, rang, racha
-        `, [xp_ganado, req.user.id, novaRacha, novaUltimaActivitat]);
+        `, [xp_ganado, req.user.id, novaRacha, novaUltimaActivitat, coinsToAdd]);
 
         // Guardar registro de progreso si se pasa tipo y nombre
         if (tipus && nom) {

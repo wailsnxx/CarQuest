@@ -491,6 +491,7 @@
             if (d.xp !== undefined) {
                 const u = JSON.parse(localStorage.getItem('cq_usuario') || '{}');
                 u.xp = d.xp; u.nivel = d.nivel; u.rang = d.rang; u.racha = d.racha;
+                if (d.monedes !== undefined) u.monedes = d.monedes;
                 localStorage.setItem('cq_usuario', JSON.stringify(u));
                 actualitzarUIUsuari(u);
                 rachaActualitzada = d.racha;

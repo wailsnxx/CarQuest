@@ -930,23 +930,8 @@ function showGameover() {
     document.getElementById('xpEarned').textContent   = '⭐ +' + xp + ' XP';
     document.getElementById('coinsEarned').textContent= '🪙 +' + coins;
 
-    // Guardar XP en la BD
-    const token = localStorage.getItem('cq_token');
-    if (token) {
-        fetch('/api/user/xp', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ xp_ganado: xp, tipus: 'joc', nom: 'Aparcamiento Perfecto', puntuacio: levelsOK })
-        }).then(r => r.json()).then(d => {
-            if (d.xp !== undefined) {
-                const u = JSON.parse(localStorage.getItem('cq_usuario') || '{}');
-                u.xp = d.xp; u.nivel = d.nivel; u.rang = d.rang;
-                if (d.monedes !== undefined) u.monedes = d.monedes;
-                localStorage.setItem('cq_usuario', JSON.stringify(u));
-                if (typeof actualitzarUIUsuari === 'function') actualitzarUIUsuari(u);
-            }
-        }).catch(() => {});
-    }
+    // Guardar XP y monedas en la BD
+    guanyarXP(xp, 'joc', 'Aparcamiento Perfecto', levelsOK, coins);
 
     const allOk = levelsOK === total;
     document.getElementById('finalEmoji').textContent = allOk ? '🏆' : levelsOK > 0 ? '⭐' : '😓';
